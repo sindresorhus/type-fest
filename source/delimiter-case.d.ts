@@ -1,5 +1,6 @@
+import type {AsciiPunctuationCharacter} from './ascii-punctuation-character.d.ts';
 import type {Or} from './or.d.ts';
-import type {ApplyDefaultOptions, AsciiPunctuation, UnwrapBrand} from './internal/index.d.ts';
+import type {ApplyDefaultOptions, UnwrapBrand} from './internal/index.d.ts';
 import type {StartsWith} from './starts-with.d.ts';
 import type {IsStringLiteral} from './is-string-literal.d.ts';
 import type {Merge} from './merge.d.ts';
@@ -22,7 +23,7 @@ type DelimiterCaseFromArray<
 ]
 	? DelimiterCaseFromArray<RemainingWords, Delimiter, OutputString extends '' ? Lowercase<FirstWord> : `${OutputString}${
 		// A delimiter is not emitted next to punctuation, or the two double up. `OutputString` ends with the last character of the previous word, so testing it covers the word that ends in punctuation, and `FirstWord` covers the one that begins with it.
-		Or<StartsWith<FirstWord, AsciiPunctuation>, EndsWithPunctuation<OutputString>> extends true
+		Or<StartsWith<FirstWord, AsciiPunctuationCharacter>, EndsWithPunctuation<OutputString>> extends true
 			? ''
 			: Delimiter
 	}${Lowercase<FirstWord>}`>
@@ -31,7 +32,7 @@ type DelimiterCaseFromArray<
 /**
 Whether the given string ends in punctuation.
 */
-type EndsWithPunctuation<String_ extends string> = String_ extends `${string}${AsciiPunctuation}` ? true : false;
+type EndsWithPunctuation<String_ extends string> = String_ extends `${string}${AsciiPunctuationCharacter}` ? true : false;
 
 /**
 Convert a string literal to a custom string delimiter casing.
@@ -53,8 +54,8 @@ const someVariableWithPunctuation: DelimiterCase<'div.card::after', '#', {splitO
 
 // Advanced
 
-type OddlyCasedProperties<T> = {
-	[K in keyof T as DelimiterCase<K, '#'>]: T[K]
+type OddlyCasedProperties<Value> = {
+	[Key in keyof Value as DelimiterCase<Key, '#'>]: Value[Key];
 };
 
 type SomeOptions = {
@@ -72,7 +73,7 @@ const rawCliOptions: OddlyCasedProperties<SomeOptions> = {
 
 @category Change case
 @category Template literal
- */
+*/
 export type DelimiterCase<
 	Value,
 	Delimiter extends string,

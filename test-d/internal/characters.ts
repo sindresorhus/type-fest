@@ -1,6 +1,6 @@
 import {expectTypeOf} from 'nz';
 import type {IsEqual, WhitespaceCharacter} from '../../index.d.ts';
-import type {AsciiPunctuation, IsWhitespace, WordSeparators} from '../../source/internal/index.d.ts';
+import type {IsWhitespace, WordSeparators} from '../../source/internal/index.d.ts';
 
 // The exact set of code points `String.prototype.trim()` removes, checked against the runtime.
 type TrimsByJs =
@@ -57,5 +57,3 @@ expectTypeOf<IsWhitespace<'\u{200B}'>>().toBe<false>();
 expectTypeOf<IsWhitespace<'\u{2060}'>>().toBe<false>();
 
 expectTypeOf<IsEqual<WordSeparators, '-' | '_' | '\u{85}' | WhitespaceCharacter>>().toBe<true>();
-
-expectTypeOf<IsEqual<AsciiPunctuation, '!' | '"' | '#' | '$' | '%' | '&' | '\'' | '(' | ')' | '*' | '+' | ',' | '-' | '.' | '/' | ':' | ';' | '<' | '=' | '>' | '?' | '@' | '[' | '\\' | ']' | '^' | '_' | '`' | '{' | '|' | '}' | '~'>>().toBe<true>();

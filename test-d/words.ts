@@ -3,7 +3,7 @@ import type {Words} from '../source/words.d.ts';
 import type {Tagged} from '../source/tagged.d.ts';
 import type {StringRepeat} from '../source/string-repeat.d.ts';
 import type {TupleOf} from '../source/tuple-of.d.ts';
-import type {WhitespaceCharacter} from '../index.d.ts';
+import type {AsciiPunctuationCharacter, WhitespaceCharacter} from '../index.d.ts';
 
 expectTypeOf<Words<''>>().toBe<[]>();
 expectTypeOf<Words<'a'>>().toBe<['a']>();
@@ -262,3 +262,55 @@ expectTypeOf<Words<'a\0b'>>().toBe<['a\0b']>();
 expectTypeOf<Words<'first\u{200B}part\u{A0}second'>>().toBe<['first\u{200B}part', 'second']>();
 expectTypeOf<Words<Tagged<'first\u{FEFF}second', 'Text'>>>().toBe<['first', 'second']>();
 expectTypeOf<Words<'first\u{A0}second' | 'third\u{3000}fourth'>>().toBe<['first', 'second'] | ['third', 'fourth']>();
+
+// Punctuation splitting resets the current word at every ASCII punctuation character.
+expectTypeOf<{[Character in AsciiPunctuationCharacter]: Words<Character, {splitOnPunctuation: true}>}>()
+	.toBe<{[Character in AsciiPunctuationCharacter]: []}>();
+expectTypeOf<{[Character in AsciiPunctuationCharacter]: Words<`${Character}value${Character}`, {splitOnPunctuation: true}>}>()
+	.toBe<{[Character in AsciiPunctuationCharacter]: ['value']}>();
+expectTypeOf<{[Character in AsciiPunctuationCharacter]: Words<`first${Character}${Character}second`, {splitOnPunctuation: true}>}>()
+	.toBe<{[Character in AsciiPunctuationCharacter]: ['first', 'second']}>();
+expectTypeOf<{[Character in AsciiPunctuationCharacter]: Words<`HTTP${Character}serverID`, {splitOnPunctuation: true}>}>()
+	.toBe<{[Character in AsciiPunctuationCharacter]: ['HTTP', 'server', 'ID']}>();
+expectTypeOf<{[Character in AsciiPunctuationCharacter]: Words<`first${Character}XMLHttp`, {splitOnPunctuation: true}>}>()
+	.toBe<{[Character in AsciiPunctuationCharacter]: ['first', 'XML', 'Http']}>();
+expectTypeOf<{[Character in AsciiPunctuationCharacter]: Words<`v2${Character}HTTP3Server`, {splitOnPunctuation: true; splitOnNumbers: false}>}>()
+	.toBe<{[Character in AsciiPunctuationCharacter]: ['v2', 'HTTP3', 'Server']}>();
+expectTypeOf<{[Character in AsciiPunctuationCharacter]: Words<`v2${Character}HTTP3Server`, {splitOnPunctuation: true; splitOnNumbers: true}>}>()
+	.toBe<{[Character in AsciiPunctuationCharacter]: ['v', '2', 'HTTP', '3', 'Server']}>();
+expectTypeOf<{[Character in AsciiPunctuationCharacter]: Words<`12${Character}34`, {splitOnPunctuation: true; splitOnNumbers: false}>}>()
+	.toBe<{[Character in AsciiPunctuationCharacter]: ['12', '34']}>();
+expectTypeOf<{[Character in AsciiPunctuationCharacter]: Words<` ${Character}first${Character}\tsecond${Character} `, {splitOnPunctuation: true}>}>()
+	.toBe<{[Character in AsciiPunctuationCharacter]: ['first', 'second']}>();
+
+// Hyphens and underscores remain separators even when punctuation splitting is disabled.
+type PreservedPunctuation = Exclude<AsciiPunctuationCharacter, '-' | '_'>;
+expectTypeOf<{[Character in '-' | '_']: Words<`first${Character}second`, {splitOnPunctuation: false}>}>()
+	.toBe<{[Character in '-' | '_']: ['first', 'second']}>();
+expectTypeOf<{[Character in PreservedPunctuation]: Words<Character, {splitOnPunctuation: false}>}>()
+	.toBe<{[Character in PreservedPunctuation]: [Character]}>();
+expectTypeOf<{[Character in PreservedPunctuation]: Words<`first${Character}second`>}>()
+	.toBe<{[Character in PreservedPunctuation]: [`first${Character}second`]}>();
+expectTypeOf<{[Character in PreservedPunctuation]: Words<`${Character}value${Character}`>}>()
+	.toBe<{[Character in PreservedPunctuation]: [`${Character}value${Character}`]}>();
+expectTypeOf<{[Character in PreservedPunctuation]: Words<`API${Character}key`>}>()
+	.toBe<{[Character in PreservedPunctuation]: [`API${Character}key`]}>();
+expectTypeOf<{[Character in PreservedPunctuation]: Words<`foo${Character}Bar`>}>()
+	.toBe<{[Character in PreservedPunctuation]: [`foo${Character}`, 'Bar']}>();
+expectTypeOf<{[Character in PreservedPunctuation]: Words<`foo${Character}2`>}>()
+	.toBe<{[Character in PreservedPunctuation]: [`foo${Character}`, '2']}>();
+expectTypeOf<{[Character in PreservedPunctuation]: Words<`foo2${Character}bar`>}>()
+	.toBe<{[Character in PreservedPunctuation]: ['foo', '2', `${Character}bar`]}>();
+expectTypeOf<{[Character in PreservedPunctuation]: Words<`foo2${Character}bar`, {splitOnNumbers: false}>}>()
+	.toBe<{[Character in PreservedPunctuation]: [`foo2${Character}bar`]}>();
+
+// Non-ASCII punctuation and symbols are preserved even when ASCII punctuation splitting is enabled.
+type NonAsciiPunctuation = '！' | '？' | '：' | '＿' | '－' | '。' | '、' | '…' | '«' | '»' | '€' | '×' | '÷' | '−' | '😀';
+expectTypeOf<{[Character in NonAsciiPunctuation]: Words<`first${Character}second`, {splitOnPunctuation: true}>}>()
+	.toBe<{[Character in NonAsciiPunctuation]: [`first${Character}second`]}>();
+expectTypeOf<{[Character in NonAsciiPunctuation]: Words<`API${Character}key`, {splitOnPunctuation: true}>}>()
+	.toBe<{[Character in NonAsciiPunctuation]: [`API${Character}key`]}>();
+expectTypeOf<Words<'foo：bar:baz！qux', {splitOnPunctuation: true}>>().toBe<['foo：bar', 'baz！qux']>();
+expectTypeOf<Words<'hello:World' | 'HTTP/server', {splitOnPunctuation: true}>>().toBe<['hello', 'World'] | ['HTTP', 'server']>();
+expectTypeOf<Words<Tagged<'API:key2Value', 'Text'>, {splitOnPunctuation: true}>>().toBe<['API', 'key', '2', 'Value']>();
+expectTypeOf<Words<Tagged<'API:key2Value', 'Text'>, {splitOnPunctuation: true; splitOnNumbers: false}>>().toBe<['API', 'key2', 'Value']>();

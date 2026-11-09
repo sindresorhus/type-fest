@@ -1,6 +1,5 @@
 import {expectTypeOf} from 'nz';
-import type {KebabCase, Opaque, SnakeCase, Tagged, WordsOptions} from '../index.d.ts';
-import type {AsciiPunctuation} from '../source/internal/characters.d.ts';
+import type {AsciiPunctuationCharacter, KebabCase, Opaque, SnakeCase, Tagged, WordsOptions} from '../index.d.ts';
 import type {DelimiterCase} from '../source/delimiter-case.d.ts';
 import type {DelimiterCasedProperties} from '../source/delimiter-cased-properties.d.ts';
 import type {DelimiterCasedPropertiesDeep} from '../source/delimiter-cased-properties-deep.d.ts';
@@ -275,7 +274,7 @@ expectTypeOf<DelimiterCase<FieldName, '-'>>().toBe<'display-name' | 'api-key'>()
 expectTypeOf<DelimiterCase<Tagged<FieldName.DisplayName, 'Field'>, '-'>>().toBe<'display-name'>();
 
 // The public prefix predicate still suppresses delimiters on either side of every preserved punctuation character.
-type PreservedPunctuation = Exclude<AsciiPunctuation, '-' | '_'>;
+type PreservedPunctuation = Exclude<AsciiPunctuationCharacter, '-' | '_'>;
 
 expectTypeOf<{[Punctuation in PreservedPunctuation]: DelimiterCase<`foo ${Punctuation}BarBaz`, '#'>}>()
 	.toBe<{[Punctuation in PreservedPunctuation]: `foo${Punctuation}bar#baz`}>();
@@ -283,8 +282,8 @@ expectTypeOf<{[Punctuation in PreservedPunctuation]: DelimiterCase<`foo${Punctua
 	.toBe<{[Punctuation in PreservedPunctuation]: `foo${Punctuation}bar#baz`}>();
 expectTypeOf<{[Punctuation in PreservedPunctuation]: DelimiterCase<`foo ${Punctuation} BarBaz`, '#'>}>()
 	.toBe<{[Punctuation in PreservedPunctuation]: `foo${Punctuation}bar#baz`}>();
-expectTypeOf<{[Punctuation in AsciiPunctuation]: DelimiterCase<`foo${Punctuation}BarBaz`, '#', {splitOnPunctuation: true}>}>()
-	.toBe<{[Punctuation in AsciiPunctuation]: 'foo#bar#baz'}>();
+expectTypeOf<{[Punctuation in AsciiPunctuationCharacter]: DelimiterCase<`foo${Punctuation}BarBaz`, '#', {splitOnPunctuation: true}>}>()
+	.toBe<{[Punctuation in AsciiPunctuationCharacter]: 'foo#bar#baz'}>();
 
 // Prefix matching stays correct when punctuation appears at multiple word boundaries.
 expectTypeOf<DelimiterCase<'foo .Bar :Baz', '#'>>().toBe<'foo.bar:baz'>();
@@ -299,3 +298,50 @@ expectTypeOf<KebabCase<'foo .BarBaz'>>().toBe<'foo.bar-baz'>();
 expectTypeOf<SnakeCase<'foo .BarBaz'>>().toBe<'foo.bar_baz'>();
 expectTypeOf<DelimiterCasedProperties<{readonly 'foo .BarBaz'?: number}, '#'>>().toBe<{readonly 'foo.bar#baz'?: number}>();
 expectTypeOf<DelimiterCasedPropertiesDeep<{nested: Array<{'foo .BarBaz': string}>}, '#'>>().toBe<{nested: Array<{'foo.bar#baz': string}>}>();
+
+// The emitted delimiter may be any ASCII punctuation character, including word separators.
+expectTypeOf<{[Character in AsciiPunctuationCharacter]: DelimiterCase<'firstSecondThird', Character>}>()
+	.toBe<{[Character in AsciiPunctuationCharacter]: `first${Character}second${Character}third`}>();
+expectTypeOf<{[Character in AsciiPunctuationCharacter]: DelimiterCase<'API:keyValue', Character, {splitOnPunctuation: true}>}>()
+	.toBe<{[Character in AsciiPunctuationCharacter]: `api${Character}key${Character}value`}>();
+
+// Splitting punctuation removes empty words at the edges and between repeated separators.
+expectTypeOf<{[Character in AsciiPunctuationCharacter]: DelimiterCase<Character, 'SEP', {splitOnPunctuation: true}>}>()
+	.toBe<{[Character in AsciiPunctuationCharacter]: ''}>();
+expectTypeOf<{[Character in AsciiPunctuationCharacter]: DelimiterCase<`${Character}firstSecond${Character}`, 'SEP', {splitOnPunctuation: true}>}>()
+	.toBe<{[Character in AsciiPunctuationCharacter]: 'firstSEPsecond'}>();
+expectTypeOf<{[Character in AsciiPunctuationCharacter]: DelimiterCase<`first${Character}${Character}second`, 'SEP', {splitOnPunctuation: true}>}>()
+	.toBe<{[Character in AsciiPunctuationCharacter]: 'firstSEPsecond'}>();
+expectTypeOf<{[Character in AsciiPunctuationCharacter]: DelimiterCase<`API${Character}keyValue`, 'SEP', {splitOnPunctuation: true}>}>()
+	.toBe<{[Character in AsciiPunctuationCharacter]: 'apiSEPkeySEPvalue'}>();
+expectTypeOf<{[Character in AsciiPunctuationCharacter]: DelimiterCase<`v2${Character}HTTP3Server`, 'SEP', {splitOnPunctuation: true}>}>()
+	.toBe<{[Character in AsciiPunctuationCharacter]: 'v2SEPhttp3SEPserver'}>();
+expectTypeOf<{[Character in AsciiPunctuationCharacter]: DelimiterCase<`v2${Character}HTTP3Server`, 'SEP', {splitOnPunctuation: true; splitOnNumbers: true}>}>()
+	.toBe<{[Character in AsciiPunctuationCharacter]: 'vSEP2SEPhttpSEP3SEPserver'}>();
+
+// Preserved punctuation suppresses an extra delimiter at both boundaries, including numeric boundaries.
+expectTypeOf<{[Character in PreservedPunctuation]: DelimiterCase<`first${Character} ${Character}Second`, 'SEP'>}>()
+	.toBe<{[Character in PreservedPunctuation]: `first${Character}${Character}second`}>();
+expectTypeOf<{[Character in PreservedPunctuation]: DelimiterCase<`first${Character}2Third`, 'SEP', {splitOnNumbers: true}>}>()
+	.toBe<{[Character in PreservedPunctuation]: `first${Character}2SEPthird`}>();
+expectTypeOf<{[Character in PreservedPunctuation]: DelimiterCase<`first2${Character}Third`, 'SEP', {splitOnNumbers: true}>}>()
+	.toBe<{[Character in PreservedPunctuation]: `firstSEP2${Character}third`}>();
+expectTypeOf<{[Character in PreservedPunctuation]: DelimiterCase<`API${Character}keyValue`, 'SEP'>}>()
+	.toBe<{[Character in PreservedPunctuation]: `api${Character}keySEPvalue`}>();
+expectTypeOf<{[Character in PreservedPunctuation]: DelimiterCase<`${Character} ${Character}`, 'SEP'>}>()
+	.toBe<{[Character in PreservedPunctuation]: `${Character}${Character}`}>();
+
+// Non-ASCII punctuation stays in the word and does not suppress delimiters at whitespace boundaries.
+type NonAsciiPunctuation = '！' | '？' | '：' | '＿' | '－' | '。' | '、' | '…' | '«' | '»' | '€' | '×' | '÷' | '−' | '😀';
+expectTypeOf<{[Character in NonAsciiPunctuation]: DelimiterCase<`first${Character}second`, 'SEP', {splitOnPunctuation: true}>}>()
+	.toBe<{[Character in NonAsciiPunctuation]: `first${Character}second`}>();
+expectTypeOf<{[Character in NonAsciiPunctuation]: DelimiterCase<`first${Character} second`, 'SEP', {splitOnPunctuation: true}>}>()
+	.toBe<{[Character in NonAsciiPunctuation]: `first${Character}SEPsecond`}>();
+expectTypeOf<{[Character in NonAsciiPunctuation]: DelimiterCase<`first ${Character}second`, 'SEP', {splitOnPunctuation: true}>}>()
+	.toBe<{[Character in NonAsciiPunctuation]: `firstSEP${Character}second`}>();
+expectTypeOf<DelimiterCase<'foo：bar:baz！qux', 'SEP', {splitOnPunctuation: true}>>().toBe<'foo：barSEPbaz！qux'>();
+expectTypeOf<DelimiterCase<'API:keyValue' | 'user/name', 'X' | 'Y', {splitOnPunctuation: true}>>().toBe<'apiXkeyXvalue' | 'apiYkeyYvalue' | 'userXname' | 'userYname'>();
+expectTypeOf<KebabCase<'API:keyValue', {splitOnPunctuation: true}>>().toBe<'api-key-value'>();
+expectTypeOf<SnakeCase<'API:keyValue', {splitOnPunctuation: true}>>().toBe<'api_key_value'>();
+expectTypeOf<DelimiterCasedProperties<{readonly 'API:keyValue'?: number}, 'SEP', {splitOnPunctuation: true}>>().toBe<{readonly apiSEPkeySEPvalue?: number}>();
+expectTypeOf<DelimiterCasedPropertiesDeep<{items: Array<{'API:keyValue': number}>}, 'SEP', {splitOnPunctuation: true}>>().toBe<{items: Array<{apiSEPkeySEPvalue: number}>}>();

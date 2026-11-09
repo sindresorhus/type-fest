@@ -1,5 +1,5 @@
 import {expectTypeOf} from 'nz';
-import type {KebabCaseString, Opaque, Tagged} from '../index.d.ts';
+import type {AsciiPunctuationCharacter, KebabCaseString, Opaque, Tagged} from '../index.d.ts';
 
 // A valid value is kept as is
 expectTypeOf<KebabCaseString<'foo-bar'>>().toBe<'foo-bar'>();
@@ -119,3 +119,19 @@ declare const emptyClassName: Tagged<'', 'ClassName'>;
 
 // @ts-expect-error A branded empty string is still empty.
 addClass(emptyClassName);
+
+// Every ASCII punctuation character is checked at each position, including characters the case transform preserves.
+expectTypeOf<{[Character in Exclude<AsciiPunctuationCharacter, '-'>]: KebabCaseString<`${Character}foo-bar`>}>()
+	.toBe<{[Character in Exclude<AsciiPunctuationCharacter, '-'>]: never}>();
+expectTypeOf<{[Character in Exclude<AsciiPunctuationCharacter, '-'>]: KebabCaseString<`foo-bar${Character}foo-bar`>}>()
+	.toBe<{[Character in Exclude<AsciiPunctuationCharacter, '-'>]: never}>();
+expectTypeOf<{[Character in Exclude<AsciiPunctuationCharacter, '-'>]: KebabCaseString<`foo-bar${Character}`>}>()
+	.toBe<{[Character in Exclude<AsciiPunctuationCharacter, '-'>]: never}>();
+
+// Splitting punctuation, adding a brand, or including a valid union member cannot bypass validation.
+expectTypeOf<{[Character in Exclude<AsciiPunctuationCharacter, '-'>]: KebabCaseString<`foo-bar${Character}`, {splitOnPunctuation: true}>}>()
+	.toBe<{[Character in Exclude<AsciiPunctuationCharacter, '-'>]: never}>();
+expectTypeOf<{[Character in Exclude<AsciiPunctuationCharacter, '-'>]: KebabCaseString<Tagged<`foo-bar${Character}`, 'ValidatedName'>>}>()
+	.toBe<{[Character in Exclude<AsciiPunctuationCharacter, '-'>]: never}>();
+expectTypeOf<{[Character in Exclude<AsciiPunctuationCharacter, '-'>]: KebabCaseString<'foo-bar' | `foo-bar${Character}`>}>()
+	.toBe<{[Character in Exclude<AsciiPunctuationCharacter, '-'>]: never}>();

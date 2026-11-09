@@ -1,5 +1,5 @@
 import {expectTypeOf} from 'nz';
-import type {ScreamingSnakeCaseString, Tagged} from '../index.d.ts';
+import type {AsciiPunctuationCharacter, ScreamingSnakeCaseString, Tagged} from '../index.d.ts';
 
 // A valid value is kept as is
 expectTypeOf<ScreamingSnakeCaseString<'FOO_BAR'>>().toBe<'FOO_BAR'>();
@@ -69,3 +69,19 @@ declare const wide: string;
 
 // @ts-expect-error A wide string cannot be proven to be screaming snake case.
 defineVariable({name: wide, value: 'debug'});
+
+// Every ASCII punctuation character is checked at each position, including characters the case transform preserves.
+expectTypeOf<{[Character in Exclude<AsciiPunctuationCharacter, '_'>]: ScreamingSnakeCaseString<`${Character}FOO_BAR`>}>()
+	.toBe<{[Character in Exclude<AsciiPunctuationCharacter, '_'>]: never}>();
+expectTypeOf<{[Character in Exclude<AsciiPunctuationCharacter, '_'>]: ScreamingSnakeCaseString<`FOO_BAR${Character}FOO_BAR`>}>()
+	.toBe<{[Character in Exclude<AsciiPunctuationCharacter, '_'>]: never}>();
+expectTypeOf<{[Character in Exclude<AsciiPunctuationCharacter, '_'>]: ScreamingSnakeCaseString<`FOO_BAR${Character}`>}>()
+	.toBe<{[Character in Exclude<AsciiPunctuationCharacter, '_'>]: never}>();
+
+// Splitting punctuation, adding a brand, or including a valid union member cannot bypass validation.
+expectTypeOf<{[Character in Exclude<AsciiPunctuationCharacter, '_'>]: ScreamingSnakeCaseString<`FOO_BAR${Character}`, {splitOnPunctuation: true}>}>()
+	.toBe<{[Character in Exclude<AsciiPunctuationCharacter, '_'>]: never}>();
+expectTypeOf<{[Character in Exclude<AsciiPunctuationCharacter, '_'>]: ScreamingSnakeCaseString<Tagged<`FOO_BAR${Character}`, 'ValidatedName'>>}>()
+	.toBe<{[Character in Exclude<AsciiPunctuationCharacter, '_'>]: never}>();
+expectTypeOf<{[Character in Exclude<AsciiPunctuationCharacter, '_'>]: ScreamingSnakeCaseString<'FOO_BAR' | `FOO_BAR${Character}`>}>()
+	.toBe<{[Character in Exclude<AsciiPunctuationCharacter, '_'>]: never}>();

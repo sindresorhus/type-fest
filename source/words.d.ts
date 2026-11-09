@@ -1,9 +1,5 @@
-import type {
-	ApplyDefaultOptions,
-	AsciiPunctuation,
-	IsNumeric,
-	WordSeparators,
-} from './internal/index.d.ts';
+import type {AsciiPunctuationCharacter} from './ascii-punctuation-character.d.ts';
+import type {ApplyDefaultOptions, IsNumeric, WordSeparators} from './internal/index.d.ts';
 import type {IsLowercase} from './is-lowercase.d.ts';
 import type {UnwrapBrand} from './internal/object.d.ts';
 import type {IsStringLiteral} from './is-string-literal.d.ts';
@@ -42,7 +38,9 @@ export type WordsOptions = {
 	*/
 	splitOnNumbers?: boolean;
 	/**
-	Split on {@link AsciiPunctuation | punctuation characters} (e.g., `#`, `&`, `*`, `:`, `?`, `@`, `~`).
+	Split on {@link AsciiPunctuationCharacter | ASCII punctuation characters} (for example, `#`, `&`, `*`, `:`, `?`, `@`, `~`). Hyphens and underscores always separate words, regardless of this option.
+
+	@default false
 
 	@example
 	```
@@ -68,7 +66,7 @@ Split a string similar to Lodash's `_.words()` function.
 
 - Split on each word that begins with a capital letter.
 - Split on each {@link WordSeparators}.
-- Split on each {@link AsciiPunctuation} (if {@link WordsOptions.splitOnPunctuation} is enabled).
+- Split on each {@link AsciiPunctuationCharacter} (if {@link WordsOptions.splitOnPunctuation} is enabled).
 - Split on numeric sequence.
 
 @example
@@ -127,7 +125,7 @@ export type _Words<
 	// The words found so far are kept in `Result`, so the recursion is in tail position and a long sentence does not hit the recursion limit.
 	Result extends string[] = [],
 > = Sentence extends `${infer FirstCharacter}${infer RemainingCharacters}`
-	? FirstCharacter extends WordSeparators | (Options['splitOnPunctuation'] extends true ? AsciiPunctuation : never)
+	? FirstCharacter extends WordSeparators | (Options['splitOnPunctuation'] extends true ? AsciiPunctuationCharacter : never)
 		// Skip word separator
 		? _Words<RemainingCharacters, Options, '', '', [...Result, ...SkipEmptyWord<CurrentWord>]>
 		: LastCharacter extends ''

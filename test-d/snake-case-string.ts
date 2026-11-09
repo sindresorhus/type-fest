@@ -1,5 +1,5 @@
 import {expectTypeOf} from 'nz';
-import type {SnakeCaseString, Tagged} from '../index.d.ts';
+import type {AsciiPunctuationCharacter, SnakeCaseString, Tagged} from '../index.d.ts';
 
 // A valid value is kept as is
 expectTypeOf<SnakeCaseString<'foo_bar'>>().toBe<'foo_bar'>();
@@ -80,3 +80,19 @@ const columns = [{name: 'user_id'}, {name: 'display_name'}] as const;
 expectTypeOf(defineColumns(columns)).toBe<'user_id' | 'display_name'>();
 // @ts-expect-error The second readonly object's name is not snake case.
 defineColumns([{name: 'user_id'}, {name: 'displayName'}] as const);
+
+// Every ASCII punctuation character is checked at each position, including characters the case transform preserves.
+expectTypeOf<{[Character in Exclude<AsciiPunctuationCharacter, '_'>]: SnakeCaseString<`${Character}foo_bar`>}>()
+	.toBe<{[Character in Exclude<AsciiPunctuationCharacter, '_'>]: never}>();
+expectTypeOf<{[Character in Exclude<AsciiPunctuationCharacter, '_'>]: SnakeCaseString<`foo_bar${Character}foo_bar`>}>()
+	.toBe<{[Character in Exclude<AsciiPunctuationCharacter, '_'>]: never}>();
+expectTypeOf<{[Character in Exclude<AsciiPunctuationCharacter, '_'>]: SnakeCaseString<`foo_bar${Character}`>}>()
+	.toBe<{[Character in Exclude<AsciiPunctuationCharacter, '_'>]: never}>();
+
+// Splitting punctuation, adding a brand, or including a valid union member cannot bypass validation.
+expectTypeOf<{[Character in Exclude<AsciiPunctuationCharacter, '_'>]: SnakeCaseString<`foo_bar${Character}`, {splitOnPunctuation: true}>}>()
+	.toBe<{[Character in Exclude<AsciiPunctuationCharacter, '_'>]: never}>();
+expectTypeOf<{[Character in Exclude<AsciiPunctuationCharacter, '_'>]: SnakeCaseString<Tagged<`foo_bar${Character}`, 'ValidatedName'>>}>()
+	.toBe<{[Character in Exclude<AsciiPunctuationCharacter, '_'>]: never}>();
+expectTypeOf<{[Character in Exclude<AsciiPunctuationCharacter, '_'>]: SnakeCaseString<'foo_bar' | `foo_bar${Character}`>}>()
+	.toBe<{[Character in Exclude<AsciiPunctuationCharacter, '_'>]: never}>();

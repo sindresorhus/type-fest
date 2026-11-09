@@ -1,5 +1,5 @@
 import {expectTypeOf} from 'nz';
-import type {IsEqual, LiteralUnion, Opaque, StringRepeat, Tagged} from '../../index.d.ts';
+import type {AsciiPunctuationCharacter, IsEqual, LiteralUnion, Opaque, StringRepeat, Tagged} from '../../index.d.ts';
 import type {CasedString, ConsistsOnlyOf, IsNumeric, PositiveNumericStringGt, ToPath, ToString, UnwrapPathBrand} from '../../source/internal/index.d.ts';
 
 expectTypeOf<IsEqual<ToString<'a'>, 'a'>>().toBe<true>();
@@ -243,3 +243,39 @@ function _readGenericIntegerFraction<Value extends `${bigint}`>(value: PositiveN
 }
 
 expectTypeOf<PositiveNumericStringGt<'0.1', '1'>>().toBe<false>();
+
+// The public punctuation set is enforced in every position, even when a transform preserves it.
+expectTypeOf<{[Character in AsciiPunctuationCharacter]: CasedString<`${Character}foo`, `${Character}foo`, never>}>()
+	.toBe<{[Character in AsciiPunctuationCharacter]: never}>();
+expectTypeOf<{[Character in AsciiPunctuationCharacter]: CasedString<`foo${Character}bar`, `foo${Character}bar`, never>}>()
+	.toBe<{[Character in AsciiPunctuationCharacter]: never}>();
+expectTypeOf<{[Character in AsciiPunctuationCharacter]: CasedString<`foo${Character}`, `foo${Character}`, never>}>()
+	.toBe<{[Character in AsciiPunctuationCharacter]: never}>();
+
+// Explicitly allowing each punctuation character preserves the complete literal value.
+expectTypeOf<{[Character in AsciiPunctuationCharacter]: CasedString<`${Character}foo${Character}`, `${Character}foo${Character}`, Character>}>()
+	.toBe<{[Character in AsciiPunctuationCharacter]: `${Character}foo${Character}`}>();
+expectTypeOf<{[Character in AsciiPunctuationCharacter]: CasedString<Character, Character, Character>}>()
+	.toBe<{[Character in AsciiPunctuationCharacter]: Character}>();
+expectTypeOf<CasedString<'foo/bar:baz', 'foo/bar:baz', '/' | ':'>>().toBe<'foo/bar:baz'>();
+expectTypeOf<CasedString<'foo/bar:baz!', 'foo/bar:baz!', '/' | ':'>>().toBe<never>();
+expectTypeOf<CasedString<'foo.bar', 'foo.bar', '..'>>().toBe<never>();
+expectTypeOf<CasedString<'foo.bar', 'foo.bar', ''>>().toBe<never>();
+
+// A brand cannot hide punctuation from validation, and accepted values keep their brand.
+expectTypeOf<{[Character in AsciiPunctuationCharacter]: CasedString<Tagged<`foo${Character}bar`, 'Text'>, `foo${Character}bar`, never>}>()
+	.toBe<{[Character in AsciiPunctuationCharacter]: never}>();
+expectTypeOf<{[Character in AsciiPunctuationCharacter]: CasedString<Tagged<`foo${Character}bar`, 'Text'>, `foo${Character}bar`, Character>}>()
+	.toBe<{[Character in AsciiPunctuationCharacter]: Tagged<`foo${Character}bar`, 'Text'>}>();
+
+// Invalid punctuation rejects the whole input union instead of filtering out a bad member.
+expectTypeOf<{[Character in AsciiPunctuationCharacter]: CasedString<'valid' | `foo${Character}bar`, 'valid' | `foo${Character}bar`, never>}>()
+	.toBe<{[Character in AsciiPunctuationCharacter]: never}>();
+expectTypeOf<CasedString<'foo.bar' | 'foo:bar', 'foo.bar' | 'foo:bar', '.' | ':'>>().toBe<'foo.bar' | 'foo:bar'>();
+expectTypeOf<CasedString<'foo.bar', 'foo:bar', AsciiPunctuationCharacter>>().toBe<never>();
+expectTypeOf<CasedString<'foo.bar', 'foo.bar' | 'extra', AsciiPunctuationCharacter>>().toBe<never>();
+
+// Unicode punctuation is outside the ASCII guard and remains subject to the transform itself.
+type UnicodePunctuation = '！' | '：' | '＿' | '＄' | '’' | '…' | '。';
+expectTypeOf<{[Character in UnicodePunctuation]: CasedString<`foo${Character}bar`, `foo${Character}bar`, never>}>()
+	.toBe<{[Character in UnicodePunctuation]: `foo${Character}bar`}>();

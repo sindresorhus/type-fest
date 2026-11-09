@@ -1,5 +1,5 @@
 import {expectTypeOf} from 'nz';
-import type {CamelCaseString, Opaque, Tagged} from '../index.d.ts';
+import type {AsciiPunctuationCharacter, CamelCaseString, Opaque, Tagged} from '../index.d.ts';
 
 // A valid value is kept as is
 expectTypeOf<CamelCaseString<'fooBar'>>().toBe<'fooBar'>();
@@ -100,3 +100,19 @@ const handlerNames = ['onSubmit', 'onReset'] as const;
 expectTypeOf(defineHandlerNames(handlerNames)).toBe<typeof handlerNames>();
 // @ts-expect-error Every name in the readonly tuple must be camel case.
 defineHandlerNames(['onSubmit', 'on-reset'] as const);
+
+// Every ASCII punctuation character is checked at each position, including characters the case transform preserves.
+expectTypeOf<{[Character in AsciiPunctuationCharacter]: CamelCaseString<`${Character}fooBar`>}>()
+	.toBe<{[Character in AsciiPunctuationCharacter]: never}>();
+expectTypeOf<{[Character in AsciiPunctuationCharacter]: CamelCaseString<`fooBar${Character}fooBar`>}>()
+	.toBe<{[Character in AsciiPunctuationCharacter]: never}>();
+expectTypeOf<{[Character in AsciiPunctuationCharacter]: CamelCaseString<`fooBar${Character}`>}>()
+	.toBe<{[Character in AsciiPunctuationCharacter]: never}>();
+
+// Splitting punctuation, adding a brand, or including a valid union member cannot bypass validation.
+expectTypeOf<{[Character in AsciiPunctuationCharacter]: CamelCaseString<`fooBar${Character}`, {splitOnPunctuation: true}>}>()
+	.toBe<{[Character in AsciiPunctuationCharacter]: never}>();
+expectTypeOf<{[Character in AsciiPunctuationCharacter]: CamelCaseString<Tagged<`fooBar${Character}`, 'ValidatedName'>>}>()
+	.toBe<{[Character in AsciiPunctuationCharacter]: never}>();
+expectTypeOf<{[Character in AsciiPunctuationCharacter]: CamelCaseString<'fooBar' | `fooBar${Character}`>}>()
+	.toBe<{[Character in AsciiPunctuationCharacter]: never}>();

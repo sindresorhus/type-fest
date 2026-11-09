@@ -3,40 +3,6 @@ import type {WhitespaceCharacter} from '../whitespace-character.d.ts';
 // `U+0085` (next line) is not whitespace to `String.prototype.trim()`, but it still separates words.
 export type WordSeparators = '-' | '_' | '\u{85}' | WhitespaceCharacter;
 
-export type AsciiPunctuation =
-	| '!'
-	| '"'
-	| '#'
-	| '$'
-	| '%'
-	| '&'
-	| '\''
-	| '('
-	| ')'
-	| '*'
-	| '+'
-	| ','
-	| '-'
-	| '.'
-	| '/'
-	| ':'
-	| ';'
-	| '<'
-	| '='
-	| '>'
-	| '?'
-	| '@'
-	| '['
-	| '\\'
-	| ']'
-	| '^'
-	| '_'
-	| '`'
-	| '{'
-	| '|'
-	| '}'
-	| '~';
-
 /**
 The characters of the Unicode titlecase category (`Lt`), which is closed at these 31 code points. Each is changed by both lowercasing and uppercasing, so a character like `ǅ` is neither lowercase nor uppercase, though it also matches none of the uppercase or lowercase shapes the case predicates look for.
 */

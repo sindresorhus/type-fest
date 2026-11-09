@@ -1,5 +1,5 @@
 import {expectTypeOf} from 'nz';
-import type {LiteralUnion, Opaque, PathParameters, Tagged, WhitespaceCharacter} from '../index.d.ts';
+import type {AsciiPunctuationCharacter, LiteralUnion, Opaque, PathParameters, Tagged, WhitespaceCharacter} from '../index.d.ts';
 
 // Named parameters can occupy whole path segments or appear alongside literal text.
 expectTypeOf<PathParameters<'/users/:id'>>().toBe<{id: string}>();
@@ -195,3 +195,49 @@ expectTypeOf<PathParameters<'/:id\t?'>>().toBe<Record<string, string | undefined
 
 // A fallback in one union member does not erase the extraction from another member.
 expectTypeOf<PathParameters<'/:id\u{A0}suffix' | '/:name\u{85}suffix'>>().toBe<Record<string, string | undefined> | {id: string}>();
+
+// Every literal punctuation boundary ends the name and permits a later parameter capture.
+type LiteralPunctuation = Exclude<AsciiPunctuationCharacter, '$' | '_' | ':' | '?' | '*' | '+' | '(' | '{' | '}' | '\\' | '#'>;
+expectTypeOf<{[Character in LiteralPunctuation]: PathParameters<`/:id${Character}suffix`>}>()
+	.toBe<{[Character in LiteralPunctuation]: {id: string}}>();
+expectTypeOf<{[Character in LiteralPunctuation]: PathParameters<`/:id${Character}:next`>}>()
+	.toBe<{[Character in LiteralPunctuation]: {id: string; next: string}}>();
+expectTypeOf<{[Character in LiteralPunctuation]: PathParameters<`/:id${Character}:next?`>}>()
+	.toBe<{[Character in LiteralPunctuation]: {id: string; next?: string | undefined}}>();
+expectTypeOf<{[Character in LiteralPunctuation]: PathParameters<`/:id${Character}:rest*`>}>()
+	.toBe<{[Character in LiteralPunctuation]: {id: string; rest?: string | undefined}}>();
+expectTypeOf<{[Character in LiteralPunctuation]: PathParameters<`/:id${Character}:rest+`>}>()
+	.toBe<{[Character in LiteralPunctuation]: {id: string; rest: string}}>();
+
+// Dollar signs and underscores belong to identifier names instead of terminating them.
+expectTypeOf<PathParameters<'/:id$suffix/:id_suffix'>>().toBe<{id$suffix: string; id_suffix: string}>();
+expectTypeOf<PathParameters<'/:$9_?/:_9$*'>>().toBe<{$9_?: string | undefined; _9$?: string | undefined}>();
+expectTypeOf<PathParameters<'/:first:second'>>().toBe<{first: string; second: string}>();
+expectTypeOf<PathParameters<'/:first:second?'>>().toBe<{first: string; second?: string | undefined}>();
+expectTypeOf<PathParameters<'/:first:second*'>>().toBe<{first: string; second?: string | undefined}>();
+expectTypeOf<PathParameters<'/:first:second+'>>().toBe<{first: string; second: string}>();
+
+// Punctuation that starts unsupported syntax discards captures on both sides.
+type UnsupportedPunctuation = '(' | '{' | '}' | '\\' | '#';
+expectTypeOf<{[Character in UnsupportedPunctuation]: PathParameters<`/:known/:id${Character}suffix/:last`>}>()
+	.toBe<{[Character in UnsupportedPunctuation]: Record<string, string | undefined>}>();
+expectTypeOf<{[Character in '?' | '*' | '+']: PathParameters<`/:known/:id${Character}-suffix/:last`>}>()
+	.toBe<{[Character in '?' | '*' | '+']: Record<string, string | undefined>}>();
+expectTypeOf<{[Character in '?' | '*' | '+']: PathParameters<`/:known/:id${Character}${Character}`>}>()
+	.toBe<{[Character in '?' | '*' | '+']: Record<string, string | undefined>}>();
+expectTypeOf<PathParameters<'/:first:'>>().toBe<Record<string, string | undefined>>();
+
+// A non-ASCII punctuation lookalike must not silently truncate a parameter name.
+type NonAsciiPunctuation = '！' | '：' | '＿' | '＄' | '’' | '…' | '。';
+expectTypeOf<{[Character in NonAsciiPunctuation]: PathParameters<`/:known/:id${Character}suffix`>}>()
+	.toBe<{[Character in NonAsciiPunctuation]: Record<string, string | undefined>}>();
+expectTypeOf<{[Character in NonAsciiPunctuation]: PathParameters<`/${Character}/:id`>}>()
+	.toBe<{[Character in NonAsciiPunctuation]: {id: string}}>();
+
+// Identifier boundaries and modifiers keep working through pattern unions and brands.
+expectTypeOf<PathParameters<'/:file.:ext?' | '/:directory/:path*'>>()
+	.toBe<{file: string; ext?: string | undefined} | {directory: string; path?: string | undefined}>();
+expectTypeOf<PathParameters<Tagged<'/:file.:ext?', 'Route'>>>().toBe<{file: string; ext?: string | undefined}>();
+expectTypeOf<PathParameters<Opaque<'/:from-:to+', 'Route'>>>().toBe<{from: string; to: string}>();
+expectTypeOf<PathParameters<'/:file.:ext' | '/:id#fragment'>>()
+	.toBe<Record<string, string | undefined> | {file: string; ext: string}>();

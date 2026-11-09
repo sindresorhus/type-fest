@@ -4,7 +4,7 @@ import type {IsStringLiteral} from '../is-string-literal.d.ts';
 import type {Trim} from '../trim.d.ts';
 import type {_SplitOnDelimiter} from '../split.d.ts';
 import type {CollapseLiterals} from '../collapse-literals.d.ts';
-import type {AsciiPunctuation} from './characters.d.ts';
+import type {AsciiPunctuationCharacter} from '../ascii-punctuation-character.d.ts';
 import type {UnwrapBrand} from './object.d.ts';
 
 /**
@@ -81,7 +81,7 @@ export type CasedString<
 	AllowedPunctuation extends string,
 > = IsStringLiteral<Value> extends true
 	// `Exclude` distributes over the members of a union, so one member that is empty or holds a foreign character removes itself and the whole union is rejected. A branded member is matched too, because the brand does not stop it from extending the pattern.
-	? [Value] extends [Exclude<Value, '' | `${string}${Exclude<AsciiPunctuation, AllowedPunctuation>}${string}`>]
+	? [Value] extends [Exclude<Value, '' | `${string}${Exclude<AsciiPunctuationCharacter, AllowedPunctuation>}${string}`>]
 		// The value is turned into a plain string, because a string enum member is not equal to the string that the transform returns.
 		// Unwrap unconditionally after the predicate so branded generics retain their primitive constraint.
 		? IsEqual<`${UnwrapBrand<Value>}`, CasedValue> extends true

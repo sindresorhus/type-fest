@@ -1,5 +1,5 @@
 import {expectTypeOf} from 'nz';
-import type {PascalCaseString, Tagged} from '../index.d.ts';
+import type {AsciiPunctuationCharacter, PascalCaseString, Tagged} from '../index.d.ts';
 
 // A valid value is kept as is
 expectTypeOf<PascalCaseString<'FooBar'>>().toBe<'FooBar'>();
@@ -66,3 +66,19 @@ declare const wide: string;
 
 // @ts-expect-error A wide string cannot be proven to be pascal case.
 defineComponent({name: wide});
+
+// Every ASCII punctuation character is checked at each position, including characters the case transform preserves.
+expectTypeOf<{[Character in AsciiPunctuationCharacter]: PascalCaseString<`${Character}FooBar`>}>()
+	.toBe<{[Character in AsciiPunctuationCharacter]: never}>();
+expectTypeOf<{[Character in AsciiPunctuationCharacter]: PascalCaseString<`FooBar${Character}FooBar`>}>()
+	.toBe<{[Character in AsciiPunctuationCharacter]: never}>();
+expectTypeOf<{[Character in AsciiPunctuationCharacter]: PascalCaseString<`FooBar${Character}`>}>()
+	.toBe<{[Character in AsciiPunctuationCharacter]: never}>();
+
+// Splitting punctuation, adding a brand, or including a valid union member cannot bypass validation.
+expectTypeOf<{[Character in AsciiPunctuationCharacter]: PascalCaseString<`FooBar${Character}`, {splitOnPunctuation: true}>}>()
+	.toBe<{[Character in AsciiPunctuationCharacter]: never}>();
+expectTypeOf<{[Character in AsciiPunctuationCharacter]: PascalCaseString<Tagged<`FooBar${Character}`, 'ValidatedName'>>}>()
+	.toBe<{[Character in AsciiPunctuationCharacter]: never}>();
+expectTypeOf<{[Character in AsciiPunctuationCharacter]: PascalCaseString<'FooBar' | `FooBar${Character}`>}>()
+	.toBe<{[Character in AsciiPunctuationCharacter]: never}>();
