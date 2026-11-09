@@ -1,5 +1,6 @@
 import type {AsciiPunctuationCharacter} from './ascii-punctuation-character.d.ts';
-import type {ApplyDefaultOptions, IsNumeric, WordSeparators} from './internal/index.d.ts';
+import type {IsNumeric, WordSeparators} from './internal/index.d.ts';
+import type {ApplyDefaultOptions} from './apply-default-options.d.ts';
 import type {IsLowercase} from './is-lowercase.d.ts';
 import type {UnwrapBrand} from './internal/object.d.ts';
 import type {IsStringLiteral} from './is-string-literal.d.ts';

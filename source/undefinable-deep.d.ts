@@ -1,4 +1,5 @@
-import type {ApplyDefaultOptions, IsArrayOfUnknownLength, NonRecursiveLeaf} from './internal/index.d.ts';
+import type {IsArrayOfUnknownLength, NonRecursiveLeaf} from './internal/index.d.ts';
+import type {ApplyDefaultOptions} from './apply-default-options.d.ts';
 import type {IsNever} from './is-never.d.ts';
 import type {PartialDeep} from './partial-deep.d.ts'; // For `@link`
 import type {UndefinedOnPartialDeep} from './undefined-on-partial-deep.d.ts'; // For `@link`

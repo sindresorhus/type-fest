@@ -1,4 +1,5 @@
 import type {IsAny} from './is-any.d.ts';
+import type {ApplyDefaultOptions} from './apply-default-options.d.ts'; // For `@link`
 
 /**
 Create the type of a defaults object for the given options type, with only its optional keys, made required.
@@ -45,6 +46,8 @@ const requiredOptionDefault = {url: 'https://example.com', retries: 2, timeout: 
 type SourceDefaults = DefaultsFor<{type: 'file'; encoding?: string} | {type: 'url'; timeout?: number}>;
 //=> {encoding: string} | {timeout: number}
 ```
+
+Use {@link ApplyDefaultOptions} to resolve options for a configurable utility type while preserving literal types.
 
 Known limitations:
 - A misspelled key and a default for a required key are only rejected by the excess property check, so they are rejected in an object literal, as with `satisfies`, but not when you assign an object from a variable.

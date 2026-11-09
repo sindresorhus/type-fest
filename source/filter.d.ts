@@ -1,6 +1,6 @@
 import type {IsTruthy, Extends, IfNotAnyOrNever} from './internal/type.d.ts';
 import type {IsReadonlyArray} from './is-readonly-array.d.ts';
-import type {ApplyDefaultOptions} from './internal/index.d.ts';
+import type {ApplyDefaultOptions} from './apply-default-options.d.ts';
 import type {UnknownArray} from './unknown-array.d.ts';
 import type {IsEqual} from './is-equal.d.ts';
 import type {If} from './if.d.ts';

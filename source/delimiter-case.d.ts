@@ -1,6 +1,7 @@
 import type {AsciiPunctuationCharacter} from './ascii-punctuation-character.d.ts';
 import type {Or} from './or.d.ts';
-import type {ApplyDefaultOptions, UnwrapBrand} from './internal/index.d.ts';
+import type {UnwrapBrand} from './internal/index.d.ts';
+import type {ApplyDefaultOptions} from './apply-default-options.d.ts';
 import type {StartsWith} from './starts-with.d.ts';
 import type {IsStringLiteral} from './is-string-literal.d.ts';
 import type {Merge} from './merge.d.ts';

@@ -1,5 +1,5 @@
 import type {CollapseRestElement} from './internal/array.d.ts';
-import type {ApplyDefaultOptions} from './internal/object.d.ts';
+import type {ApplyDefaultOptions} from './apply-default-options.d.ts';
 import type {IfNotAnyOrNever} from './internal/type.d.ts';
 import type {Not} from './not.d.ts';
 import type {IsAny} from './is-any.d.ts';

@@ -1,4 +1,5 @@
-import type {NonRecursiveType, ToString, IsNumberLike, ApplyDefaultOptions, MapsSetsOrArrays, CountExactInArray} from './internal/index.d.ts';
+import type {NonRecursiveType, ToString, IsNumberLike, MapsSetsOrArrays, CountExactInArray} from './internal/index.d.ts';
+import type {ApplyDefaultOptions} from './apply-default-options.d.ts';
 import type {IsAny} from './is-any.d.ts';
 import type {UnknownArray} from './unknown-array.d.ts';
 import type {GreaterThan} from './greater-than.d.ts';

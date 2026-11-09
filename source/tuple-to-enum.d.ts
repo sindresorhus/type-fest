@@ -1,4 +1,4 @@
-import type {ApplyDefaultOptions} from './internal/object.d.ts';
+import type {ApplyDefaultOptions} from './apply-default-options.d.ts';
 import type {IfNotAnyOrNever} from './internal/type.d.ts';
 import type {UnionToEnum} from './union-to-enum.d.ts'; // For `@link`
 import type {IsLiteral} from './is-literal.d.ts';

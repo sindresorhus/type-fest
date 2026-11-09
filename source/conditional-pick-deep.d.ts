@@ -3,7 +3,8 @@ import type {ConditionalSimplifyDeep} from './conditional-simplify-deep.d.ts';
 import type {UnknownRecord} from './unknown-record.d.ts';
 import type {IsEmptyObject} from './empty-object.d.ts';
 import type {IsNever} from './is-never.d.ts';
-import type {ApplyDefaultOptions, IsPlainObject} from './internal/index.d.ts';
+import type {IsPlainObject} from './internal/index.d.ts';
+import type {ApplyDefaultOptions} from './apply-default-options.d.ts';
 import type {ConditionalPick} from './conditional-pick.d.ts'; // For `@link`
 
 /**

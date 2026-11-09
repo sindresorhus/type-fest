@@ -1,5 +1,6 @@
 import type {KeysOfUnion} from './keys-of-union.d.ts';
-import type {ApplyDefaultOptions, KeySelector, SelectedKeyAlias, SelectedKeys, SimplifyObject, UnwrapPathBrand} from './internal/index.d.ts';
+import type {KeySelector, SelectedKeyAlias, SelectedKeys, SimplifyObject, UnwrapPathBrand} from './internal/index.d.ts';
+import type {ApplyDefaultOptions} from './apply-default-options.d.ts';
 import type {SetProperty} from './set-property.d.ts'; // For `@link`
 
 export type SetFieldTypeOptions = {

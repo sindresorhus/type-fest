@@ -148,6 +148,7 @@ export type {OverridePropertiesDeep} from './source/override-properties-deep.d.t
 export type {RenameKeys} from './source/rename-keys.d.ts';
 export type {OptionalKeysOf} from './source/optional-keys-of.d.ts';
 export type {DefaultsFor} from './source/defaults-for.d.ts';
+export type {ApplyDefaultOptions} from './source/apply-default-options.d.ts';
 export type {IsOptionalKeyOf} from './source/is-optional-key-of.d.ts';
 export type {HasOptionalKeys} from './source/has-optional-keys.d.ts';
 export type {RequiredKeysOf} from './source/required-keys-of.d.ts';

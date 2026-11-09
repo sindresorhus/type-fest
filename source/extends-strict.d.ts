@@ -1,6 +1,6 @@
 import type {IsNever} from './is-never.d.ts';
 import type {IsAny} from './is-any.d.ts';
-import type {ApplyDefaultOptions} from './internal/object.d.ts';
+import type {ApplyDefaultOptions} from './apply-default-options.d.ts';
 import type {IsMutuallyAssignable} from './is-mutually-assignable.d.ts'; // For `@link`
 
 export type ExtendsStrictOptions = {

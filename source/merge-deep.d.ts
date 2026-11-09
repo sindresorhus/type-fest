@@ -1,3 +1,4 @@
+import type {ApplyDefaultOptions} from './apply-default-options.d.ts';
 import type {IsAny} from './is-any.d.ts';
 import type {IsEqual} from './is-equal.d.ts';
 import type {And} from './and.d.ts';
@@ -10,7 +11,6 @@ import type {Except} from './except.d.ts';
 import type {
 	FirstArrayElement,
 	SimplifyObject,
-	ApplyDefaultOptions,
 	EnforceOptional,
 	KeyAliases,
 	NonRecursiveType,

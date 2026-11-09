@@ -1,4 +1,4 @@
-import type {ApplyDefaultOptions} from './internal/object.d.ts';
+import type {ApplyDefaultOptions} from './apply-default-options.d.ts';
 import type {IsArrayOfUnknownLength} from './internal/array.d.ts';
 import type {HasMultipleCallSignatures, NonRecursiveLeaf} from './internal/type.d.ts';
 import type {FunctionParameters} from './internal/function.d.ts';

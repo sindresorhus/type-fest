@@ -1,4 +1,5 @@
-import type {ApplyDefaultOptions, MapsSetsOrArrays, NonRecursiveType, ToString} from './internal/index.d.ts';
+import type {MapsSetsOrArrays, NonRecursiveType, ToString} from './internal/index.d.ts';
+import type {ApplyDefaultOptions} from './apply-default-options.d.ts';
 import type {GreaterThan} from './greater-than.d.ts';
 import type {IsAny} from './is-any.d.ts';
 import type {IsNever} from './is-never.d.ts';

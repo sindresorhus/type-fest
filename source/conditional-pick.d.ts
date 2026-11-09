@@ -1,5 +1,5 @@
 import type {ConditionalKeys, ConditionalKeysOptions, _DefaultConditionalKeysOptions} from './conditional-keys.d.ts';
-import type {ApplyDefaultOptions} from './internal/object.d.ts';
+import type {ApplyDefaultOptions} from './apply-default-options.d.ts';
 import type {Extends} from './internal/type.d.ts';
 import type {ExtendsStrict} from './extends-strict.d.ts';
 import type {IsNever} from './is-never.d.ts';

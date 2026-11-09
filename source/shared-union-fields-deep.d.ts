@@ -1,4 +1,5 @@
-import type {NonRecursiveType, TupleLength, StaticPartOfArray, VariablePartOfArray, SetArrayAccess, ApplyDefaultOptions} from './internal/index.d.ts';
+import type {NonRecursiveType, TupleLength, StaticPartOfArray, VariablePartOfArray, SetArrayAccess} from './internal/index.d.ts';
+import type {ApplyDefaultOptions} from './apply-default-options.d.ts';
 import type {IsReadonlyArray} from './is-readonly-array.d.ts';
 import type {OmitIndexSignature} from './omit-index-signature.d.ts';
 import type {UnionMax} from './union-max.d.ts';

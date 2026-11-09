@@ -1,5 +1,5 @@
 import type {KeysOfUnion} from './keys-of-union.d.ts';
-import type {ApplyDefaultOptions} from './internal/index.d.ts';
+import type {ApplyDefaultOptions} from './apply-default-options.d.ts';
 import type {RequireNone} from './require-none.d.ts';
 
 /**

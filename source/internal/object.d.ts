@@ -1,10 +1,6 @@
 import type {ExactKey} from '../exact-key.d.ts';
 import type {IsEqual} from '../is-equal.d.ts';
 import type {KeysOfUnion} from '../keys-of-union.d.ts';
-import type {RequiredKeysOf} from '../required-keys-of.d.ts';
-import type {_Merge} from '../merge.d.ts';
-import type {IsAny} from '../is-any.d.ts';
-import type {If} from '../if.d.ts';
 import type {IsNever} from '../is-never.d.ts';
 import type {StringToNumber} from '../string-to-number.d.ts';
 import type {Primitive} from '../primitive.d.ts';
@@ -149,85 +145,6 @@ type ReadonlyKeys = ReadonlyKeysOfUnion<User | Post>;
 export type ReadonlyKeysOfUnion<Union> = Union extends unknown ? keyof {
 	[Key in keyof Union as IsReadonlyProperty<Union, Key> extends true ? Key : never]: never
 } : never;
-
-/**
-Merges user specified options with default options.
-
-When constructing a result, TypeScript may require concrete specified options instead of unresolved generics.
-
-@example
-```
-type PathsOptions = {maxRecursionDepth?: number; leavesOnly?: boolean};
-type DefaultPathsOptions = {maxRecursionDepth: 10; leavesOnly: false};
-type SpecifiedOptions = {leavesOnly: true};
-
-type Result = ApplyDefaultOptions<PathsOptions, DefaultPathsOptions, SpecifiedOptions>;
-//=> {maxRecursionDepth: 10; leavesOnly: true}
-```
-
-@example
-```
-// Complains if default values are not provided for optional options
-
-type PathsOptions = {maxRecursionDepth?: number; leavesOnly?: boolean};
-type DefaultPathsOptions = {maxRecursionDepth: 10};
-type SpecifiedOptions = {};
-
-type Result = ApplyDefaultOptions<PathsOptions, DefaultPathsOptions, SpecifiedOptions>;
-//                                              ~~~~~~~~~~~~~~~~~~~
-// Property 'leavesOnly' is missing in type 'DefaultPathsOptions' but required in type '{ maxRecursionDepth: number; leavesOnly: boolean; }'.
-```
-
-@example
-```
-// Complains if an option's default type does not conform to the expected type
-
-type PathsOptions = {maxRecursionDepth?: number; leavesOnly?: boolean};
-type DefaultPathsOptions = {maxRecursionDepth: 10; leavesOnly: 'no'};
-type SpecifiedOptions = {};
-
-type Result = ApplyDefaultOptions<PathsOptions, DefaultPathsOptions, SpecifiedOptions>;
-//                                              ~~~~~~~~~~~~~~~~~~~
-// Types of property 'leavesOnly' are incompatible. Type 'string' is not assignable to type 'boolean'.
-```
-
-@example
-```
-// Complains if an option's specified type does not conform to the expected type
-
-type PathsOptions = {maxRecursionDepth?: number; leavesOnly?: boolean};
-type DefaultPathsOptions = {maxRecursionDepth: 10; leavesOnly: false};
-type SpecifiedOptions = {leavesOnly: 'yes'};
-
-type Result = ApplyDefaultOptions<PathsOptions, DefaultPathsOptions, SpecifiedOptions>;
-//                                                                   ~~~~~~~~~~~~~~~~
-// Types of property 'leavesOnly' are incompatible. Type 'string' is not assignable to type 'boolean'.
-```
-*/
-export type ApplyDefaultOptions<
-	Options extends object,
-	Defaults extends SimplifyObject<Omit<Required<Options>, RequiredKeysOf<Options>> & Partial<Record<RequiredKeysOf<Options>, never>>>,
-	SpecifiedOptions extends Options,
-> =
-	// Keep the resolved type assignable to `Required<Options>` without inferring a result that can widen a specified generic value to its constraint.
-	_ApplyDefaultOptions<Options, Defaults, SpecifiedOptions> extends Required<Options>
-		? _ApplyDefaultOptions<Options, Defaults, SpecifiedOptions>
-		: never;
-
-type _ApplyDefaultOptions<
-	Options,
-	Defaults,
-	SpecifiedOptions,
-> =
-	If<IsAny<SpecifiedOptions>, Defaults,
-		If<IsNever<SpecifiedOptions>, Defaults,
-			// The overrides are already an object map, so skip `Merge`'s array and equality dispatch.
-			_Merge<Defaults, {
-				// The first `as` branch keeps the key of an option whose declared type admits `undefined`, like `unknown`, because `undefined` is one of its valid values. `-?` then strips the optional modifier, so an unnarrowed options type still resolves instead of failing the `Required<Options>` guard above.
-				[Key in keyof SpecifiedOptions
-				as undefined extends Required<Options>[Key & keyof Options] ? Key : undefined extends SpecifiedOptions[Key] ? never : Key
-				]-?: SpecifiedOptions[Key]
-			}>>>;
 
 /**
 Returns the base type of a branded type.

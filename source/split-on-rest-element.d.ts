@@ -1,5 +1,5 @@
 import type {IfNotAnyOrNever} from './internal/type.d.ts';
-import type {ApplyDefaultOptions} from './internal/object.d.ts';
+import type {ApplyDefaultOptions} from './apply-default-options.d.ts';
 import type {MaxLength} from './internal/array.d.ts';
 import type {IsReadonlyArray} from './is-readonly-array.d.ts';
 import type {UnknownArray} from './unknown-array.d.ts';

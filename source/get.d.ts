@@ -1,6 +1,7 @@
 import type {ExactKey} from './exact-key.d.ts';
 import type {ConsistsOnlyOf} from './consists-only-of.d.ts';
-import type {ApplyDefaultOptions, ToPath, ToString, UnwrapPathBrand} from './internal/index.d.ts';
+import type {ToPath, ToString, UnwrapPathBrand} from './internal/index.d.ts';
+import type {ApplyDefaultOptions} from './apply-default-options.d.ts';
 import type {KeyAsString} from './key-as-string.d.ts';
 import type {DigitCharacter} from './characters.d.ts';
 import type {IsNever} from './is-never.d.ts';

@@ -1,4 +1,5 @@
-import type {ApplyDefaultOptions, UnwrapBrand} from './internal/object.d.ts';
+import type {UnwrapBrand} from './internal/object.d.ts';
+import type {ApplyDefaultOptions} from './apply-default-options.d.ts';
 import type {IfNotAnyOrNever} from './internal/type.d.ts';
 import type {Not} from './not.d.ts';
 import type {IsStringLiteral} from './is-string-literal.d.ts';

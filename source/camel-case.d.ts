@@ -1,4 +1,5 @@
-import type {ApplyDefaultOptions, UnwrapBrand} from './internal/index.d.ts';
+import type {UnwrapBrand} from './internal/index.d.ts';
+import type {ApplyDefaultOptions} from './apply-default-options.d.ts';
 import type {IsStringLiteral} from './is-string-literal.d.ts';
 import type {_DefaultWordsOptions, _Words, WordsOptions} from './words.d.ts';
 

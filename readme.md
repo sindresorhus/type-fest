@@ -200,6 +200,7 @@ Click the type names for complete docs.
 - [`KeysOfUnion`](source/keys-of-union.d.ts) - Create a union of all keys from a given type, even those exclusive to specific union members.
 - [`OptionalKeysOf`](source/optional-keys-of.d.ts) - Extract all optional keys from the given type.
 - [`DefaultsFor`](source/defaults-for.d.ts) - Create the type of a defaults object for the given options type, with only its optional keys, made required.
+- [`ApplyDefaultOptions`](source/apply-default-options.d.ts) - Apply default options to specified options, preserving literal types.
 - [`HasOptionalKeys`](source/has-optional-keys.d.ts) - Returns a boolean for whether the given type has any optional fields.
 - [`RequiredKeysOf`](source/required-keys-of.d.ts) - Extract all required keys from the given type.
 - [`HasRequiredKeys`](source/has-required-keys.d.ts) - Returns a boolean for whether the given type has any required fields.

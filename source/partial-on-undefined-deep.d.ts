@@ -1,4 +1,5 @@
-import type {ApplyDefaultOptions, NonRecursiveType, SimplifyObject} from './internal/index.d.ts';
+import type {NonRecursiveType, SimplifyObject} from './internal/index.d.ts';
+import type {ApplyDefaultOptions} from './apply-default-options.d.ts';
 import type {IsUnknown} from './is-unknown.d.ts';
 import type {OmitIndexSignature} from './omit-index-signature.d.ts';
 import type {PartialOnUndefined} from './partial-on-undefined.d.ts'; // For `@link`
