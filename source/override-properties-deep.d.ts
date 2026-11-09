@@ -1,5 +1,6 @@
 import type {ExactKey} from './exact-key.d.ts';
-import type {IsPlainObject, ObjectValue} from './internal/index.d.ts';
+import type {ObjectValue} from './internal/index.d.ts';
+import type {IsRecordLike} from './is-record-like.d.ts';
 import type {Not} from './not.d.ts';
 import type {IsAny} from './is-any.d.ts';
 import type {IsEqual} from './is-equal.d.ts';
@@ -16,7 +17,7 @@ Use-cases:
 - Correcting deeply nested values from an external source, such as an API response, while keeping the shape of the original type.
 - Catching a property rename or removal in a generated type before a hand-written override silently goes stale.
 
-Unlike {@link MergeDeep}, an `Override` key that does not exist in `Original`, or in the original value at the same path, is a type error, unless its value is `never` or the original is an array. Value types can change freely. An override of a plain object is merged, so keys you do not mention keep their original value.
+Unlike {@link MergeDeep}, an `Override` key that does not exist in `Original`, or in the original value at the same path, is a type error, unless its value is `never` or the original is an array. Value types can change freely. An override of a record-like object is merged, so keys you do not mention keep their original value.
 
 The `Options` parameter is passed to {@link MergeDeep} and does not change which keys are checked. See {@link MergeDeepOptions}.
 
@@ -57,11 +58,11 @@ type ApiResponse = {
 type Invalid = OverridePropertiesDeep<ApiResponse, {author: {emailAddress: string}}>;
 ```
 
-A key is valid when it is declared on the original, covered by an index signature, or a canonical string or number spelling of a numeric key, such as `0` and `'0'`. Plain strings cannot select declared string enum keys. Keys are checked recursively through plain object values, and a missing key is reported at its full path, for example `author.emailAddress`.
+A key is valid when it is declared on the original, covered by an index signature, or a canonical string or number spelling of a numeric key, such as `0` and `'0'`. Plain strings cannot select declared string enum keys. Keys are checked recursively through values classified by {@link IsRecordLike}, including ordinary class instances, and a missing key is reported at its full path, for example `author.emailAddress`.
 
 Known limitations:
-- Only plain object values are checked. Arrays, maps, sets, dates, functions, `object` values, and unions containing a non-plain object are opaque. An optional value's `undefined` part is ignored. Array elements are never checked, even with `recurseIntoArrays`, which can merge in keys the original lacks.
-- For a union of plain objects, only the keys common to every member can be overridden; a union of arrays is opaque. A union `Override` is checked member by member, but a member with an extra key can match another member's check.
+- Only record-like object values are checked. Arrays, maps, sets, dates, functions, the bare `object` type, and unions containing an excluded value are opaque. An optional value's `undefined` part is ignored. Array elements are never checked, even with `recurseIntoArrays`, which can merge in keys the original lacks.
+- For a union of record-like objects, only the keys common to every member can be overridden; a union of arrays is opaque. A union `Override` is checked member by member, but a member with an extra key can match another member's check.
 - Only key existence is checked, not value types.
 - An unresolved generic in `Original` or `Override` cannot be checked. This also applies to {@link OverrideProperties}.
 - An `unknown` original only accepts `never`-valued keys (`{}` works), while an `any` original or override gives `any`. A key with a `never` value bypasses the check even when it does not exist, as in {@link OverrideProperties}.
@@ -80,7 +81,7 @@ export type OverridePropertiesDeep<
 > = MergeDeep<Original, Override, Options>;
 
 /**
-The constraint for {@link OverridePropertiesDeep}. Every key of `Override` must exist in `Original`, unless its value is `never` or the original is an array, and every plain object value is checked against the original value at the same path.
+The constraint for {@link OverridePropertiesDeep}. Every key of `Override` must exist in `Original`, unless its value is `never` or the original is an array, and every record-like object value is checked against the original value at the same path.
 
 The mapped type is deliberately not recursive. TypeScript reports a circular constraint when a type parameter's constraint refers to itself through a recursive mapped type, but two aliases that call each other are accepted. The recursion therefore goes through {@link OverridePropertyDeepValue}.
 */
@@ -112,23 +113,23 @@ Get the value of `Key` in `Original`, matching the spellings described in {@link
 type OriginalPropertyValue<Original, Key extends PropertyKey> = ObjectValue<Original, Key>;
 
 /**
-Test whether the original value is a plain object whose keys can be checked. An `any` original is not checked, and an `object` original has no declared keys.
+Test whether the original value is a record-like object whose keys can be checked. An `any` original is not checked, and an `object` original has no declared keys.
 */
 type IsCheckableObject<Original> =
 	IsAny<Original> extends true
 		? false
 		: IsEqual<Exclude<Original, undefined>, object> extends true
 			? false
-			: IsPlainObject<Exclude<Original, undefined>>;
+			: IsRecordLike<Exclude<Original, undefined>>;
 
 /**
-Check an override value against the original value at the same path. A value that is not a plain object is returned as it is, because only object keys are checked. The distribution over `Override` checks the object part of an optional property separately from `undefined`.
+Check an override value against the original value at the same path. A value that is not a record-like object is returned as it is, because only object keys are checked. The distribution over `Override` checks the object part of an optional property separately from `undefined`.
 */
 type OverridePropertyDeepValue<Original, Override> =
 	Override extends unknown
 		? IsAny<Override> extends true
 			? unknown
-			: IsPlainObject<Override> extends true
+			: IsRecordLike<Override> extends true
 				? IsCheckableObject<Original> extends true
 					? OverridePropertiesDeepCheck<Exclude<Original, undefined>, Override>
 					: Override

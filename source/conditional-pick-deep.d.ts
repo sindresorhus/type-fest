@@ -3,7 +3,7 @@ import type {ConditionalSimplifyDeep} from './conditional-simplify-deep.d.ts';
 import type {UnknownRecord} from './unknown-record.d.ts';
 import type {IsEmptyObject} from './empty-object.d.ts';
 import type {IsNever} from './is-never.d.ts';
-import type {IsPlainObject} from './internal/index.d.ts';
+import type {IsRecordLike} from './is-record-like.d.ts';
 import type {ApplyDefaultOptions} from './apply-default-options.d.ts';
 import type {ConditionalPick} from './conditional-pick.d.ts'; // For `@link`
 
@@ -44,7 +44,7 @@ In a generic function, use concrete option values before relying on which keys a
 Known limitations:
 - Very deeply nested inputs, and inputs that reference themselves through an object property (for example `interface LinkedList {value: string; next?: LinkedList}`), can exceed TypeScript's instantiation budget.
 - Arrays are not recursed into, so a match that is only inside an array is not found: `ConditionalPickDeep<{a: Array<{b: 1}>}, 1>` is `never`. The comparable `*Deep` types take a `recurseIntoArrays` option for this (`PartialDeep`, `MergeDeep`, `Schema` and `SharedUnionFieldsDeep` have one), and `ConditionalPickDeep` has none. `OmitDeep` and `PickDeep` recurse into an array unconditionally instead.
-- A value that is a union with a non-object member (for example `string` or `null`) is not recursed into: `ConditionalPickDeep<{data: {b: 1} | null}, 1>` is `never`. When a value is recursed into, an `undefined` union member, including the one that reading an optional property adds, is ignored, so it neither blocks recursion nor appears in the picked value. `PickDeep` instead recurses past such members and puts them back.
+- A value that is a union with a member that is neither record-like nor `undefined` (for example `string` or `null`) is not recursed into: `ConditionalPickDeep<{data: {b: 1} | null}, 1>` is `never`. When a value is recursed into, an `undefined` union member, including the one that reading an optional property adds, is ignored, so it neither blocks recursion nor appears in the picked value. `PickDeep` instead recurses past such members and puts them back.
 - A top-level array or tuple is mapped as an object of matching keys and does not keep its array shape: `ConditionalPickDeep<[1, 2], 1>` is `{0: 1}`.
 
 @see {@link ConditionalPick}
@@ -131,8 +131,8 @@ type _ConditionalPickDeep<
 		// A value cannot distinguish an exclusion marker from matching `undefined` or `{}` values. Filter keys according to the condition and recursive result instead of removing properties by their values.
 		[Key in keyof Type as AssertCondition<Type[Key], Condition, Options> extends true
 			? Key
-			// Reading an optional property adds `undefined`, which is not a plain object, so it is excluded before the checks. The `undefined` member contributes no keys, so it is dropped from the value like any other nonmatching union member.
-			: IsPlainObject<Exclude<Type[Key], undefined>> extends true
+			// Reading an optional property adds `undefined`, which is not record-like, so it is excluded before the checks. The `undefined` member contributes no keys, so it is dropped from the value like any other nonmatching union member.
+			: IsRecordLike<Exclude<Type[Key], undefined>> extends true
 				? IsNever<_ConditionalPickDeep<Exclude<Type[Key], undefined>, Condition, Options>> extends true ? never : Key
 				: never]: AssertCondition<Type[Key], Condition, Options> extends true
 			? ConditionalSimplifyDeep<Type[Key], never, UnknownRecord>

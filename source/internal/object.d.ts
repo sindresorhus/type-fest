@@ -9,7 +9,7 @@ import type {OmitIndexSignature} from '../omit-index-signature.d.ts';
 import type {PickIndexSignature} from '../pick-index-signature.d.ts';
 import type {CollapseLiterals} from '../collapse-literals.d.ts';
 import type {DefinedKeyFilter, OptionalKeyFilter} from './keys.d.ts';
-import type {IfNotAnyOrNever, MapsSetsOrArrays, NonRecursiveType} from './type.d.ts';
+import type {IfNotAnyOrNever} from './type.d.ts';
 import type {ToString} from './string.d.ts';
 
 /**
@@ -41,18 +41,6 @@ export type BuildObject<Key extends PropertyKey, Value, CopiedFrom extends objec
 			? {[_ in Key]: Value}
 			: Pick<{[_ in keyof CopiedFrom]: Value}, ExactKey<CopiedFrom, Key>>
 		: never;
-
-/**
-Returns a boolean for whether the given type is a plain key-value object.
-*/
-export type IsPlainObject<T> =
-	IsNever<T> extends true
-		? false
-		: T extends NonRecursiveType | MapsSetsOrArrays
-			? false
-			: T extends object
-				? true
-				: false;
 
 /**
 Extract the object field type if T is an object and K is a key of T, return `never` otherwise.

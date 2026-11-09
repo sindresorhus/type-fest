@@ -140,7 +140,7 @@ expectTypeOf<SymbolIndex[symbol]>().toBe<{a: number}>();
 // @ts-expect-error `b` is not a property of the symbol index signature's value.
 type InvalidSymbolIndexNested = OverridePropertiesDeep<{[key: symbol]: {a: number}}, {[symbolKey]: {b: string}}>;
 
-// Arrays and other non-plain values are opaque, because their keys are not checked.
+// Arrays and other non-record-like values are opaque, so their keys are not checked.
 expectTypeOf<OverridePropertiesDeep<{a: Array<{b: number}>}, {a: Array<{c: string}>}>>().toBe<{a: Array<{c: string}>}>();
 expectTypeOf<OverridePropertiesDeep<{a: Date}, {a: {c: string}}>>().toBe<{a: {c: string}}>();
 expectTypeOf<OverridePropertiesDeep<{a: Map<string, number>}, {a: {c: string}}>>().toBe<{a: {c: string}}>();
@@ -199,7 +199,7 @@ expectTypeOf<OverridePropertiesDeep<{a: {}}, {a: {}}>>().toBe<{a: {}}>();
 // @ts-expect-error `{}` has no keys.
 type EmptyObjectValue = OverridePropertiesDeep<{a: {}}, {a: {x: 1}}>;
 
-// Other non-plain original values are opaque.
+// Other non-record-like original values are opaque.
 expectTypeOf<OverridePropertiesDeep<{a: string}, {a: {x: string}}>>().toBe<{a: {x: string}}>();
 expectTypeOf<OverridePropertiesDeep<{a: null}, {a: {x: string}}>>().toBe<{a: {x: string}}>();
 expectTypeOf<OverridePropertiesDeep<{a: unknown}, {a: {x: string}}>>().toBe<{a: {x: string}}>();
@@ -209,8 +209,11 @@ expectTypeOf<OverridePropertiesDeep<{a: Set<number>}, {a: {x: string}}>>().toBe<
 expectTypeOf<OverridePropertiesDeep<{a: Promise<{x: number}>}, {a: {y: string}}>>().toBe<{a: {y: string}}>();
 expectTypeOf<OverridePropertiesDeep<{a: WeakMap<object, {x: number}>}, {a: {y: string}}>>().toBe<{a: {y: string}}>();
 expectTypeOf<OverridePropertiesDeep<{a: (() => void) & {prop: number}}, {a: {x: string}}>>().toBe<{a: {x: string}}>();
+// A callable whose own property conflicts with `Function` is still a function, so its keys are not checked. The underlying `MergeDeep` still merges its properties, dropping the call signature.
+type CallableWithOwnBind = {(): void; bind: boolean};
+expectTypeOf<OverridePropertiesDeep<{a: CallableWithOwnBind}, {a: {missing: string}}>>().toBe<{a: {bind: boolean; missing: string}}>();
 
-// A class instance is structurally a plain object, so its keys are checked.
+// A class instance is a record-like object, so its keys are checked.
 declare class Instance {
 	a: number;
 }
@@ -218,6 +221,14 @@ declare class Instance {
 expectTypeOf<OverridePropertiesDeep<{x: Instance}, {x: {a: string}}>>().toBe<{x: {a: string}}>();
 // @ts-expect-error `b` is not a property of the class instance.
 type MissingInstanceKey = OverridePropertiesDeep<{x: Instance}, {x: {b: string}}>;
+
+// Keys that the override does not mention keep their original value.
+declare class Pair {
+	a: number;
+	b: number;
+}
+
+expectTypeOf<OverridePropertiesDeep<{x: Pair}, {x: {a: string}}>>().toBe<{x: {a: string; b: number}}>();
 
 // The override value is checked member by member when it is a union.
 expectTypeOf<OverridePropertiesDeep<{a: {b: number}}, {a: {b: string} | null}>>().toBe<{a: {b: string} | null}>();

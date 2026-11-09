@@ -169,7 +169,7 @@ expectTypeOf(optionalUnionOfObjects).toBe<{data?: {a: string}}>();
 declare const nullUnionObject: ConditionalPickDeep<{data?: {a: string} | null}, string>;
 expectTypeOf(nullUnionObject).toBe<never>();
 
-// Optional non-plain-object values are still not recursed into.
+// Optional non-record-like values are still not recursed into.
 declare const optionalFunction: ConditionalPickDeep<{data?: (() => string) | undefined; other: string}, string>;
 expectTypeOf(optionalFunction).toBe<{other: string}>();
 
@@ -178,6 +178,19 @@ expectTypeOf(optionalDate).toBe<{other: string}>();
 
 declare const optionalMap: ConditionalPickDeep<{data?: Map<string, string>; other: string}, string>;
 expectTypeOf(optionalMap).toBe<{other: string}>();
+
+// A callable with an own property that conflicts with `Function` is still a function, so it is not recursed into. The `label` property would match the condition if it were recursed into.
+type CallableWithOwnBind = {(): void; bind: boolean; label: string};
+declare const callableWithOwnBind: ConditionalPickDeep<{callback: CallableWithOwnBind; text: string}, string>;
+expectTypeOf(callableWithOwnBind).toBe<{text: string}>();
+
+// A data object with the same property but no call signature is still recursed into.
+declare const recordWithBind: ConditionalPickDeep<{data: {bind: boolean}; text: string}, boolean>;
+expectTypeOf(recordWithBind).toBe<{data: {bind: boolean}}>();
+
+// A union that contains the callable is not recursed into either.
+declare const unionWithCallable: ConditionalPickDeep<{data: CallableWithOwnBind | {x: string}; text: string}, string>;
+expectTypeOf(unionWithCallable).toBe<{text: string}>();
 
 // Arrays are not recursed into, also not through an optional property.
 declare const optionalArray: ConditionalPickDeep<{data?: Array<{b: 1}>}, 1>;
