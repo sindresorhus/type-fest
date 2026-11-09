@@ -127,6 +127,7 @@ Click the type names for complete docs.
 - [`RequireExactlyOne`](source/require-exactly-one.d.ts) - Create a type that requires exactly one of the given keys and disallows more, while keeping the remaining keys as is.
 - [`RequireAllOrNone`](source/require-all-or-none.d.ts) - Create a type that requires all of the given keys or none of the given keys, while keeping the remaining keys as is.
 - [`RequireOneOrNone`](source/require-one-or-none.d.ts) - Create a type that requires exactly one of the given keys or none of the given keys, while keeping the remaining keys as is.
+- [`RequireNone`](source/require-none.d.ts) - Create an object type that disallows the given keys.
 - [`SingleKeyObject`](source/single-key-object.d.ts) - Create a type that only accepts an object with a single key.
 - [`RequiredDeep`](source/required-deep.d.ts) - Create a deeply required version of another type.
 - [`RequiredKeepUndefined`](source/required-keep-undefined.d.ts) - Create a type that makes all keys required, while the keys that were optional also accept `undefined`.

@@ -1,5 +1,5 @@
 import type {_RequireAtLeastOneOfOne} from './require-at-least-one.d.ts';
-import type {RequireNone} from './internal/index.d.ts';
+import type {RequireNone} from './require-none.d.ts';
 
 /**
 Represents an object with at least 1 non-optional key.

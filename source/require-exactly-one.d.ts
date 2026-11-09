@@ -1,7 +1,8 @@
 import type {KeysOfUnion} from './keys-of-union.d.ts';
 import type {Except} from './except.d.ts';
 import type {If} from './if.d.ts';
-import type {DeduplicatedKeys, IfNotAnyOrNever, KeyAliases, RequireAll, RequireNone} from './internal/index.d.ts';
+import type {DeduplicatedKeys, IfNotAnyOrNever, KeyAliases, RequireAll} from './internal/index.d.ts';
+import type {RequireNone} from './require-none.d.ts';
 import type {IsAny} from './is-any.d.ts';
 import type {IsNever} from './is-never.d.ts';
 

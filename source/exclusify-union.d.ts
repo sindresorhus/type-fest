@@ -1,4 +1,5 @@
-import type {DeduplicatedKeys, ExactKey, NormalizedKeys, RequireNone, SimplifyObject, ToString} from './internal/index.d.ts';
+import type {DeduplicatedKeys, ExactKey, NormalizedKeys, SimplifyObject, ToString} from './internal/index.d.ts';
+import type {RequireNone} from './require-none.d.ts';
 import type {If} from './if.d.ts';
 import type {IfNotAnyOrNever, MapsSetsOrArrays, NonRecursiveType} from './internal/type.d.ts';
 import type {IsUnknown} from './is-unknown.d.ts';

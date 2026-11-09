@@ -32,6 +32,7 @@ export type {RequireAtLeastOne} from './source/require-at-least-one.d.ts';
 export type {RequireExactlyOne} from './source/require-exactly-one.d.ts';
 export type {RequireAllOrNone} from './source/require-all-or-none.d.ts';
 export type {RequireOneOrNone} from './source/require-one-or-none.d.ts';
+export type {RequireNone} from './source/require-none.d.ts';
 export type {SingleKeyObject} from './source/single-key-object.d.ts';
 export type {OmitIndexSignature} from './source/omit-index-signature.d.ts';
 export type {PickIndexSignature} from './source/pick-index-signature.d.ts';
