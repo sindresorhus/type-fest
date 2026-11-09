@@ -64,6 +64,14 @@ expectTypeOf<OmitIndexSignature<unknown>>().toBe<{}>();
 expectTypeOf<OmitIndexSignature<never>>().toBe<never>();
 expectTypeOf<keyof OmitIndexSignature<any>>().toBe<never>();
 
+// Retrieve only literal keys with `keyof OmitIndexSignature<Type>`, including `unique symbol` keys.
+declare const symbolKey: unique symbol;
+expectTypeOf<keyof OmitIndexSignature<{a: 1; 1: 2; [symbolKey]: 3}>>().toBe<'a' | 1 | typeof symbolKey>();
+// An index signature's key is `string | number`, and neither is a literal, so nothing is kept.
+expectTypeOf<keyof OmitIndexSignature<{[key: string]: unknown}>>().toBe<never>();
+expectTypeOf<keyof OmitIndexSignature<unknown>>().toBe<never>();
+expectTypeOf<keyof OmitIndexSignature<never>>().toBe<PropertyKey>();
+
 function _constructDeclaredFields<Value>(value: Value): OmitIndexSignature<Value> {
 	return value;
 }

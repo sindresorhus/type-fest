@@ -109,6 +109,7 @@ type Statuses = ValueOfUnion<{id: 1; status: 'open'} | {id: 2; status: 'closed'}
 //=> "open" | "closed"
 ```
 */
+// This per-member lookup keeps `AllUnionFields` index values precise. Public `ValueOf` includes an undistributed read to preserve generic getter assignability, but that read can return `unknown` for mixed numeric or symbol index domains. It cannot replace this helper until that precision issue is fixed; switching also deliberately widens index values to include overlapping named properties.
 export type ValueOfUnion<Union, Key extends KeysOfUnion<Union>> =
 	Union extends unknown ? Key extends keyof Union ? Union[Key] : never : never;
 
@@ -121,30 +122,6 @@ export type IsReadonlyProperty<ObjectType, Key extends keyof ObjectType> = IsEqu
 	{[Property in Key]: ObjectType[Property]},
 	{readonly [Property in Key]: ObjectType[Property]}
 >;
-
-/**
-Extract all readonly keys from a union of object types.
-
-@example
-```
-type User = {
-	readonly id: string;
-	name: string;
-};
-
-type Post = {
-	readonly id: string;
-	readonly author: string;
-	body: string;
-};
-
-type ReadonlyKeys = ReadonlyKeysOfUnion<User | Post>;
-//=> "id" | "author"
-```
-*/
-export type ReadonlyKeysOfUnion<Union> = Union extends unknown ? keyof {
-	[Key in keyof Union as IsReadonlyProperty<Union, Key> extends true ? Key : never]: never
-} : never;
 
 /**
 Returns the base type of a branded type.

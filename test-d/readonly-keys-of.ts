@@ -142,3 +142,19 @@ expectTypeOf<ReadonlyKeysOf<{readonly [ReadonlyField.Value]: string; readonly [r
 // Preserve the existing queries for an indeterminate `any` key domain.
 expectTypeOf<ReadonlyKeysOf<Record<any, unknown>>>().toBe<never>();
 expectTypeOf<ReadonlyKeysOf<Readonly<Record<any, unknown>>>>().toBe<any>();
+
+expectTypeOf<ReadonlyKeysOf<{readonly a: 1; b: 2}>>().toBe<'a'>();
+expectTypeOf<ReadonlyKeysOf<{readonly a: 1; b?: 2} | {readonly c?: 3; d: 4}>>().toBe<'a' | 'c'>();
+expectTypeOf<ReadonlyKeysOf<{readonly a: 1; b?: 2} | {readonly c?: 3; d: 4} | {readonly c: 5} | {d: 6}>>().toBe<'a' | 'c'>();
+
+// Returns `never` if there's no readonly key
+expectTypeOf<ReadonlyKeysOf<{a: 1; b?: 2} | {c?: 3; d: 4}>>().toBe<never>();
+
+// Works with index signatures
+expectTypeOf<ReadonlyKeysOf<{readonly [x: string]: number; a: 1} | {readonly [x: symbol]: number; a: 2}>>().toBe<string | number | symbol>();
+
+// Works with arrays
+expectTypeOf<ReadonlyKeysOf<readonly string[] | readonly [number, number]>>().toBe<number | typeof Symbol.unscopables | '0' | '1' | 'length'>();
+
+// Works with functions
+expectTypeOf<ReadonlyKeysOf<(() => void) | {(): void; readonly a: 1}>>().toBe<'a'>();

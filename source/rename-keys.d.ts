@@ -1,5 +1,4 @@
 import type {ExactKey} from './exact-key.d.ts';
-import type {LiteralKeyOf} from './internal/keys.d.ts';
 import type {IsLiteral} from './is-literal.d.ts';
 import type {IsNever} from './is-never.d.ts';
 import type {IsEqual} from './is-equal.d.ts';
@@ -152,7 +151,7 @@ type RenameOnce<BaseType extends object, RenameMap extends Record<PropertyKey, P
 		ApplyRequired<BaseType, RenameMap,
 			RenameNaive<BaseType, RenameMap>>>;
 
-type RenameNaive<BaseType extends object, RenameMap extends Record<PropertyKey, PropertyKey>, NumericTargets extends number = TargetOf<LiteralKeyOf<BaseType>, RenameMap> & number> = {
+type RenameNaive<BaseType extends object, RenameMap extends Record<PropertyKey, PropertyKey>, NumericTargets extends number = TargetOf<keyof OmitIndexSignature<BaseType>, RenameMap> & number> = {
 	// Targets with the same numeric spelling share one key before later maps restore their modifiers; retaining both aliases would make those maps drop the property.
 	// Like for example, `{a?: 1; b: 2}` with `{a: 'x'; b: 'x'}` produces `{x?: 1 | 2}`, taking `a`'s optional.
 	[Key in keyof BaseType as

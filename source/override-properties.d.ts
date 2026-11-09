@@ -1,5 +1,6 @@
-import type {KeyAliases, LiteralKeyOf} from './internal/index.d.ts';
+import type {KeyAliases} from './internal/index.d.ts';
 import type {Merge} from './merge.d.ts';
+import type {OmitIndexSignature} from './omit-index-signature.d.ts';
 
 /**
 Override existing properties of the given type. Similar to `Merge`, but enforces that the original type has the properties you want to override.
@@ -36,7 +37,7 @@ export type OverrideProperties<
 	// to override properties that doesn't exist in the original type.
 	TOverride extends Partial<Record<keyof TOriginal, unknown>> & {
 		// A declared numeric or enum property has the same name as its string spelling; bare index signatures keep their existing key constraint.
-		[Key in keyof TOverride]: Key extends keyof TOriginal | KeyAliases<LiteralKeyOf<TOriginal>>
+		[Key in keyof TOverride]: Key extends keyof TOriginal | KeyAliases<keyof OmitIndexSignature<TOriginal>>
 			? TOverride[Key]
 			: never;
 	},

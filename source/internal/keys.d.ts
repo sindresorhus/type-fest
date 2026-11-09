@@ -1,5 +1,4 @@
 import type {ExactKey} from '../exact-key.d.ts';
-import type {IsLiteral} from '../is-literal.d.ts';
 import type {UnknownArray} from '../unknown-array.d.ts';
 import type {ToString} from './string.d.ts';
 
@@ -63,11 +62,6 @@ type Keys = DeduplicatedKeys<0 | '0' | Field.Name | 'name'>;
 ```
 */
 export type DeduplicatedKeys<Keys extends PropertyKey> = Exclude<ToString<Keys & string> | Exclude<Keys, string>, `${Keys & number}`>;
-
-/**
-Utility type to retrieve only literal keys from type.
-*/
-export type LiteralKeyOf<T> = keyof {[K in keyof T as IsLiteral<K> extends true ? K : never]-?: never};
 
 /**
 Returns the keys of `Type` that are not in `Keys`.

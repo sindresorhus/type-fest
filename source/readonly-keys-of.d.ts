@@ -22,6 +22,27 @@ type UserReadonlyKeys = ReadonlyKeysOf<User>;
 //=> 'id'
 ```
 
+Extract all readonly keys from a union of object types.
+
+@example
+```
+import type {ReadonlyKeysOf} from 'type-fest';
+
+type User = {
+	readonly id: string;
+	name: string;
+};
+
+type Post = {
+	readonly id: string;
+	readonly author: string;
+	body: string;
+};
+
+type ReadonlyKeys = ReadonlyKeysOf<User | Post>;
+// The readonly keys are 'id' and 'author'.
+```
+
 Known limitations:
 - A union reports the keys of each of its members, so the result can name a key that is not a key of the union itself. `keyof` of a union is the intersection of its members' keys, so `ReadonlyKeysOf<{readonly a?: string} | {readonly b?: number}>` is `'a' | 'b'` while `keyof` of the same union is `never`. Read one member at a time if you need a key that is valid for the whole union.
 

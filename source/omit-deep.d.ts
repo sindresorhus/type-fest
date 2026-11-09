@@ -1,7 +1,7 @@
 import type {ExactKey} from './exact-key.d.ts';
 import type {ArraySplice} from './array-splice.d.ts';
 import type {Except} from './except.d.ts';
-import type {LiteralKeyOf, NonRecursiveType, SetArrayAccess, ToString, UnwrapPathBrand} from './internal/index.d.ts';
+import type {NonRecursiveType, SetArrayAccess, ToString, UnwrapPathBrand} from './internal/index.d.ts';
 import type {IsReadonlyArray} from './is-readonly-array.d.ts';
 import type {OmitIndexSignature} from './omit-index-signature.d.ts';
 import type {IsEqual} from './is-equal.d.ts';
@@ -124,7 +124,7 @@ type OmitDeepObjectWithOnePath<ObjectT extends object, P extends string | number
 				// `Paths` emits `${string}` for a signature, so matching segments transform its value type. Resolve the current key with `ExactKey` to reject alternate numeric spellings.
 				: RecordKeyInPath extends ToString<Key> & ToString<ExactKey<Record<Key, unknown>, RecordKeyInPath>>
 					// A member that names the key outright is what the key reads, so the signature is left alone.
-					? RecordKeyInPath extends ToString<LiteralKeyOf<ObjectT>>
+					? RecordKeyInPath extends ToString<keyof OmitIndexSignature<ObjectT>>
 						? ObjectT[Key]
 						: OmitDeepWithOnePath<ObjectT[Key], SubPath>
 					: ObjectT[Key]

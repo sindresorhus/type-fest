@@ -1,6 +1,6 @@
 import {expectTypeOf} from 'nz';
 import type {IsEqual, IsLiteral, LiteralUnion} from '../../index.d.ts';
-import type {DeduplicatedKeys, DefinedKeyFilter, KeysExcept, LiteralKeyOf, OptionalKeyFilter, RequireAll, SelectedKeys} from '../../source/internal/index.d.ts';
+import type {DeduplicatedKeys, DefinedKeyFilter, KeysExcept, OptionalKeyFilter, RequireAll, SelectedKeys} from '../../source/internal/index.d.ts';
 
 // A property whose type includes `undefined` is optional, one that is only `undefined` is neither.
 expectTypeOf<IsEqual<DefinedKeyFilter<{a: 1; b: string | undefined}, 'a'>, 'a'>>().toBe<true>();
@@ -51,13 +51,9 @@ expectTypeOf<IsEqual<OptionalKeyFilter<{[key: string]: number | undefined}, stri
 expectTypeOf<IsEqual<DefinedKeyFilter<{[key: `x${string}`]: number}, `x${string}`>, `x${string}`>>().toBe<true>();
 expectTypeOf<IsEqual<DefinedKeyFilter<{[key: number]: () => void}, number>, never>>().toBe<true>();
 
-// `LiteralKeyOf` keeps the keys that `IsLiteral` calls a literal, which includes a `unique symbol` even though a bare `symbol` is not one. `IsEqual` leaves this mapped type unresolved, so it is asserted on the result directly.
-declare const literalKeys: LiteralKeyOf<{a: 1; 1: 2; [symbolKey]: 3}>;
-expectTypeOf(literalKeys).toBe<'a' | 1 | typeof symbolKey>();
+// A `unique symbol` is a literal, while a bare `symbol` is not.
 expectTypeOf<IsEqual<IsLiteral<symbol>, false>>().toBe<true>();
 expectTypeOf<IsEqual<IsLiteral<typeof symbolKey>, true>>().toBe<true>();
-// An index signature's key is `string | number`, and neither is a literal, so nothing is kept.
-expectTypeOf<IsEqual<LiteralKeyOf<{[k: string]: unknown}>, never>>().toBe<true>();
 
 // A name-only record is data even though a function also has a name.
 expectTypeOf<DefinedKeyFilter<{value: {name: string} | null}, 'value'>>().toBe<'value'>();
