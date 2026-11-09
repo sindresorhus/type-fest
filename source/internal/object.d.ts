@@ -59,7 +59,7 @@ export type ObjectValue<T, K> =
 				: never;
 
 /**
-For an object T, if it has any properties that are a union with `undefined`, make those into optional properties instead.
+Prepare object properties for `Jsonify` by filtering omitted keys and replacing unions with `undefined` with optional properties.
 
 It also removes the properties that `JSON.stringify` drops: symbol keys, properties that are only `undefined`, required properties that are only a symbol, and properties whose type includes a function. A `never` property is removed too. An `any` or `unknown` property is kept as it is, including whether it is optional.
 
@@ -70,14 +70,14 @@ type User = {
 	lastName: string | undefined;
 };
 
-type OptionalizedUser = UndefinedToOptional<User>;
+type OptionalizedUser = JsonifyObjectProperties<User>;
 //=> {
 // 	firstName: string;
 // 	lastName?: string;
 // }
 ```
 */
-export type UndefinedToOptional<T extends object> = SimplifyObject<
+export type JsonifyObjectProperties<T extends object> = SimplifyObject<
 	// Each key is filtered on its own in the `as` clause. Filtering `keyof T` as a union would merge a literal key like `foo` into a `string` index signature.
 	{
 	// Property is not a union with `undefined`, keep it as-is.

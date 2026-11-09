@@ -11,7 +11,7 @@ import type {Except} from './except.d.ts';
 import type {
 	FirstArrayElement,
 	SimplifyObject,
-	EnforceOptional,
+	UndefinedToOptionalObject,
 	KeyAliases,
 	NonRecursiveType,
 	MapsSetsOrArrays,
@@ -398,12 +398,18 @@ type MergeDeepArrayRecursive<
 > = Destination[number] extends UnknownArray
 	? Source[number] extends UnknownArray
 		// Only the top level is always spread, so the flag is turned off before recursing, the same way it is when descending into a property.
-		? Array<MergeDeepArrayOrTupleRecursive<Destination[number], Source[number], RemoveNever, EnforceOptional<Except<Options, 'spreadTopLevelArrays'> & {spreadTopLevelArrays: false}>>>
+		? Array<MergeDeepArrayOrTupleRecursive<Destination[number], Source[number], RemoveNever, UndefinedToOptionalObject<Except<Options, 'spreadTopLevelArrays'> & {spreadTopLevelArrays: false}>>>
 		: DoMergeArrayOrTuple<Destination, Source, Options>
 	: Destination[number] extends UnknownRecord
 		? Source[number] extends UnknownRecord
 			// Distribute record variants before comparing their keys, like record properties and tuple elements.
-			? Array<MergeDeepOrReturn<Source[number], Destination[number], Source[number], RemoveNever, EnforceOptional<Except<Options, 'spreadTopLevelArrays'> & {spreadTopLevelArrays: false}>>>
+			? Array<MergeDeepOrReturn<
+				Source[number],
+				Destination[number],
+				Source[number],
+				RemoveNever,
+				UndefinedToOptionalObject<Except<Options, 'spreadTopLevelArrays'> & {spreadTopLevelArrays: false}>
+			>>
 			: DoMergeArrayOrTuple<Destination, Source, Options>
 		: DoMergeArrayOrTuple<Destination, Source, Options>;
 
@@ -483,7 +489,7 @@ type DoMergeDeepOrReturn<
 		: SimplifyCopied<CopiedSource, RemoveNever>
 	: Destination extends UnknownArray
 		? Source extends UnknownArray
-			? MergeDeepArrayOrTuple<Destination, Source, RemoveNever, EnforceOptional<Except<Options, 'spreadTopLevelArrays'> & {spreadTopLevelArrays: false}>>
+			? MergeDeepArrayOrTuple<Destination, Source, RemoveNever, UndefinedToOptionalObject<Except<Options, 'spreadTopLevelArrays'> & {spreadTopLevelArrays: false}>>
 			: SimplifyCopied<CopiedSource, RemoveNever>
 		: SimplifyCopied<CopiedSource, RemoveNever>;
 

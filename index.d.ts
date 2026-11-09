@@ -47,6 +47,7 @@ export type {RequiredKeepUndefined} from './source/required-keep-undefined.d.ts'
 export type {RequiredNonNullable} from './source/required-non-nullable.d.ts';
 export type {PickDeep} from './source/pick-deep.d.ts';
 export type {OmitDeep} from './source/omit-deep.d.ts';
+export type {UndefinedToOptional} from './source/undefined-to-optional.d.ts';
 export type {PartialOnUndefined} from './source/partial-on-undefined.d.ts';
 export type {PartialOnUndefinedDeep, PartialOnUndefinedDeepOptions} from './source/partial-on-undefined-deep.d.ts';
 export type {UndefinedOnPartial} from './source/undefined-on-partial.d.ts';

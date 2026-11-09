@@ -1,6 +1,6 @@
 import type {JsonPrimitive, JsonValue} from './json-value.d.ts';
 import type {EmptyObject} from './empty-object.d.ts';
-import type {IsArrayOfUnknownLength, UndefinedToOptional} from './internal/index.d.ts';
+import type {IsArrayOfUnknownLength, JsonifyObjectProperties} from './internal/index.d.ts';
 import type {IsAny} from './is-any.d.ts';
 import type {IsEqual} from './is-equal.d.ts';
 import type {IsNever} from './is-never.d.ts';
@@ -83,7 +83,7 @@ type RemoveFlavor<T, Names extends PropertyKey = keyof NonNullable<T[typeof tag 
 type ContainsItself<T extends UnknownArray, Item = T[number]> = Item extends UnknownArray ? IsEqual<Item, T> : false;
 
 /**
-JSON serialize objects (not including arrays) and classes. The caller has already filtered their keys with `UndefinedToOptional`.
+JSON serialize objects (not including arrays) and classes. The caller has already filtered their keys with `JsonifyObjectProperties`.
 */
 type JsonifyObject<T extends object> = {
 	[Key in keyof T]: Jsonify<T[Key]>;
@@ -215,7 +215,7 @@ export type Jsonify<T> = IsAny<T> extends true
 												// An object without keys becomes `{}`. The homomorphic mapped type below would return a bare `object` as is, which is not assignable to `JsonValue`.
 												? [keyof T] extends [never]
 													? {}
-													: JsonifyObject<UndefinedToOptional<{[Key in keyof T]: OmittedValueToUndefined<ToJsonResult<T[Key]>>}>> // JsonifyObject recursive call for its children
+													: JsonifyObject<JsonifyObjectProperties<{[Key in keyof T]: OmittedValueToUndefined<ToJsonResult<T[Key]>>}>> // JsonifyObject recursive call for its children
 												: IsUnknown<T> extends true
 													? JsonValue
 													: never; // Otherwise any other non-object is removed

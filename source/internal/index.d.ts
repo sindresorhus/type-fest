@@ -6,7 +6,7 @@ export type * from './object.d.ts';
 export type * from './string.d.ts';
 export type * from './tuple.d.ts';
 export type * from './type.d.ts';
-export type * from './enforce-optional.d.ts';
+export type * from './undefined-to-optional-object.d.ts';
 export type * from './function.d.ts';
 
 export {};

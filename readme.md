@@ -140,6 +140,7 @@ Click the type names for complete docs.
 - [`PickReadonly`](source/pick-readonly.d.ts) - Pick only the `readonly` properties from the given object type, leaving out the writable ones.
 - [`PickNonNever`](source/pick-non-never.d.ts) - Pick only the properties of the given object type that do not have the `never` type.
 - [`PartialDeep`](source/partial-deep.d.ts) - Create a deeply optional version of another type.
+- [`UndefinedToOptional`](source/undefined-to-optional.d.ts) - Make properties with a union containing `undefined` optional, removing `undefined` from their values.
 - [`PartialOnUndefined`](source/partial-on-undefined.d.ts) - Create a type where all keys accepting `undefined` type are set to optional.
 - [`PartialOnUndefinedDeep`](source/partial-on-undefined-deep.d.ts) - Create a deep version of another type where all keys accepting `undefined` type are set to optional.
 - [`UndefinedOnPartial`](source/undefined-on-partial.d.ts) - Create a type where all optional keys are set to also accept `undefined`.
