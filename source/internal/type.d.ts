@@ -75,23 +75,6 @@ Returns a boolean for whether the given `boolean` is not `false`.
 export type IsNotFalse<T extends boolean> = [T] extends [false] ? false : true;
 
 /**
-Returns a boolean for whether the given type is primitive value or primitive type.
-
-@example
-```
-type A = IsPrimitive<'string'>;
-//=> true
-
-type B = IsPrimitive<string>;
-//=> true
-
-type C = IsPrimitive<Object>;
-//=> false
-```
-*/
-export type IsPrimitive<T> = [T] extends [Primitive] ? true : false;
-
-/**
 An if-else-like type that resolves depending on whether the given type is `any` or `never`.
 
 @example

@@ -1,24 +1,6 @@
 import {expectTypeOf} from 'nz';
 import type {Falsy, IsEqual, Merge, MergeAll, PartialDeep, ReadonlyDeep, RequiredDeep, SetOptional, SetReadonly, SetRequired, WritableDeep} from '../../index.d.ts';
-import type {CallSignatureOf, FunctionParameters, IsAnyOrNever, IsBothExtends, IsPlainObject, IsPrimitive, IsTruthy} from '../../source/internal/index.d.ts';
-
-expectTypeOf<IsEqual<IsPrimitive<'string'>, true>>().toBe<true>();
-expectTypeOf<IsEqual<IsPrimitive<string>, true>>().toBe<true>();
-expectTypeOf<IsEqual<IsPrimitive<Object>, false>>().toBe<true>();
-expectTypeOf<IsEqual<IsPrimitive<1>, true>>().toBe<true>();
-expectTypeOf<IsEqual<IsPrimitive<1n>, true>>().toBe<true>();
-expectTypeOf<IsEqual<IsPrimitive<true>, true>>().toBe<true>();
-expectTypeOf<IsEqual<IsPrimitive<'a'>, true>>().toBe<true>();
-expectTypeOf<IsEqual<IsPrimitive<null>, true>>().toBe<true>();
-expectTypeOf<IsEqual<IsPrimitive<undefined>, true>>().toBe<true>();
-expectTypeOf<IsEqual<IsPrimitive<void>, false>>().toBe<true>();
-// `never` is not a primitive, but the `[T] extends [Primitive]` form answers `true` for it, the same way the other `Is*` types that use that form do. The house convention is kept rather than special-cased, because nothing user-visible depends on it.
-expectTypeOf<IsEqual<IsPrimitive<never>, true>>().toBe<true>();
-expectTypeOf<IsEqual<IsPrimitive<unknown>, false>>().toBe<true>();
-expectTypeOf<IsEqual<IsPrimitive<any>, true>>().toBe<true>();
-expectTypeOf<IsEqual<IsPrimitive<{a: 1}>, false>>().toBe<true>();
-expectTypeOf<IsEqual<IsPrimitive<Date>, false>>().toBe<true>();
-expectTypeOf<IsEqual<IsPrimitive<symbol>, true>>().toBe<true>();
+import type {CallSignatureOf, FunctionParameters, IsAnyOrNever, IsBothExtends, IsPlainObject, IsTruthy} from '../../source/internal/index.d.ts';
 
 expectTypeOf<IsEqual<IsAnyOrNever<any>, true>>().toBe<true>();
 expectTypeOf<IsEqual<IsAnyOrNever<never>, true>>().toBe<true>();

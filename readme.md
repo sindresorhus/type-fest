@@ -254,6 +254,7 @@ Click the type names for complete docs.
 ### Type Guard
 
 - [`If`](source/if.d.ts) - An if-else-like type that resolves depending on whether the given `boolean` type is `true` or `false`.
+- [`IsPrimitive`](source/is-primitive.d.ts) - Returns a boolean for whether the given type is a primitive.
 - [`IsLiteral`](source/is-literal.d.ts) - Returns a boolean for whether the given type is a [literal type](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#literal-types).
 - [`IsStringLiteral`](source/is-string-literal.d.ts) - Returns a boolean for whether the given type is a `string` [literal type](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#literal-types).
 - [`IsNumericLiteral`](source/is-numeric-literal.d.ts) - Returns a boolean for whether the given type is a `number` or `bigint` [literal type](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#literal-types).
