@@ -1,8 +1,8 @@
 import {expectTypeOf} from 'nz';
-import type {IsEqual, WhitespaceCharacter} from '../../index.d.ts';
-import type {IsWhitespace, WordSeparators} from '../../source/internal/index.d.ts';
+import type {IsEqual, IsWhitespace, WhitespaceCharacter} from '../../index.d.ts';
+import type {WordSeparators} from '../../source/internal/index.d.ts';
 
-// The exact set of code points `String.prototype.trim()` removes, checked against the runtime.
+// The exact set of code points `String.prototype.trim()` removes, kept as an independent copy so `WhitespaceCharacter` cannot drift.
 type TrimsByJs =
 	'\u{9}'
 	| '\u{A}'
@@ -30,7 +30,7 @@ type TrimsByJs =
 	| '\u{3000}'
 	| '\u{FEFF}';
 
-// The ones it keeps.
+// The ones `String.prototype.trim()` keeps.
 type KeptByJs =
 	'\u{85}'
 	| '\u{180E}'
@@ -43,7 +43,7 @@ expectTypeOf<IsEqual<KeptByJs & WhitespaceCharacter, never>>().toBe<true>();
 
 expectTypeOf<IsWhitespace<'\u{20}\u{9}\u{A}'>>().toBe<true>();
 expectTypeOf<IsWhitespace<'\u{3000}\u{FEFF}'>>().toBe<true>();
-// An empty string has no characters to classify, and the existing test pins this as `false`.
+// `IsWhitespace` rejects the empty string by design; `ConsistsOnlyOf` alone would return `true`.
 expectTypeOf<IsWhitespace<''>>().toBe<false>();
 
 // A string is only whitespace when nothing else is in it.

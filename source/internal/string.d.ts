@@ -1,4 +1,3 @@
-import type {WhitespaceCharacter} from '../whitespace-character.d.ts';
 import type {IsEqual} from '../is-equal.d.ts';
 import type {IsStringLiteral} from '../is-string-literal.d.ts';
 import type {Trim} from '../trim.d.ts';
@@ -20,16 +19,6 @@ The types that `Array#join()` can stringify, and which `Join` accepts.
 The builtin `join` method supports all these natively in the same way that typescript handles them so we can safely accept all of them.
 */
 export type JoinableItem = string | number | bigint | boolean | undefined | null;
-
-/**
-Returns a boolean for whether a string is whitespace.
-*/
-export type IsWhitespace<T extends string> = T extends WhitespaceCharacter
-	? true
-	// Infer one character instead of matching every whitespace alternative against the entire remainder.
-	: T extends `${infer First}${infer Rest}`
-		? First extends WhitespaceCharacter ? IsWhitespace<Rest> : false
-		: false;
 
 /**
 Returns a boolean for whether the string is numeric.

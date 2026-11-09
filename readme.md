@@ -313,6 +313,7 @@ Click the type names for complete docs.
 ### String
 
 - [`WhitespaceCharacter`](source/whitespace-character.d.ts) - Matches a single whitespace character.
+- [`IsWhitespace`](source/is-whitespace.d.ts) - Returns a boolean for whether a string is non-empty and consists only of whitespace characters.
 - [`AsciiPunctuationCharacter`](source/ascii-punctuation-character.d.ts) - Matches a single ASCII punctuation character.
 - [`Trim`](source/trim.d.ts) - Remove leading and trailing spaces from a string.
 - [`Split`](source/split.d.ts) - Represents an array of strings split using a given character or character set.

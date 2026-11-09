@@ -221,6 +221,7 @@ export type {If} from './source/if.d.ts';
 export type {IsUnion} from './source/is-union.d.ts';
 export type {IsLowercase} from './source/is-lowercase.d.ts';
 export type {IsUppercase} from './source/is-uppercase.d.ts';
+export type {IsWhitespace} from './source/is-whitespace.d.ts';
 export type {StartsWith} from './source/starts-with.d.ts';
 export type {ConsistsOnlyOf} from './source/consists-only-of.d.ts';
 export type {IsOptional} from './source/is-optional.d.ts';
