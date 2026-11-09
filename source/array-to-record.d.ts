@@ -1,7 +1,7 @@
 import type {If} from './if.d.ts';
 import type {IsAny} from './is-any.d.ts';
 import type {IsLiteral} from './is-literal.d.ts';
-import type {ExactKey} from './internal/keys.d.ts';
+import type {ExactKey} from './exact-key.d.ts';
 import type {UnwrapBrand} from './internal/object.d.ts';
 import type {Tagged} from './tagged.d.ts'; // For `@link`
 import type {TupleToObject} from './tuple-to-object.d.ts'; // For `@link`

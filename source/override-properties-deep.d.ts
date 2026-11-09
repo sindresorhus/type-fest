@@ -1,4 +1,5 @@
-import type {ExactKey, IsPlainObject, ObjectValue} from './internal/index.d.ts';
+import type {ExactKey} from './exact-key.d.ts';
+import type {IsPlainObject, ObjectValue} from './internal/index.d.ts';
 import type {Not} from './not.d.ts';
 import type {IsAny} from './is-any.d.ts';
 import type {IsEqual} from './is-equal.d.ts';

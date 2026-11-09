@@ -1,3 +1,4 @@
+import type {ExactKey} from '../exact-key.d.ts';
 import type {IsEqual} from '../is-equal.d.ts';
 import type {KeysOfUnion} from '../keys-of-union.d.ts';
 import type {RequiredKeysOf} from '../required-keys-of.d.ts';
@@ -11,7 +12,7 @@ import type {TagContainer, UnwrapTagged} from '../tagged.d.ts';
 import type {OmitIndexSignature} from '../omit-index-signature.d.ts';
 import type {PickIndexSignature} from '../pick-index-signature.d.ts';
 import type {CollapseLiterals} from '../collapse-literals.d.ts';
-import type {DefinedKeyFilter, ExactKey, OptionalKeyFilter} from './keys.d.ts';
+import type {DefinedKeyFilter, OptionalKeyFilter} from './keys.d.ts';
 import type {IfNotAnyOrNever, MapsSetsOrArrays, NonRecursiveType} from './type.d.ts';
 import type {ToString} from './string.d.ts';
 

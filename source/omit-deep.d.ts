@@ -1,6 +1,7 @@
+import type {ExactKey} from './exact-key.d.ts';
 import type {ArraySplice} from './array-splice.d.ts';
 import type {Except} from './except.d.ts';
-import type {ExactKey, LiteralKeyOf, NonRecursiveType, SetArrayAccess, ToString, UnwrapPathBrand} from './internal/index.d.ts';
+import type {LiteralKeyOf, NonRecursiveType, SetArrayAccess, ToString, UnwrapPathBrand} from './internal/index.d.ts';
 import type {IsReadonlyArray} from './is-readonly-array.d.ts';
 import type {OmitIndexSignature} from './omit-index-signature.d.ts';
 import type {IsEqual} from './is-equal.d.ts';

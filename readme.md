@@ -193,6 +193,7 @@ Click the type names for complete docs.
 - [`AsExtendable`](source/as-extendable.d.ts) - Allow any object type to be used in the `extends` clause of an interface or the `implements` clause of a class, which otherwise only accept a type name.
 - [`Get`](source/get.d.ts) - Get a deeply-nested property from an object using a key path, like [Lodash's `.get()`](https://lodash.com/docs#get) function.
 - [`SetProperty`](source/set-property.d.ts) - Set a deeply-nested property on an object using a key path, like [Lodash's `.set()`](https://lodash.com/docs#set) function.
+- [`ExactKey`](source/exact-key.d.ts) - Resolve a property key to the matching key type in an object, converting between numeric and string forms when needed.
 - [`KeyAsString`](source/key-as-string.d.ts) - Get keys of the given type as strings.
 - [`Schema`](source/schema.d.ts) - Create a deep version of another object type where property values are recursively replaced into a given value type.
 - [`Exact`](source/exact.d.ts) - Create a type that does not allow extra properties, meaning it only allows properties that are explicitly declared.

@@ -1,3 +1,4 @@
+import type {ExactKey} from '../exact-key.d.ts';
 import type {IsLiteral} from '../is-literal.d.ts';
 import type {UnknownArray} from '../unknown-array.d.ts';
 import type {ToString} from './string.d.ts';
@@ -67,45 +68,6 @@ export type DeduplicatedKeys<Keys extends PropertyKey> = Exclude<ToString<Keys &
 Utility type to retrieve only literal keys from type.
 */
 export type LiteralKeyOf<T> = keyof {[K in keyof T as IsLiteral<K> extends true ? K : never]-?: never};
-
-/**
-Get the exact version of the given `Key` in the given object `T`.
-
-Use-case: You know that a number key (e.g. 10) is in an object, but you don't know how it is defined in the object, as a string or as a number (e.g. 10 or '10'). You can use this type to get the exact version of the key. See the example.
-
-@example
-```
-type Object = {
-	0: number;
-	'1': string;
-};
-
-type Key1 = ExactKey<Object, '0'>;
-//=> 0
-type Key2 = ExactKey<Object, 0>;
-//=> 0
-
-type Key3 = ExactKey<Object, '1'>;
-//=> '1'
-type Key4 = ExactKey<Object, 1>;
-//=> '1'
-```
-
-@category Object
-*/
-export type ExactKey<T extends object, Key extends PropertyKey> =
-	Key extends keyof T
-		? Key
-		: ToString<Key> extends keyof T
-			? ToString<Key>
-			: Key extends `${infer NumberKey extends number}`
-				// A numeric-looking string names a number key only when its spelling survives the conversion.
-				? `${NumberKey}` extends Key
-					? NumberKey extends keyof T
-						? NumberKey
-						: never
-					: never
-				: never;
 
 /**
 Returns the keys of `Type` that are not in `Keys`.

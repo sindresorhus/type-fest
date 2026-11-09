@@ -1,10 +1,11 @@
+import type {ExactKey} from './exact-key.d.ts';
 import type {ConsistsOnlyOf} from './consists-only-of.d.ts';
 import type {IsAny} from './is-any.d.ts';
 import type {DigitCharacter} from './characters.d.ts';
 import type {OmitIndexSignature} from './omit-index-signature.d.ts';
 import type {PickIndexSignature} from './pick-index-signature.d.ts';
 import type {UnknownArray} from './unknown-array.d.ts';
-import type {ExactKey, SetArrayAccess, SimplifyObject, ToPath, ToString, UnwrapPathBrand} from './internal/index.d.ts';
+import type {SetArrayAccess, SimplifyObject, ToPath, ToString, UnwrapPathBrand} from './internal/index.d.ts';
 import type {IsReadonlyArray} from './is-readonly-array.d.ts';
 
 /**

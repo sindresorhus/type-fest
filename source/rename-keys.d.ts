@@ -1,4 +1,5 @@
-import type {ExactKey, LiteralKeyOf} from './internal/keys.d.ts';
+import type {ExactKey} from './exact-key.d.ts';
+import type {LiteralKeyOf} from './internal/keys.d.ts';
 import type {IsLiteral} from './is-literal.d.ts';
 import type {IsNever} from './is-never.d.ts';
 import type {IsEqual} from './is-equal.d.ts';

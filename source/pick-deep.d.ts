@@ -1,7 +1,8 @@
+import type {ExactKey} from './exact-key.d.ts';
 import type {OmitIndexSignature} from './omit-index-signature.d.ts';
 import type {TupleOf} from './tuple-of.d.ts';
 import type {ExcludeRestElement} from './exclude-rest-element.d.ts';
-import type {BuildObject, ExactKey, NonRecursiveType, SimplifyObject, ToString, UnwrapPathBrand} from './internal/index.d.ts';
+import type {BuildObject, NonRecursiveType, SimplifyObject, ToString, UnwrapPathBrand} from './internal/index.d.ts';
 import type {IsNever} from './is-never.d.ts';
 import type {IsUnion} from './is-union.d.ts';
 import type {LiteralUnion} from './literal-union.d.ts';
