@@ -1,5 +1,9 @@
+import type {IsAny} from './is-any.d.ts';
+
 /**
 Returns a boolean for whether the given type is `null`.
+
+Checks unions as a whole. Returns `false` for `any`, `never`, and `unknown`.
 
 @example
 ```
@@ -17,7 +21,7 @@ type Example2 = NonNullFallback<number, string>;
 @category Type Guard
 @category Utilities
 */
-// `never` is checked first, because it is assignable to `null` and would otherwise answer `true`.
-export type IsNull<T> = [T] extends [never] ? false : [T] extends [null] ? true : false;
+// `any` and `never` are checked first, because they are assignable to `null` and would otherwise answer `true`.
+export type IsNull<Value> = IsAny<Value> extends true ? false : [Value] extends [never] ? false : [Value] extends [null] ? true : false;
 
 export {};
