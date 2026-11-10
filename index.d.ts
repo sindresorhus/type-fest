@@ -168,6 +168,7 @@ export type {ExtractRestElement} from './source/extract-rest-element.d.ts';
 export type {ExcludeRestElement} from './source/exclude-rest-element.d.ts';
 export type {IsInteger} from './source/is-integer.d.ts';
 export type {IsFloat} from './source/is-float.d.ts';
+export type {IsNumberLike} from './source/is-number-like.d.ts';
 export type {TupleToObject} from './source/tuple-to-object.d.ts';
 export type {ArrayToRecord} from './source/array-to-record.d.ts';
 export type {TupleToEnum, TupleToEnumOptions} from './source/tuple-to-enum.d.ts';

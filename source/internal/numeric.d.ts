@@ -1,37 +1,5 @@
 import type {UnknownArray} from '../unknown-array.d.ts';
 import type {TupleOf} from '../tuple-of.d.ts';
-import type {IfNotAnyOrNever} from './type.d.ts';
-
-/**
-Check whether the given type is a number or a number string.
-
-Supports floating-point as a string.
-
-@example
-```
-type A = IsNumberLike<'1'>;
-//=> true
-
-type B = IsNumberLike<'-1.1'>;
-//=> true
-
-type C = IsNumberLike<'5e-20'>;
-//=> true
-
-type D = IsNumberLike<1>;
-//=> true
-
-type E = IsNumberLike<'a'>;
-//=> false
-*/
-export type IsNumberLike<N> =
-	IfNotAnyOrNever<N, {
-		ifNot: N extends number | `${number}`
-			? true
-			: false;
-		ifAny: boolean;
-		ifNever: false;
-	}>;
 
 /**
 Returns the sum of two non-negative integers.
