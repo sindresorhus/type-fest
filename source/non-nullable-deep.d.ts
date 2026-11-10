@@ -1,7 +1,7 @@
 import type {ApplyDefaultOptions} from './apply-default-options.d.ts';
 import type {IsArrayOfUnknownLength} from './internal/array.d.ts';
 import type {HasMultipleCallSignatures, NonRecursiveLeaf} from './internal/type.d.ts';
-import type {FunctionParameters} from './internal/function.d.ts';
+import type {FunctionParameters} from './function-parameters.d.ts';
 import type {IsNever} from './is-never.d.ts';
 import type {RequiredDeep} from './required-deep.d.ts'; // For `@link`
 

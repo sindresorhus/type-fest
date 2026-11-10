@@ -300,6 +300,7 @@ Click the type names for complete docs.
 
 ### Function
 
+- [`FunctionParameters`](source/function-parameters.d.ts) - Extract the parameters of a function type as a tuple.
 - [`Overloads`](source/overloads.d.ts) - Extract all overload signatures of the given function type as a tuple, preserving declaration order.
 - [`OverloadParameters`](source/overload-parameters.d.ts) - Extract the parameter types of all overloads as a union.
 - [`OverloadReturnType`](source/overload-return-type.d.ts) - Extract the return types of all overloads as a union.

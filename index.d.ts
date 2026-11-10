@@ -101,6 +101,7 @@ export type {Entry, ObjectEntry} from './source/entry.d.ts';
 export type {Entries, ObjectEntries} from './source/entries.d.ts';
 export type {SetReturnType} from './source/set-return-type.d.ts';
 export type {SetParameterType} from './source/set-parameter-type.d.ts';
+export type {FunctionParameters} from './source/function-parameters.d.ts';
 export type {Overloads} from './source/overloads.d.ts';
 export type {OverloadParameters} from './source/overload-parameters.d.ts';
 export type {OverloadReturnType} from './source/overload-return-type.d.ts';

@@ -2,13 +2,6 @@ import type {IsEqual} from '../is-equal.d.ts';
 import type {IsUnknown} from '../is-unknown.d.ts';
 import type {UnknownArray} from '../unknown-array.d.ts';
 
-/**
-Obtain the parameters of a function type in a tuple.
-
-This works even when the parameters type is a readonly array.
-*/
-export type FunctionParameters<FunctionType extends (...arguments_: any) => any> = FunctionType extends (...arguments_: infer Parameters_ extends UnknownArray) => any ? Parameters_ : never;
-
 /*
 Internal documentation: TypeScript's overload enumeration behavior
 ========================================================================

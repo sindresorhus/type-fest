@@ -1,6 +1,7 @@
 import {expectTypeOf} from 'nz';
 import type {Falsy, IsEqual, Merge, MergeAll, PartialDeep, ReadonlyDeep, RequiredDeep, SetOptional, SetReadonly, SetRequired, WritableDeep} from '../../index.d.ts';
-import type {CallSignatureOf, FunctionParameters, IsAnyOrNever, IsBothExtends, IsTruthy} from '../../source/internal/index.d.ts';
+import type {FunctionParameters} from '../../source/function-parameters.d.ts';
+import type {CallSignatureOf, IsAnyOrNever, IsBothExtends, IsTruthy} from '../../source/internal/index.d.ts';
 
 expectTypeOf<IsEqual<IsAnyOrNever<any>, true>>().toBe<true>();
 expectTypeOf<IsEqual<IsAnyOrNever<never>, true>>().toBe<true>();

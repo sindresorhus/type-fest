@@ -1,4 +1,4 @@
-import type {FunctionParameters} from './internal/index.d.ts';
+import type {FunctionParameters} from './function-parameters.d.ts';
 import type {Overloads} from './overloads.d.ts';
 
 /**

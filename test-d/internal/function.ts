@@ -1,18 +1,5 @@
 import {expectTypeOf} from 'nz';
-import type {FunctionParameters, HasExplicitThis} from '../../source/internal/index.d.ts';
-import type {UnknownArray} from '../../source/unknown-array.d.ts';
-
-// FunctionParameters
-// ------------------
-
-expectTypeOf<FunctionParameters<(foo: string, bar: number) => void>>().toBe<[foo: string, bar: number]>();
-expectTypeOf<FunctionParameters<() => void>>().toBe<[]>();
-expectTypeOf<FunctionParameters<(...args: any[]) => void>>().toBe<any[]>();
-expectTypeOf<FunctionParameters<(...args: readonly any[]) => void>>().toBe<readonly any[]>();
-expectTypeOf<FunctionParameters<(foo: string, ...bar: number[]) => void>>().toBe<[foo: string, ...bar: number[]]>();
-expectTypeOf<FunctionParameters<(foo: string, bar?: number) => void>>().toBe<[foo: string, bar?: number | undefined]>();
-expectTypeOf<FunctionParameters<any>>().toBe<UnknownArray>();
-expectTypeOf<FunctionParameters<never>>().toBe<never>();
+import type {HasExplicitThis} from '../../source/internal/index.d.ts';
 
 // HasExplicitThis
 // ---------------

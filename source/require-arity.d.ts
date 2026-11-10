@@ -2,7 +2,7 @@ import type {IsAny} from './is-any.d.ts';
 import type {ExcludeRestElement} from './exclude-rest-element.d.ts';
 import type {TupleOf} from './tuple-of.d.ts';
 import type {AnyFunction} from './basic.d.ts';
-import type {FunctionParameters} from './internal/index.d.ts';
+import type {FunctionParameters} from './function-parameters.d.ts';
 
 /**
 Require a function to have at least the given number of required parameters.
