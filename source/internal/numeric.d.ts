@@ -31,6 +31,7 @@ export type NonNegativeIntegerDifference<A extends number, B extends number> =
 	ToNumber<TrimLeadingZeros<DifferenceOfReversedDigits<StringReverse<`${A}`>, StringReverse<`${B}`>>>>;
 
 // A string that is not exactly a number, like one with leading zeros or one too large to be represented exactly, becomes `number`.
+// This differs from the public `StringToNumber`, which returns `never` for such a string. `Sum` and `Subtract` need `number` here, because a result that is too large is still a number, only not an exact one.
 type ToNumber<S extends string> = S extends `${infer N extends number}` ? N : never;
 
 type TrimLeadingZeros<S extends string> = S extends `0${infer Rest}`

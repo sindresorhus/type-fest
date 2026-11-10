@@ -28,7 +28,7 @@ type NegativeInfinity = StringToNumber<'-Infinity'>;
 //=> -Infinity
 ```
 
-Note: Some strings, such as `'1.50'`, `'0b10'`, or `'12_345'`, may look like they can be converted to numbers, but they don't actually have corresponding numeric literals. So, in such cases, this type produces `never`. See [type-fest#1446](https://github.com/sindresorhus/type-fest/pull/1446) for more details.
+Note: Some strings, such as `'1.50'`, `'0b10'`, `'12_345'`, or an integer too large to be represented exactly like `'9007199254740993'`, may look like they can be converted to numbers, but they don't actually have corresponding numeric literals. So, in such cases, this type produces `never`. See [type-fest#1446](https://github.com/sindresorhus/type-fest/pull/1446) for more details.
 
 @example
 ```
@@ -41,6 +41,9 @@ type NonDecimalBases = StringToNumber<'0b10' | '0o10' | '0x10'>;
 //=> never
 
 type NumericSeparators = StringToNumber<'12_345'>;
+//=> never
+
+type TooLarge = StringToNumber<'9007199254740993'>;
 //=> never
 ```
 

@@ -49,6 +49,23 @@ expectTypeOf<StringToNumber<'1.0'>>().toBe<never>();
 expectTypeOf<StringToNumber<'-3.50'>>().toBe<never>();
 expectTypeOf<StringToNumber<'12_345'>>().toBe<never>();
 
+// Too large to be represented exactly
+expectTypeOf<StringToNumber<'9007199254740991'>>().toBe<9_007_199_254_740_991>();
+expectTypeOf<StringToNumber<'-9007199254740991'>>().toBe<-9_007_199_254_740_991>();
+expectTypeOf<StringToNumber<'9007199254740992'>>().toBe<9_007_199_254_740_992>();
+expectTypeOf<StringToNumber<'9007199254740993'>>().toBe<never>();
+expectTypeOf<StringToNumber<'-9007199254740993'>>().toBe<never>();
+expectTypeOf<StringToNumber<'1000000000000000000000'>>().toBe<never>();
+expectTypeOf<StringToNumber<'0.1234567890123456789'>>().toBe<never>();
+expectTypeOf<StringToNumber<'1' | '9007199254740993'>>().toBe<1>();
+expectTypeOf<StringToNumber<Tagged<'9007199254740993', 'Text'>>>().toBe<never>();
+
+// Exponent notation parses only in the spelling that JavaScript prints
+expectTypeOf<StringToNumber<'1e+21'>>().toBe<1e21>();
+expectTypeOf<StringToNumber<'1e-7'>>().toBe<1e-7>();
+expectTypeOf<StringToNumber<'1e21'>>().toBe<never>();
+expectTypeOf<StringToNumber<'1e3'>>().toBe<never>();
+
 // Special cases
 expectTypeOf<StringToNumber<`${number}`>>().toBe<number>();
 expectTypeOf<StringToNumber<string>>().toBe<number>();
