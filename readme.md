@@ -333,6 +333,7 @@ Click the type names for complete docs.
   Note: Slicing supplementary Unicode characters, such as emoji, depends on the TypeScript compiler and is not guaranteed to match JavaScript’s UTF-16 indexing in `String#slice()`.
 
 - [`StringRepeat`](source/string-repeat.d.ts) - Returns a new string which contains the specified number of copies of a given string, just like `String#repeat()`.
+- [`StringReverse`](source/string-reverse.d.ts) - Reverse the order of characters in a string literal type.
 - [`RemovePrefix`](source/remove-prefix.d.ts) - Remove the specified prefix from the start of a string.
 - [`RemoveSuffix`](source/remove-suffix.d.ts) - Remove the specified suffix from the end of a string.
 - [`StringToArray`](source/string-to-array.d.ts) - Returns an array of the characters of the specified string.

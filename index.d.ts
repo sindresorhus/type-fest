@@ -279,6 +279,7 @@ export type {WhitespaceCharacter} from './source/whitespace-character.d.ts';
 export type {AsciiPunctuationCharacter} from './source/ascii-punctuation-character.d.ts';
 export type {Replace, ReplaceOptions} from './source/replace.d.ts';
 export type {StringRepeat} from './source/string-repeat.d.ts';
+export type {StringReverse} from './source/string-reverse.d.ts';
 export type {Includes, IncludesOptions} from './source/includes.d.ts';
 export type {IndexOf, IndexOfOptions} from './source/index-of.d.ts';
 export type {Get, GetOptions} from './source/get.d.ts';

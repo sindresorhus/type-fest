@@ -1,5 +1,6 @@
 import type {UnknownArray} from '../unknown-array.d.ts';
 import type {TupleOf} from '../tuple-of.d.ts';
+import type {StringReverse} from '../string-reverse.d.ts';
 
 /**
 Returns the sum of two non-negative integers.
@@ -13,7 +14,7 @@ type A = NonNegativeIntegerSum<999_999, 1>;
 ```
 */
 export type NonNegativeIntegerSum<A extends number, B extends number> =
-	ToNumber<SumOfReversedDigits<ReverseString<`${A}`>, ReverseString<`${B}`>>>;
+	ToNumber<SumOfReversedDigits<StringReverse<`${A}`>, StringReverse<`${B}`>>>;
 
 /**
 Returns the difference of two non-negative integers, where `A` is not less than `B`.
@@ -27,9 +28,7 @@ type A = NonNegativeIntegerDifference<1_000_000, 1>;
 ```
 */
 export type NonNegativeIntegerDifference<A extends number, B extends number> =
-	ToNumber<TrimLeadingZeros<DifferenceOfReversedDigits<ReverseString<`${A}`>, ReverseString<`${B}`>>>>;
-
-type ReverseString<S extends string> = S extends `${infer First}${infer Rest}` ? `${ReverseString<Rest>}${First}` : '';
+	ToNumber<TrimLeadingZeros<DifferenceOfReversedDigits<StringReverse<`${A}`>, StringReverse<`${B}`>>>>;
 
 // A string that is not exactly a number, like one with leading zeros or one too large to be represented exactly, becomes `number`.
 type ToNumber<S extends string> = S extends `${infer N extends number}` ? N : never;
