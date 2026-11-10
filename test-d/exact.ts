@@ -888,3 +888,40 @@ declare function exactPrimitiveValue<const Value extends string>(value: Value): 
 
 expectTypeOf(exactPrimitiveValue('ready' as const).value).toBe<'ready'>();
 expectTypeOf<Exact<{value: Opaque<string, 'Id'>}, {value: Opaque<'ready', 'Id'>}>['value']>().toBe<Opaque<string, 'Id'>>();
+
+// Numeric aliases must read nested input values before checking their excess keys.
+type NumericRecordParameter = {readonly 0?: {entry: {name: string}; rows: ReadonlyArray<{id: number}>}};
+type NumericRecordInput = {readonly '0'?: {entry: {name: 'Ada'}; rows: readonly [{id: 1}]}};
+expectTypeOf<NumericRecordInput>().toBeAssignableTo<Exact<NumericRecordParameter, NumericRecordInput>>();
+type NumericRecordExcessInput = {'0'?: {entry: {name: 'Ada'; extra: true}; rows: [{id: 1}]}};
+expectTypeOf<NumericRecordExcessInput>().not.toBeAssignableTo<Exact<NumericRecordParameter, NumericRecordExcessInput>>();
+type NumericRowsExcessInput = {'0'?: {entry: {name: 'Ada'}; rows: [{id: 1; extra: true}]}};
+expectTypeOf<NumericRowsExcessInput>().not.toBeAssignableTo<Exact<NumericRecordParameter, NumericRowsExcessInput>>();
+type NumericMissingInput = {'0': {entry: {}; rows: []}};
+expectTypeOf<NumericMissingInput>().not.toBeAssignableTo<Exact<NumericRecordParameter, NumericMissingInput>>();
+
+type AliasedObjectUnion = {0: {name: 'Ada'}} | {'0': {name: 'Grace'}};
+expectTypeOf<AliasedObjectUnion>().toBeAssignableTo<Exact<{0: {name: string}}, AliasedObjectUnion>>();
+type AliasedExcessObjectUnion = {0: {name: 'Ada'}} | {'0': {name: 'Grace'; extra: true}};
+expectTypeOf<AliasedExcessObjectUnion>().not.toBeAssignableTo<Exact<{0: {name: string}}, AliasedExcessObjectUnion>>();
+type AliasedNullableInput = {0: {name: 'Ada'} | null};
+expectTypeOf<AliasedNullableInput>().toBeAssignableTo<Exact<{'0': {name: string} | null}, AliasedNullableInput>>();
+type AliasedNullableExcessInput = {0: {name: 'Ada'; extra: true} | null};
+expectTypeOf<AliasedNullableExcessInput>().not.toBeAssignableTo<Exact<{'0': {name: string} | null}, AliasedNullableExcessInput>>();
+
+// Symbol-keyed nested values follow the same recursive checks as string keys.
+type SymbolRecordParameter = {readonly [exactSymbol]?: {name: string}};
+expectTypeOf<{[exactSymbol]?: {name: 'Ada'}}>().toBeAssignableTo<Exact<SymbolRecordParameter, {[exactSymbol]?: {name: 'Ada'}}>>();
+expectTypeOf<{[exactSymbol]?: {name: 'Ada'; extra: true}}>().not.toBeAssignableTo<Exact<SymbolRecordParameter, {[exactSymbol]?: {name: 'Ada'; extra: true}}>>();
+expectTypeOf<{[exactSymbol]: {name: 'Ada'}}>().toBeAssignableTo<Exact<Record<symbol, {name: string}>, {[exactSymbol]: {name: 'Ada'}}>>();
+expectTypeOf<{[exactSymbol]: {name: 'Ada'; extra: true}}>().not.toBeAssignableTo<Exact<Record<symbol, {name: string}>, {[exactSymbol]: {name: 'Ada'; extra: true}}>>();
+
+// Reading a specific declared key must not fall back to its broader index signature.
+type PreciseIndexedParameter = {[key: string]: unknown; entry: {name: string}};
+expectTypeOf<{entry: {name: 'Ada'}; other: {extra: true}}>().toBeAssignableTo<Exact<PreciseIndexedParameter, {entry: {name: 'Ada'}; other: {extra: true}}>>();
+expectTypeOf<{entry: {name: 'Ada'; extra: true}}>().not.toBeAssignableTo<Exact<PreciseIndexedParameter, {entry: {name: 'Ada'; extra: true}}>>();
+
+// The alias works in both directions: the parameter may declare the string spelling and the input the numeric one.
+type ReverseAliasParameter = {readonly '0'?: {name: string}};
+expectTypeOf<{0?: {name: 'Ada'}}>().toBeAssignableTo<Exact<ReverseAliasParameter, {0?: {name: 'Ada'}}>>();
+expectTypeOf<{0?: {name: 'Ada'; extra: true}}>().not.toBeAssignableTo<Exact<ReverseAliasParameter, {0?: {name: 'Ada'; extra: true}}>>();

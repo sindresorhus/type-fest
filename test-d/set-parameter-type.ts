@@ -286,3 +286,46 @@ void constructedGenericParameterList.call(new Date(), 1, 'wrong');
 void constructedGenericParameterList.call(new Date(), 1, 'ready', 1);
 // @ts-expect-error Constructing the generic wrapper retains its receiver.
 void constructedGenericParameterList.call('wrong', 1, 'ready');
+
+// Object replacements carry complete values through numeric aliases without transforming them.
+type CompleteReplacement = {readonly id: 'replacement'; payload?: {count: number}};
+type ReplaceNestedValue = SetParameterType<(first: string, second?: number, ...rest: boolean[]) => Promise<'done'>, {readonly '0': CompleteReplacement; readonly '2': readonly [Date, number?]}>;
+expectTypeOf<ReplaceNestedValue>().toBe<(first: CompleteReplacement, second?: number, ...rest: Array<readonly [Date, number?]>) => Promise<'done'>>();
+expectTypeOf<Parameters<SetParameterType<(first: string, second: number) => void, {'0': (() => 'ready') & {readonly id: 1}}>>>()
+	.toBe<[first: (() => 'ready') & {readonly id: 1}, second: number]>();
+expectTypeOf<Parameters<SetParameterType<(first: string) => void, {'0': {0: 'nested'}}>>>().toBe<[first: {0: 'nested'}]>();
+
+// Optional replacement properties add undefined to a value without making a required argument optional.
+expectTypeOf<SetParameterType<(first: string, second: number) => boolean, {'0'?: Date}>>().toBe<(first: Date | undefined, second: number) => boolean>();
+expectTypeOf<SetParameterType<(first?: string) => boolean, {'0'?: Date}>>().toBe<(first?: Date) => boolean>();
+expectTypeOf<SetParameterType<(first: string, ...rest: number[]) => boolean, {'1'?: Date}>>().toBe<(first: string, ...rest: Array<Date | undefined>) => boolean>();
+
+// A declared replacement is more specific than its covering numeric index signature.
+type DeclaredReplacementIndex = {[key: number]: unknown; readonly '0': Date; readonly 2: RegExp};
+expectTypeOf<SetParameterType<(first: string, second?: number, ...rest: boolean[]) => 'done', DeclaredReplacementIndex>>()
+	.toBe<(first: Date, second?: unknown, ...rest: RegExp[]) => 'done'>();
+expectTypeOf<SetParameterType<(first: string, ...rest: boolean[]) => 'done', {[key: number]: Date; '0': never}>>()
+	.toBe<(first: never, ...rest: Date[]) => 'done'>();
+
+// String aliases preserve special replacement values in a trailing rest argument too.
+expectTypeOf<SetParameterType<(first: string, ...rest: number[]) => boolean, {'1': any}>>().toBe<(first: string, ...rest: any[]) => boolean>();
+expectTypeOf<SetParameterType<(first: string, ...rest: number[]) => boolean, {'1': unknown}>>().toBe<(first: string, ...rest: unknown[]) => boolean>();
+expectTypeOf<SetParameterType<(first: string, ...rest: number[]) => boolean, {'1': never}>>().toBe<(first: string, ...rest: never[]) => boolean>();
+expectTypeOf<SetParameterType<(first: string, ...rest: number[]) => boolean, {'1': undefined}>>().toBe<(first: string, ...rest: undefined[]) => boolean>();
+expectTypeOf<SetParameterType<(first: string, ...rest: number[]) => boolean, {'1': null}>>().toBe<(first: string, ...rest: null[]) => boolean>();
+
+// A replacement value that is itself a union stays at its selected argument position.
+expectTypeOf<SetParameterType<(first: string, second?: number, ...rest: boolean[]) => Date, {'0': Date | RegExp; '2': {kind: 'a'} | {kind: 'b'}}>>()
+	.toBe<(first: Date | RegExp, second?: number, ...rest: Array<{kind: 'a'} | {kind: 'b'}>) => Date>();
+
+declare const optionalReplacementCallback: SetParameterType<(this: Date, first: string) => 'done', {'0'?: RegExp}>;
+expectTypeOf(optionalReplacementCallback.call(new Date(), undefined)).toBe<'done'>();
+expectTypeOf(optionalReplacementCallback.call(new Date(), /request/)).toBe<'done'>();
+// @ts-expect-error An optional replacement key does not remove the required argument position.
+optionalReplacementCallback.call(new Date());
+// @ts-expect-error The old value type is replaced even when the replacement key is optional.
+optionalReplacementCallback.call(new Date(), 'old');
+
+// Only canonical numeric spellings select a parameter, and an index outside the parameter list is ignored.
+expectTypeOf<SetParameterType<(first: string) => void, {'00': Date}>>().toBe<(first: string) => void>();
+expectTypeOf<SetParameterType<(first: string, second: number) => void, {5: Date}>>().toBe<(first: string, second: number) => void>();

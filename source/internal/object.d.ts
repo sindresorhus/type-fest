@@ -43,22 +43,6 @@ export type BuildObject<Key extends PropertyKey, Value, CopiedFrom extends objec
 		: never;
 
 /**
-Extract the object field type if T is an object and K is a key of T, return `never` otherwise.
-
-It creates a type-safe way to access the member type of `unknown` type.
-*/
-export type ObjectValue<T, K> =
-	K extends keyof T
-		? T[K]
-		: ToString<K> extends keyof T
-			? T[ToString<K>]
-			: K extends `${infer NumberK extends number}`
-				? NumberK extends keyof T
-					? T[NumberK]
-					: never
-				: never;
-
-/**
 Prepare object properties for `Jsonify` by filtering omitted keys and replacing unions with `undefined` with optional properties.
 
 It also removes the properties that `JSON.stringify` drops: symbol keys, properties that are only `undefined`, required properties that are only a symbol, and properties whose type includes a function. A `never` property is removed too. An `any` or `unknown` property is kept as it is, including whether it is optional.

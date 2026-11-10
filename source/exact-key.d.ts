@@ -1,4 +1,5 @@
 import type {ToString} from './internal/string.d.ts';
+import type {PropertyValue} from './property-value.d.ts'; // For `@link`
 
 /**
 Resolve a property key to the matching key type in an object, converting between numeric and string forms when needed.
@@ -24,14 +25,13 @@ type SuccessKey = ExactKey<StatusMessages, '200'>;
 type NotFoundKey = ExactKey<StatusMessages, 404>;
 //=> '404'
 
-type PropertyValue<ObjectType extends object, Key extends PropertyKey> = ObjectType[ExactKey<ObjectType, Key>];
+type PickByKey<ObjectType extends object, Key extends PropertyKey> = Pick<ObjectType, ExactKey<ObjectType, Key>>;
 
-type Message = PropertyValue<StatusMessages, '200'>;
-//=> 'OK'
-
-type UnknownMessage = PropertyValue<StatusMessages, '500'>;
-//=> never
+type Success = PickByKey<StatusMessages, '200'>;
+//=> {200: 'OK'}
 ```
+
+@see {@link PropertyValue} to get the value of the matching property.
 
 @category Object
 */

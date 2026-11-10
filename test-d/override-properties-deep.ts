@@ -457,3 +457,52 @@ expectTypeOf<ApiResponse>().not.toBeAssignableTo<Corrected>();
 ({id: 1, author: {email: 'a@b'}}) satisfies Corrected;
 // @ts-expect-error The overridden `id` must be a number.
 ({id: '1', author: {name: 'Ada', email: 'a@b'}}) satisfies Corrected;
+
+// Numeric aliases at several levels keep unmentioned siblings and the override's modifiers.
+type NestedNumericOriginal = {readonly 0?: {readonly '1': {name: string; keep: boolean}; sibling: number}; untouched: Date};
+type NestedNumericOverride = {'0': {1: {readonly name?: number}}};
+expectTypeOf<OverridePropertiesDeep<NestedNumericOriginal, NestedNumericOverride>>()
+	.toBe<{'0': {1: {readonly name?: number; keep: boolean}; sibling: number}; untouched: Date}>();
+// @ts-expect-error The numeric alias must still read the original nested value.
+type InvalidTwiceAliasedOverride = OverridePropertiesDeep<NestedNumericOriginal, {'0': {1: {missing: number}}}>;
+// @ts-expect-error An optional aliased override is checked before its undefined part is ignored.
+type InvalidOptionalTwiceAliasedOverride = OverridePropertiesDeep<NestedNumericOriginal, {'0'?: {1?: {missing: number}}}>;
+
+// A declared numeric property's precise value wins over a covering index signature.
+type PreciseNumberIndex = {[key: number]: {name: string}; 0: {name: string; detail: {code: number}}};
+type ChangedPreciseNumberIndex = OverridePropertiesDeep<PreciseNumberIndex, {'0': {detail: {code: string}}}>;
+expectTypeOf<ChangedPreciseNumberIndex['0']>().toBe<{name: string; detail: {code: string}}>();
+expectTypeOf<ChangedPreciseNumberIndex[number]>().toBe<{name: string}>();
+// @ts-expect-error A declared value cannot acquire a key just because it is under an index signature.
+type InvalidPreciseNumberIndex = OverridePropertiesDeep<PreciseNumberIndex, {'0': {detail: {missing: string}}}>;
+
+// Aliased keys inside a record union read only the shared nested keys.
+type NumericUnionOriginal = {0: {1: {name: string; first: boolean}}} | {0: {1: {name: string; second: number}}};
+expectTypeOf<OverridePropertiesDeep<NumericUnionOriginal, {'0': {'1': {name: Date}}}>>()
+	.toBe<{'0': {'1': {name: Date; first: boolean}}} | {'0': {'1': {name: Date; second: number}}}>();
+// @ts-expect-error The first member's exclusive nested key is not common to the union.
+type InvalidAliasedUnionKey = OverridePropertiesDeep<NumericUnionOriginal, {'0': {'1': {first: string}}}>;
+
+// A symbol property can contain numeric aliases, and optionality is preserved at each level.
+type SymbolNumericOriginal = {readonly [symbolKey]?: {0?: {name: string; keep: number}}};
+expectTypeOf<OverridePropertiesDeep<SymbolNumericOriginal, {[symbolKey]?: {'0'?: {name: boolean}}}>>()
+	.toBe<{[symbolKey]?: {'0'?: {name: boolean; keep: number}}}>();
+// @ts-expect-error Symbol lookup must not make the aliased numeric value opaque.
+type InvalidSymbolNumericOverride = OverridePropertiesDeep<SymbolNumericOriginal, {[symbolKey]?: {'0'?: {missing: boolean}}}>;
+
+// Numeric index values are checked again after a nested symbol lookup.
+type NumberSymbolIndex = Record<number, {[symbolKey]: {name: string; keep: boolean}}>;
+type ChangedNumberSymbolIndex = OverridePropertiesDeep<NumberSymbolIndex, {'0': {[symbolKey]: {name: number}}}>;
+expectTypeOf<keyof ChangedNumberSymbolIndex['0']>().toBe<typeof symbolKey>();
+expectTypeOf<ChangedNumberSymbolIndex['0'][typeof symbolKey]>().toBe<{name: number}>();
+expectTypeOf<ChangedNumberSymbolIndex[number]>().toBe<{[symbolKey]: {name: string; keep: boolean}}>();
+// @ts-expect-error Both the numeric alias and the symbol key must preserve recursive checking.
+type InvalidNumberSymbolIndex = OverridePropertiesDeep<NumberSymbolIndex, {'0': {[symbolKey]: {missing: number}}}>;
+
+// The alias works in both directions: the original may declare the string spelling and the override the numeric one.
+type ReverseAlias = OverridePropertiesDeep<{'0': {name: string}}, {0: {name: number}}>;
+expectTypeOf<ReverseAlias[0]>().toBe<{name: number}>();
+
+// A declared unique symbol overrides a root symbol index signature.
+type SymbolIndexAlias = OverridePropertiesDeep<{[key: symbol]: {name: string}}, {[symbolKey]: {name: 'Ada'}}>;
+expectTypeOf<SymbolIndexAlias[typeof symbolKey]>().toBe<{name: 'Ada'}>();

@@ -1,5 +1,6 @@
 import type {IsUnknown} from './is-unknown.d.ts';
-import type {NormalizedKeys, ObjectValue, VariablePartOfArray} from './internal/index.d.ts';
+import type {NormalizedKeys, VariablePartOfArray} from './internal/index.d.ts';
+import type {PropertyValue} from './property-value.d.ts';
 import type {UnknownArray} from './unknown-array.d.ts';
 
 /**
@@ -28,7 +29,7 @@ type RestElementIndex<ArrayType extends UnknownArray, Counter extends unknown[] 
 /**
 Create an array that replaces the given `TArray`'s elements with the given `TObject`'s values at the given indices.
 
-`TArray` and `TObject` supports tailing spread array like `[string, ...boolean[]]`, but does not support `[string, ...boolean[], number]`.
+`TArray` and `TObject` support a trailing rest element like `[string, ...boolean[]]`, but do not support `[string, ...boolean[], number]`.
 
 @example
 ```ts
@@ -40,7 +41,7 @@ type A = MergeObjectToArray<[string, number], {0: boolean}>;
 type B = MergeObjectToArray<[string, number], [boolean]>;
 //=> [boolean, number]
 
-// tailing spread array
+// Trailing rest element
 type C = MergeObjectToArray<[string, ...boolean[]], {1: number}>;
 //=> [string, ...number[]]
 
@@ -77,12 +78,12 @@ type MergeObjectToArrayMember<TArray extends UnknownArray, TObject, RestIndex ex
 				? {
 					[K in keyof TArray]:
 					K extends `${infer NumberK extends number}`
-						? NumberK extends ReplacementKeys ? ObjectValue<TObject, NumberK> : TArray[K]
+						? NumberK extends ReplacementKeys ? PropertyValue<TObject, NumberK> : TArray[K]
 						: number extends K
 						// If array key `K` is `number`, means it's a rest parameter, we should set the rest parameter type to corresponding type in `TObject`.
 						// example: `MergeObjectToArray<[string, ...boolean[]], {1: number}>` => `[string, ...number[]]`
 							? RestIndex extends ReplacementKeys
-								? ObjectValue<TObject, RestIndex>
+								? PropertyValue<TObject, RestIndex>
 								: TArray[K]
 							: never
 				} : never
@@ -103,9 +104,9 @@ Note:
 	const fn = (a: number) => a;
 	//=> (a: number) => number
 
- 	// We change type of `a` to `string`, but return type is still `number`.
+	// We change the type of `a` to `string`, but the return type is still `number`.
 	type Fn = SetParameterType<typeof fn, {0: string}>;
- 	//=> (a: string) => number
+	//=> (a: string) => number
 	```
 
 Use-case:

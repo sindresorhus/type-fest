@@ -123,10 +123,15 @@ type UnknownKey = ExactKey<Mixed, unknown>;
 // @ts-expect-error Booleans are not property keys.
 type InvalidKey = ExactKey<Mixed, true>;
 
-// The documentation's generic indexed access works without an intersection or cast.
-type PropertyValue<ObjectType extends object, Key extends PropertyKey> = ObjectType[ExactKey<ObjectType, Key>];
+// A generic indexed access works without an intersection or cast.
+type IndexedAccess<ObjectType extends object, Key extends PropertyKey> = ObjectType[ExactKey<ObjectType, Key>];
 type StatusMessages = {200: 'OK'; '404': 'Not found'};
-expectTypeOf<PropertyValue<StatusMessages, '200'>>().toBe<'OK'>();
-expectTypeOf<PropertyValue<StatusMessages, 404>>().toBe<'Not found'>();
-expectTypeOf<PropertyValue<StatusMessages, '500'>>().toBe<never>();
-expectTypeOf<PropertyValue<{readonly 0?: string}, '0'>>().toBe<string | undefined>();
+expectTypeOf<IndexedAccess<StatusMessages, '200'>>().toBe<'OK'>();
+expectTypeOf<IndexedAccess<StatusMessages, 404>>().toBe<'Not found'>();
+expectTypeOf<IndexedAccess<StatusMessages, '500'>>().toBe<never>();
+expectTypeOf<IndexedAccess<{readonly 0?: string}, '0'>>().toBe<string | undefined>();
+
+// The documentation's generic `Pick` works without an intersection or cast.
+type PickByKey<ObjectType extends object, Key extends PropertyKey> = Pick<ObjectType, ExactKey<ObjectType, Key>>;
+expectTypeOf<PickByKey<StatusMessages, '200'>>().toBe<{200: 'OK'}>();
+expectTypeOf<PickByKey<StatusMessages, 404 | '500'>>().toBe<{'404': 'Not found'}>();

@@ -1,5 +1,5 @@
 import type {ExactKey} from './exact-key.d.ts';
-import type {ObjectValue} from './internal/index.d.ts';
+import type {PropertyValue} from './property-value.d.ts';
 import type {IsRecordLike} from './is-record-like.d.ts';
 import type {Not} from './not.d.ts';
 import type {IsAny} from './is-any.d.ts';
@@ -110,7 +110,7 @@ type IsKnownPropertyKey<Original, Key extends PropertyKey> = Not<IsNever<Declare
 /**
 Get the value of `Key` in `Original`, matching the spellings described in {@link DeclaredKeyOf}.
 */
-type OriginalPropertyValue<Original, Key extends PropertyKey> = ObjectValue<Original, Key>;
+type OriginalPropertyValue<Original, Key extends PropertyKey> = PropertyValue<Original, Key>;
 
 /**
 Test whether the original value is a record-like object whose keys can be checked. An `any` original is not checked, and an `object` original has no declared keys.

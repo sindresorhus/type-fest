@@ -1,4 +1,5 @@
-import type {IsArrayOfUnknownLength, KeyAliases, ObjectValue} from './internal/index.d.ts';
+import type {IsArrayOfUnknownLength, KeyAliases} from './internal/index.d.ts';
+import type {PropertyValue} from './property-value.d.ts';
 import type {RequireNone} from './require-none.d.ts';
 import type {ArrayElement} from './array-element.d.ts';
 import type {IsEqual} from './is-equal.d.ts';
@@ -18,7 +19,7 @@ type ExactProperties<ParameterType, InputType> = {
 	// Primitive parameters pass through unchanged, so their input values do not need to be read or compared.
 	[Key in keyof ParameterType]: [ParameterType[Key]] extends [Primitive]
 		? ParameterType[Key]
-		: Exact<ParameterType[Key], InputType extends unknown ? ObjectValue<InputType, Key> | InputType[Extract<keyof InputType, Key>] : never>;
+		: Exact<ParameterType[Key], InputType extends unknown ? PropertyValue<InputType, Key> | InputType[Extract<keyof InputType, Key>] : never>;
 };
 
 /**
