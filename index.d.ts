@@ -144,6 +144,8 @@ export type {Sum} from './source/sum.d.ts';
 export type {Subtract} from './source/subtract.d.ts';
 export type {UnionMax} from './source/union-max.d.ts';
 export type {UnionMin} from './source/union-min.d.ts';
+export type {TupleMax} from './source/tuple-max.d.ts';
+export type {TupleMin} from './source/tuple-min.d.ts';
 export type {ExactKey} from './source/exact-key.d.ts';
 export type {PropertyValue} from './source/property-value.d.ts';
 export type {KeyAsString} from './source/key-as-string.d.ts';

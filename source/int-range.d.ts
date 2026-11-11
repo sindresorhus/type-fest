@@ -4,7 +4,7 @@ import type {Subtract} from './subtract.d.ts';
 import type {Absolute} from './absolute.d.ts';
 import type {IsNegative} from './numeric.d.ts';
 import type {UnknownArray} from './unknown-array.d.ts';
-import type {TupleMin} from './internal/index.d.ts';
+import type {TupleMin} from './tuple-min.d.ts';
 import type {UnwrapBrandedPrimitive} from './unwrap-branded-primitive.d.ts';
 import type {IntClosedRange} from './int-closed-range.d.ts'; // For `@link`
 import type {ArrayIndices} from './array-indices.d.ts';
