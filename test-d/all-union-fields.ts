@@ -398,3 +398,46 @@ type NumberIndexedFields = AllUnionFields<{[key: number]: string; label: true} |
 expectTypeOf<NumberIndexedFields[0]>().toBe<string | number>();
 expectTypeOf<{label: true}>().not.toBeAssignableTo<NumberIndexedFields>();
 expectTypeOf<{0: 'zero'}>().toBeAssignableTo<NumberIndexedFields>();
+
+// Separate index domains keep their own values when the non-shared fields use `ValuesOfUnion`.
+type SeparateIndexFields = AllUnionFields<{[key: number]: string; label: true} | {[key: symbol]: boolean; label: false}>;
+expectTypeOf<SeparateIndexFields[number]>().toBe<string | undefined>();
+expectTypeOf<SeparateIndexFields[symbol]>().toBe<boolean | undefined>();
+expectTypeOf<SeparateIndexFields['label']>().toBe<boolean>();
+expectTypeOf<keyof SeparateIndexFields>().toBe<number | symbol | 'label'>();
+expectTypeOf<{label: true; 0: string}>().toBeAssignableTo<SeparateIndexFields>();
+expectTypeOf<{label: false; [indexedSymbol]: boolean}>().toBeAssignableTo<SeparateIndexFields>();
+expectTypeOf<{label: true; 0: string; [indexedSymbol]: boolean}>().toBeAssignableTo<SeparateIndexFields>();
+expectTypeOf<{label: true; 0: boolean}>().not.toBeAssignableTo<SeparateIndexFields>();
+expectTypeOf<{label: false; [indexedSymbol]: string}>().not.toBeAssignableTo<SeparateIndexFields>();
+
+// The readonly-field path must preserve the same separation between index domains.
+type ReadonlyIndexFields = AllUnionFields<{readonly [key: number]: string; label: true} | {readonly [key: symbol]: boolean; label: false}>;
+expectTypeOf<ReadonlyIndexFields[number]>().toBe<string | undefined>();
+expectTypeOf<ReadonlyIndexFields[symbol]>().toBe<boolean | undefined>();
+expectTypeOf<ReadonlyIndexFields['label']>().toBe<boolean>();
+declare const readonlyIndexFields: ReadonlyIndexFields;
+// @ts-expect-error A readonly numeric index signature stays readonly.
+readonlyIndexFields[0] = 'changed';
+// @ts-expect-error A readonly symbol index signature stays readonly.
+readonlyIndexFields[indexedSymbol] = true;
+readonlyIndexFields.label = true;
+
+// Adding readonly to one index domain does not make the other domain readonly.
+type MixedReadonlyIndexFields = AllUnionFields<{readonly [key: number]: string} | {[key: symbol]: boolean}>;
+expectTypeOf<MixedReadonlyIndexFields[number]>().toBe<string | undefined>();
+expectTypeOf<MixedReadonlyIndexFields[symbol]>().toBe<boolean | undefined>();
+declare const mixedReadonlyIndexFields: MixedReadonlyIndexFields;
+// @ts-expect-error Only the numeric index signature is readonly.
+mixedReadonlyIndexFields[0] = 'changed';
+mixedReadonlyIndexFields[indexedSymbol] = true;
+
+// Declared fields retain their narrower values alongside an optional index signature.
+type ReadonlyNamedIndexFields = AllUnionFields<{readonly [key: number]: string; readonly label: 'indexed'} | {0: number; label: 'named'}>;
+expectTypeOf<ReadonlyNamedIndexFields[number]>().toBe<string | undefined>();
+expectTypeOf<ReadonlyNamedIndexFields[0]>().toBe<string | number>();
+expectTypeOf<ReadonlyNamedIndexFields['label']>().toBe<'indexed' | 'named'>();
+expectTypeOf<{label: 'indexed'}>().not.toBeAssignableTo<ReadonlyNamedIndexFields>();
+declare const readonlyNamedIndexFields: ReadonlyNamedIndexFields;
+// @ts-expect-error A readonly index contributor keeps the shared numeric field readonly.
+readonlyNamedIndexFields[0] = 'changed';

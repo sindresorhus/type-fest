@@ -170,6 +170,7 @@ Click the type names for complete docs.
 - [`SetNonNullableDeep`](source/set-non-nullable-deep.d.ts) - Create a type that makes the specified keys non-nullable (removes `null` and `undefined`), supports deeply nested key paths, and leaves all other keys unchanged.
 - [`NonNullableDeep`](source/non-nullable-deep.d.ts) - Recursively removes `null` and `undefined` from the specified type.
 - [`ValueOf`](source/value-of.d.ts) - Create a union of the given object's values, and optionally specify which keys to get the values from.
+- [`ValuesOfUnion`](source/values-of-union.d.ts) - Extract all possible values for the given keys from a union of types.
 - [`ValueOfDeep`](source/value-of-deep.d.ts) - Create a union of all leaf values in the given object, including values in nested objects and arrays.
 - [`ConditionalKeys`](source/conditional-keys.d.ts) - Extract the keys from a type where the value type of the key extends the given `Condition`.
 - [`ConditionalPick`](source/conditional-pick.d.ts) - Pick keys from the shape that matches the given `Condition`.

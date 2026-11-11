@@ -1,4 +1,5 @@
-import type {MapsSetsOrArrays, NonRecursiveType, SimplifyObject, ValueOfUnion} from './internal/index.d.ts';
+import type {MapsSetsOrArrays, NonRecursiveType, SimplifyObject} from './internal/index.d.ts';
+import type {ValuesOfUnion} from './values-of-union.d.ts';
 import type {ReadonlyKeysOf} from './readonly-keys-of.d.ts';
 import type {KeysOfUnion} from './keys-of-union.d.ts';
 import type {SharedUnionFields} from './shared-union-fields.d.ts';
@@ -99,11 +100,11 @@ export type AllUnionFields<Union> =
 				SharedUnionFields<RelevantMembers>
 				// Include readonly fields present in any union member
 				& {
-					readonly [P in ReadonlyKeysOf<Extract<RelevantMembers, object>>]?: ValueOfUnion<RelevantMembers, P & KeysOfUnion<RelevantMembers>>
+					readonly [P in ReadonlyKeysOf<Extract<RelevantMembers, object>>]?: ValuesOfUnion<RelevantMembers, P & KeysOfUnion<RelevantMembers>>
 				}
 				// Include remaining fields that are neither common nor readonly
 				& {
-					[P in Exclude<KeysOfUnion<RelevantMembers>, ReadonlyKeysOf<Extract<RelevantMembers, object>> | keyof RelevantMembers>]?: ValueOfUnion<RelevantMembers, P>
+					[P in Exclude<KeysOfUnion<RelevantMembers>, ReadonlyKeysOf<Extract<RelevantMembers, object>> | keyof RelevantMembers>]?: ValuesOfUnion<RelevantMembers, P>
 				}
 			>
 			: never

@@ -73,19 +73,6 @@ export type JsonifyObjectProperties<T extends object> = SimplifyObject<
 >;
 
 /**
-Extract all possible values for a given key from a union of object types.
-
-@example
-```
-type Statuses = ValueOfUnion<{id: 1; status: 'open'} | {id: 2; status: 'closed'}, 'status'>;
-//=> "open" | "closed"
-```
-*/
-// This per-member lookup keeps `AllUnionFields` index values precise. Public `ValueOf` includes an undistributed read to preserve generic getter assignability, but that read can return `unknown` for mixed numeric or symbol index domains. It cannot replace this helper until that precision issue is fixed; switching also deliberately widens index values to include overlapping named properties.
-export type ValueOfUnion<Union, Key extends KeysOfUnion<Union>> =
-	Union extends unknown ? Key extends keyof Union ? Union[Key] : never : never;
-
-/**
 Returns whether the given key of `ObjectType` has the `readonly` modifier.
 
 The key belongs to the object, so no distribution or `any` handling is needed.
