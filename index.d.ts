@@ -248,6 +248,7 @@ export type {Negate} from './source/negate.d.ts';
 export type {UnionLength} from './source/union-length.d.ts';
 export type {StringToNumber} from './source/string-to-number.d.ts';
 export type {StringToBoolean} from './source/string-to-boolean.d.ts';
+export type {ToString} from './source/to-string.d.ts';
 export type {ArrayAt} from './source/array-at.d.ts';
 
 // Template literal types

@@ -1391,3 +1391,23 @@ expectTypeOf(selectNumericPath<true>('[0].value')).toBe<'[0].value'>();
 expectTypeOf(selectNumericPath<false>('0.value')).toBe<'0.value'>();
 // @ts-expect-error The concrete bracketed specialization does not accept dot notation for a numeric key.
 selectNumericPath<true>('0.value');
+
+// Branded index signatures must keep their native template patterns.
+type BrandedStringKey = Tagged<string, 'StringKey'>;
+type BrandedNumberKey = Tagged<number, 'NumberKey'>;
+type StringKeyedRecord = Record<BrandedStringKey, {value: string}>;
+type NumberKeyedRecord = Record<BrandedNumberKey, {value: string}>;
+expectTypeOf<Paths<StringKeyedRecord, {leavesOnly: true}>>().toBe<`${BrandedStringKey}.value`>();
+expectTypeOf<Paths<StringKeyedRecord, {depth: 1}>>().toBe<`${BrandedStringKey}.value`>();
+expectTypeOf<Paths<{items: StringKeyedRecord}>>()
+	.toBe<'items' | `items.${BrandedStringKey}` | `items.${BrandedStringKey}.value`>();
+expectTypeOf<Paths<{items: StringKeyedRecord}, {leavesOnly: true}>>().toBe<`items.${BrandedStringKey}.value`>();
+expectTypeOf<Paths<NumberKeyedRecord>>()
+	.toBe<BrandedNumberKey | `${BrandedNumberKey}` | `${BrandedNumberKey}.value`>();
+expectTypeOf<Paths<NumberKeyedRecord, {leavesOnly: true}>>().toBe<`${BrandedNumberKey}.value`>();
+expectTypeOf<Paths<NumberKeyedRecord, {bracketNotation: true}>>()
+	.toBe<`[${BrandedNumberKey}]` | `[${BrandedNumberKey}].value`>();
+expectTypeOf<Paths<{items: NumberKeyedRecord}, {bracketNotation: true; leavesOnly: true}>>()
+	.toBe<`items[${BrandedNumberKey}].value`>();
+expectTypeOf<'items.anything.value'>().not.toBeAssignableTo<Paths<{items: StringKeyedRecord}>>();
+expectTypeOf<'items.0.value'>().not.toBeAssignableTo<Paths<{items: NumberKeyedRecord}>>();

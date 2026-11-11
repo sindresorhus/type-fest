@@ -5,7 +5,7 @@ import type {DigitCharacter} from './characters.d.ts';
 import type {OmitIndexSignature} from './omit-index-signature.d.ts';
 import type {PickIndexSignature} from './pick-index-signature.d.ts';
 import type {UnknownArray} from './unknown-array.d.ts';
-import type {SetArrayAccess, SimplifyObject, ParsePathToStringSegments, ToString, UnwrapPathBrand} from './internal/index.d.ts';
+import type {SetArrayAccess, SimplifyObject, ParsePathToStringSegments, KeyToString, UnwrapPathBrand} from './internal/index.d.ts';
 import type {IsReadonlyArray} from './is-readonly-array.d.ts';
 
 /**
@@ -31,7 +31,7 @@ Walk `Path` one key at a time, and place `Value` at the end of the path. Each un
 type SetPropertyAtPath<BaseType, Path extends readonly PropertyKey[], Value> =
 	BaseType extends unknown // For distributing `BaseType`
 		? Path extends readonly [infer Key extends PropertyKey, ...infer Rest extends readonly PropertyKey[]]
-			? SetPropertyAtKey<BaseType, ToString<UnwrapPathBrand<Key>>, Rest, Value>
+			? SetPropertyAtKey<BaseType, KeyToString<UnwrapPathBrand<Key>>, Rest, Value>
 			// The path is exhausted, so this is where the value is placed.
 			: Path extends readonly [] ? Value : BaseType
 		: never; // Should never happen
@@ -46,7 +46,7 @@ type SetPropertyAtKey<BaseType, Key extends PropertyKey, Rest extends readonly P
 			: BaseType extends UnknownArray
 				? SetPropertyInArray<BaseType, Key, Rest, Value>
 				// A non-literal key, like `string`, `number`, or `` `${number}` ``, can name any property, so the type is returned unchanged.
-				: {} extends Record<ToString<Key>, never>
+				: {} extends Record<KeyToString<Key>, never>
 					? BaseType
 					: BaseType extends object
 						? SetPropertyInObject<BaseType, Key, Rest, Value>
@@ -58,8 +58,8 @@ type SetPropertyAtKey<BaseType, Key extends PropertyKey, Rest extends readonly P
 /**
 Create an array for a canonical non-negative integer key, and an object for any other key.
 */
-type NewContainer<Key extends PropertyKey> = ToString<Key> extends `${bigint}`
-	? ConsistsOnlyOf<ToString<Key>, DigitCharacter> extends true ? never[] : {}
+type NewContainer<Key extends PropertyKey> = KeyToString<Key> extends `${bigint}`
+	? ConsistsOnlyOf<KeyToString<Key>, DigitCharacter> extends true ? never[] : {}
 	: {};
 
 /**
@@ -78,7 +78,7 @@ type SetPropertyInObject<BaseType extends object, Key extends PropertyKey, Rest 
 	& ([DeclaredKey<BaseType, Key>] extends [never]
 		? [CoveringSignature<BaseType, Key>] extends [never]
 			// The key is new, like `dot-prop` creating it at runtime.
-			? {[CreatedKey in ToString<Key>]: SetPropertyAtPath<undefined, Rest, Value>}
+			? {[CreatedKey in KeyToString<Key>]: SetPropertyAtPath<undefined, Rest, Value>}
 			: {}
 		: {})>;
 
@@ -87,8 +87,8 @@ Set the element at the numeric key in the array or tuple. An array of unknown le
 */
 type SetPropertyInArray<ArrayType extends UnknownArray, Key extends PropertyKey, Rest extends readonly PropertyKey[], Value> =
 	// A numeric key is matched by its round-tripped spelling, the same way `Get` reads it, so `01` does not name `1`. Any other key cannot name an element.
-	ToString<Key> extends `${infer Index extends number}`
-		? `${Index}` extends ToString<Key>
+	KeyToString<Key> extends `${infer Index extends number}`
+		? `${Index}` extends KeyToString<Key>
 			? `${Index}` extends keyof ArrayType
 				? {[Member in keyof ArrayType]: Member extends `${Index}` ? SetPropertyAtPath<ArrayType[Member], Rest, Value> : ArrayType[Member]}
 				// An index outside a declared tuple position, or a non-literal index, makes the element type a union in an array of unknown length.
@@ -101,7 +101,7 @@ type SetPropertyInArray<ArrayType extends UnknownArray, Key extends PropertyKey,
 Read the path as `Get` does: an array is kept, and anything else is split on `.` and `[...]`.
 */
 type NormalizePath<Path extends string | number | ReadonlyArray<string | number>> =
-	Path extends ReadonlyArray<string | number> ? Path : ParsePathToStringSegments<ToString<UnwrapPathBrand<Path>>>;
+	Path extends ReadonlyArray<string | number> ? Path : ParsePathToStringSegments<KeyToString<UnwrapPathBrand<Path>>>;
 
 /**
 Set a deeply-nested property on an object using a key path, like [Lodash's `.set()`](https://lodash.com/docs#set) function.

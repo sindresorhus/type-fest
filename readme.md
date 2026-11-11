@@ -323,6 +323,7 @@ Click the type names for complete docs.
 
 ### String
 
+- [`ToString`](source/to-string.d.ts) - Convert a primitive type to its string representation.
 - [`WhitespaceCharacter`](source/whitespace-character.d.ts) - Matches a single whitespace character.
 - [`IsWhitespace`](source/is-whitespace.d.ts) - Returns a boolean for whether a string is non-empty and consists only of whitespace characters.
 - [`AsciiPunctuationCharacter`](source/ascii-punctuation-character.d.ts) - Matches a single ASCII punctuation character.

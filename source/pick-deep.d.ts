@@ -2,7 +2,7 @@ import type {ExactKey} from './exact-key.d.ts';
 import type {OmitIndexSignature} from './omit-index-signature.d.ts';
 import type {TupleOf} from './tuple-of.d.ts';
 import type {ExcludeRestElement} from './exclude-rest-element.d.ts';
-import type {BuildObject, NonRecursiveType, SimplifyObject, ToString, UnwrapPathBrand} from './internal/index.d.ts';
+import type {BuildObject, NonRecursiveType, SimplifyObject, KeyToString, UnwrapPathBrand} from './internal/index.d.ts';
 import type {IsNever} from './is-never.d.ts';
 import type {IsUnion} from './is-union.d.ts';
 import type {LiteralUnion} from './literal-union.d.ts';
@@ -89,7 +89,7 @@ type PickDeepWithPath<Type, Path extends string | number> =
 		? never
 		: Type extends UnknownArray
 			// The array helpers match indexes as strings, so a number index is read as its string form.
-			? PickDeepArray<Type, ToString<Path>>
+			? PickDeepArray<Type, KeyToString<Path>>
 			: Type extends object
 				? SimplifyDeep<PickDeepObject<Type, Path>>
 				: never;
@@ -275,7 +275,7 @@ type BuildPickedTuple<ArrayType extends UnknownArray, PathUnion extends string |
 Use a named property's declared key when its spelling matches, otherwise retain index-signature lookup.
 */
 type PickedKey<RecordType extends object, Key extends string | number, Named extends object = OmitIndexSignature<RecordType>> =
-	Extract<keyof Named, Extract<Key, ToString<keyof Named>>> extends infer Actual extends keyof RecordType
+	Extract<keyof Named, Extract<Key, KeyToString<keyof Named>>> extends infer Actual extends keyof RecordType
 		? [Actual] extends [never] ? ExactKey<RecordType, Key> : Actual
 		: never;
 

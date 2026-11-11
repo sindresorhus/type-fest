@@ -1,4 +1,4 @@
-import type {ParsePathToStringSegments, ToString, UnwrapPathBrand} from './internal/index.d.ts';
+import type {ParsePathToStringSegments, KeyToString, UnwrapPathBrand} from './internal/index.d.ts';
 import type {IsAny} from './is-any.d.ts';
 import type {Get} from './get.d.ts'; // For `@link`
 import type {Paths} from './paths.d.ts'; // For `@link`
@@ -94,8 +94,8 @@ export type ParsePath<Path extends string | number> =
 // Read the primitive path before testing its width or parsing its segments.
 type ParsePathImplementation<Path extends string | number> =
 	// Check `Path` for the `string & {}` of `LiteralUnion`, because its string form is not `string`. Also check the string form, because checking only `Path` stops a function parameter constrained to the result from inferring string literals when it is not `const`.
-	string extends Path | ToString<Path>
+	string extends Path | KeyToString<Path>
 		? Array<string | number>
-		: ToIndexes<ParsePathToStringSegments<ToString<Path>>>;
+		: ToIndexes<ParsePathToStringSegments<KeyToString<Path>>>;
 
 export {};

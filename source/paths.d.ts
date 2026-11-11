@@ -1,4 +1,4 @@
-import type {NonRecursiveType, ToString, MapsSetsOrArrays, CountExactInArray} from './internal/index.d.ts';
+import type {NonRecursiveType, KeyToString, MapsSetsOrArrays, CountExactInArray} from './internal/index.d.ts';
 import type {IsNumberLike} from './is-number-like.d.ts';
 import type {ApplyDefaultOptions} from './apply-default-options.d.ts';
 import type {IsAny} from './is-any.d.ts';
@@ -441,9 +441,9 @@ type InternalPaths<T, Options extends Required<PathsOptions>, CurrentDepth exten
 			And<Options['bracketNotation'], IsNumberLike<Key>> extends true
 				? `[${Key}]`
 				: CurrentDepth extends 0
-					// Return both `Key` and `ToString<Key>` because for number keys, like `1`, both `1` and `'1'` are valid keys.
-					? Key | ToString<Key>
-					: `.${(Key | ToString<Key>)}`
+					// Return both `Key` and `KeyToString<Key>` because for number keys, like `1`, both `1` and `'1'` are valid keys.
+					? Key | KeyToString<Key>
+					: `.${Key}`
 		) extends infer TransformedKey extends string | number
 			? ((Options['leavesOnly'] extends true
 				? Options['maxRecursionDepth'] extends CurrentDepth

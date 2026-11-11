@@ -1,4 +1,4 @@
-import type {ToString} from './internal/string.d.ts';
+import type {KeyToString} from './internal/string.d.ts';
 import type {PropertyValue} from './property-value.d.ts'; // For `@link`
 
 /**
@@ -38,8 +38,8 @@ type Success = PickByKey<StatusMessages, '200'>;
 export type ExactKey<ObjectType extends object, Key extends PropertyKey> =
 	Key extends keyof ObjectType
 		? Key
-		: ToString<Key> extends keyof ObjectType
-			? ToString<Key>
+		: KeyToString<Key> extends keyof ObjectType
+			? KeyToString<Key>
 			: Key extends `${infer NumberKey extends number}`
 				// A numeric-looking string names a number key only when its spelling survives the conversion.
 				? `${NumberKey}` extends Key

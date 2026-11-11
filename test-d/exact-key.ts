@@ -135,3 +135,9 @@ expectTypeOf<IndexedAccess<{readonly 0?: string}, '0'>>().toBe<string | undefine
 type PickByKey<ObjectType extends object, Key extends PropertyKey> = Pick<ObjectType, ExactKey<ObjectType, Key>>;
 expectTypeOf<PickByKey<StatusMessages, '200'>>().toBe<{200: 'OK'}>();
 expectTypeOf<PickByKey<StatusMessages, 404 | '500'>>().toBe<{'404': 'Not found'}>();
+
+// Lookup uses the branded template pattern, without widening it to a plain number.
+type BrandedIndex = Tagged<number, 'Index'>;
+expectTypeOf<ExactKey<Record<`${BrandedIndex}`, string>, BrandedIndex>>().toBe<`${BrandedIndex}`>();
+expectTypeOf<ExactKey<Record<`${BrandedIndex}`, string>, '0'>>().toBe<never>();
+expectTypeOf<ExactKey<Record<`${BrandedIndex}`, string>, 0>>().toBe<never>();

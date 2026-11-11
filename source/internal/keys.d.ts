@@ -1,6 +1,6 @@
 import type {ExactKey} from '../exact-key.d.ts';
 import type {UnknownArray} from '../unknown-array.d.ts';
-import type {ToString} from './string.d.ts';
+import type {KeyToString} from './string.d.ts';
 
 // Returns `never` if the key or property is not jsonable without testing whether the property is required or optional otherwise return the key.
 type BaseKeyFilter<Type, Key extends keyof Type> = Key extends symbol
@@ -61,7 +61,7 @@ type Keys = DeduplicatedKeys<0 | '0' | Field.Name | 'name'>;
 //=> 0 | 'name'
 ```
 */
-export type DeduplicatedKeys<Keys extends PropertyKey> = Exclude<ToString<Keys & string> | Exclude<Keys, string>, `${Keys & number}`>;
+export type DeduplicatedKeys<Keys extends PropertyKey> = Exclude<KeyToString<Keys & string> | Exclude<Keys, string>, `${Keys & number}`>;
 
 /**
 Returns the keys of `Type` that are not in `Keys`.
@@ -120,7 +120,7 @@ export type KeySelector<Key> =
 			? Key
 			: Key extends number
 				? `${Key}` extends `${infer Value extends number}` ? Value : Key
-				: Key | ToString<Key & string>
+				: Key | KeyToString<Key & string>
 		: never;
 
 export {};

@@ -5,7 +5,7 @@ import type {StringToNumber} from '../string-to-number.d.ts';
 import type {OmitIndexSignature} from '../omit-index-signature.d.ts';
 import type {PickIndexSignature} from '../pick-index-signature.d.ts';
 import type {DefinedKeyFilter, OptionalKeyFilter} from './keys.d.ts';
-import type {ToString} from './string.d.ts';
+import type {KeyToString} from './string.d.ts';
 
 /**
 Flatten an object type. This is the plain definition `Simplify` had before it started returning a function, a class constructor, or a branded primitive as is.
@@ -99,7 +99,7 @@ export type NormalizedKeys<Keys extends PropertyKey> =
 	| Keys
 	| (string extends Keys ? number : never)
 	| StringToNumber<Keys & string>
-	| ToString<Keys & number>;
+	| KeyToString<Keys & number>;
 
 /**
 Get the given keys with their numeric and string aliases, including the runtime string spelling of enum keys.
@@ -114,7 +114,7 @@ type A = KeyAliases<0 | Color.Red>;
 //=> 0 | '0' | Color.Red | 'red'
 ```
 */
-export type KeyAliases<Keys extends PropertyKey> = NormalizedKeys<Keys | ToString<Keys>>;
+export type KeyAliases<Keys extends PropertyKey> = NormalizedKeys<Keys | KeyToString<Keys>>;
 
 /**
 Finds the keys of `BaseType` that the terminal paths name for deep setters, matching numeric, string, and enum spellings, and keeping a numeric key such as `1.2` distinct from a dotted string path such as `'1.2'`.
@@ -131,14 +131,14 @@ Finds the subpaths whose first property matches `Key` in `BaseType`. A declared 
 */
 export type DeepSubPaths<KeyPaths, Key, BaseType> = KeyPaths extends `${infer Property}.${infer RestPath}`
 	// A noncanonical numeric segment, such as `01`, does not name a number key or an array index.
-	? Property extends ToString<(Key & string) | ExactKey<Record<Key & number, unknown>, Property>>
+	? Property extends KeyToString<(Key & string) | ExactKey<Record<Key & number, unknown>, Property>>
 		? Property extends `${keyof OmitIndexSignature<BaseType> & (string | number)}`
 			? `${Key & (string | number)}` extends Property
 				? RestPath
 				: never
 			: RestPath
 		// A non-literal segment also selects each key assignable to its native template pattern.
-		: Extract<ToString<Key>, Property> extends never
+		: Extract<KeyToString<Key>, Property> extends never
 			? never
 			: RestPath
 	: never;

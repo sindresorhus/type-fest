@@ -1,7 +1,7 @@
 import type {ExactKey} from './exact-key.d.ts';
 import type {ArraySplice} from './array-splice.d.ts';
 import type {Except} from './except.d.ts';
-import type {NonRecursiveType, SetArrayAccess, ToString, UnwrapPathBrand} from './internal/index.d.ts';
+import type {NonRecursiveType, SetArrayAccess, KeyToString, UnwrapPathBrand} from './internal/index.d.ts';
 import type {IsReadonlyArray} from './is-readonly-array.d.ts';
 import type {OmitIndexSignature} from './omit-index-signature.d.ts';
 import type {IsEqual} from './is-equal.d.ts';
@@ -108,7 +108,7 @@ type OmitDeepWithOnePath<T, Path extends string | number> =
 	T extends NonRecursiveType
 		? T
 		// The array helper matches indexes as strings, so a number index is read as its string form.
-		: T extends UnknownArray ? SetArrayAccess<OmitDeepArrayWithOnePath<T, ToString<Path>>, IsReadonlyArray<T>>
+		: T extends UnknownArray ? SetArrayAccess<OmitDeepArrayWithOnePath<T, KeyToString<Path>>, IsReadonlyArray<T>>
 			: T extends object ? OmitDeepObjectWithOnePath<T, Path>
 				: T;
 
@@ -119,18 +119,18 @@ type OmitDeepObjectWithOnePath<ObjectT extends object, P extends string | number
 	P extends `${infer RecordKeyInPath}.${infer SubPath}`
 		? {
 			[Key in keyof ObjectT]:
-			IsEqual<RecordKeyInPath, ToString<Key>> extends true
+			IsEqual<RecordKeyInPath, KeyToString<Key>> extends true
 				? OmitDeepWithOnePath<ObjectT[Key], SubPath>
 				// `Paths` emits `${string}` for a signature, so matching segments transform its value type. Resolve the current key with `ExactKey` to reject alternate numeric spellings.
-				: RecordKeyInPath extends ToString<Key> & ToString<ExactKey<Record<Key, unknown>, RecordKeyInPath>>
+				: RecordKeyInPath extends KeyToString<Key> & KeyToString<ExactKey<Record<Key, unknown>, RecordKeyInPath>>
 					// A member that names the key outright is what the key reads, so the signature is left alone.
-					? RecordKeyInPath extends ToString<keyof OmitIndexSignature<ObjectT>>
+					? RecordKeyInPath extends KeyToString<keyof OmitIndexSignature<ObjectT>>
 						? ObjectT[Key]
 						: OmitDeepWithOnePath<ObjectT[Key], SubPath>
 					: ObjectT[Key]
 		}
 		// Match declared terminal keys by their spelling, including enums; leave index signatures to ExactKey.
-		: (ExactKey<ObjectT, P> | keyof {[Key in keyof OmitIndexSignature<ObjectT> as IsEqual<ToString<Key>, ToString<P>> extends true ? Key : never]: never}) extends infer Key
+		: (ExactKey<ObjectT, P> | keyof {[Key in keyof OmitIndexSignature<ObjectT> as IsEqual<KeyToString<Key>, KeyToString<P>> extends true ? Key : never]: never}) extends infer Key
 			? IsNever<Key> extends true
 				? ObjectT
 				: Except<ObjectT, Extract<Key, keyof ObjectT>> // Keep unrelated declared fields covered by an index signature.

@@ -1,4 +1,4 @@
-import type {MapsSetsOrArrays, NonRecursiveType, ToString} from './internal/index.d.ts';
+import type {MapsSetsOrArrays, NonRecursiveType, KeyToString} from './internal/index.d.ts';
 import type {ApplyDefaultOptions} from './apply-default-options.d.ts';
 import type {GreaterThan} from './greater-than.d.ts';
 import type {IsAny} from './is-any.d.ts';
@@ -134,7 +134,7 @@ type _JsonPointer<Type, Options extends Required<JsonPointerOptions>, CurrentDep
 			: Type extends object
 				? {
 					[Key in keyof Type]-?: Key extends string | number
-						? `${EscapeJsonPointerToken<ToString<Key>>}${_JsonPointerSuffix<Type[Key], Options, CurrentDepth>}`
+						? `${EscapeJsonPointerToken<KeyToString<Key>>}${_JsonPointerSuffix<Type[Key], Options, CurrentDepth>}`
 						: never;
 				}[keyof Type & (Type extends UnknownArray ? number : unknown)]
 				: never;

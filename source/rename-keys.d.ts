@@ -9,7 +9,7 @@ import type {SetRequired} from './set-required.d.ts';
 import type {SetReadonly} from './set-readonly.d.ts';
 import type {IfNotAnyOrNever} from './internal/type.d.ts';
 import type {NormalizedKeys} from './internal/object.d.ts';
-import type {ToString} from './internal/string.d.ts';
+import type {KeyToString} from './internal/string.d.ts';
 
 /**
 Rename keys in an object type according to a map of old-to-new names.
@@ -172,7 +172,7 @@ type ApplyReadonly<BaseType extends object, RenameMap extends Record<PropertyKey
 type NormalizeMap<RenameMap extends Record<PropertyKey, PropertyKey>> = {
 	// Include a string enum key's literal spelling, so either form can select the rename.
 	// Ignore optional-entry absence, but reject the whole target if any member is non-literal.
-	-readonly [Key in keyof RenameMap as IsLiteral<Required<RenameMap>[Key]> extends true ? Key | ToString<Key & string> : never]-?: RenameMap[Key];
+	-readonly [Key in keyof RenameMap as IsLiteral<Required<RenameMap>[Key]> extends true ? Key | KeyToString<Key & string> : never]-?: RenameMap[Key];
 };
 
 // Numeric keys and their canonical string forms name the same property, so `{'0': 'x'}` also renames `{0: …}`. Other numeric-looking strings, like `'01'`, stay distinct.

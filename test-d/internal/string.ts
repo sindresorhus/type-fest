@@ -1,13 +1,42 @@
 import {expectTypeOf} from 'nz';
 import type {AsciiPunctuationCharacter, IsEqual, LiteralUnion, Opaque, StringRepeat, Tagged} from '../../index.d.ts';
-import type {CasedString, PositiveNumericStringGt, ParsePathToStringSegments, ToString, UnwrapPathBrand} from '../../source/internal/index.d.ts';
+import type {CasedString, PositiveNumericStringGt, ParsePathToStringSegments, KeyToString, UnwrapPathBrand} from '../../source/internal/index.d.ts';
 
-expectTypeOf<IsEqual<ToString<'a'>, 'a'>>().toBe<true>();
-expectTypeOf<IsEqual<ToString<1>, '1'>>().toBe<true>();
-expectTypeOf<IsEqual<ToString<-1>, '-1'>>().toBe<true>();
-expectTypeOf<IsEqual<ToString<boolean>, never>>().toBe<true>();
-expectTypeOf<IsEqual<ToString<'a' | 1>, 'a' | '1'>>().toBe<true>();
-expectTypeOf<IsEqual<ToString<never>, never>>().toBe<true>();
+expectTypeOf<IsEqual<KeyToString<'a'>, 'a'>>().toBe<true>();
+expectTypeOf<IsEqual<KeyToString<1>, '1'>>().toBe<true>();
+expectTypeOf<IsEqual<KeyToString<-1>, '-1'>>().toBe<true>();
+expectTypeOf<IsEqual<KeyToString<boolean>, never>>().toBe<true>();
+expectTypeOf<IsEqual<KeyToString<'a' | 1>, 'a' | '1'>>().toBe<true>();
+expectTypeOf<IsEqual<KeyToString<never>, never>>().toBe<true>();
+expectTypeOf<KeyToString<any>>().toBe<`${any}`>();
+expectTypeOf<KeyToString<unknown>>().toBe<never>();
+expectTypeOf<KeyToString<symbol>>().toBe<never>();
+expectTypeOf<KeyToString<Tagged<1, 'Key'>>>().toBe<`${Tagged<1, 'Key'>}`>();
+expectTypeOf<KeyToString<number & {}>>().toBe<`${number & {}}`>();
+
+// Internal key conversion keeps native patterns and rejects non-key primitives.
+expectTypeOf<KeyToString<''>>().toBe<''>();
+expectTypeOf<KeyToString<string>>().toBe<string>();
+expectTypeOf<KeyToString<number>>().toBe<`${number}`>();
+expectTypeOf<KeyToString<bigint>>().toBe<never>();
+expectTypeOf<KeyToString<1n>>().toBe<never>();
+expectTypeOf<KeyToString<null>>().toBe<never>();
+expectTypeOf<KeyToString<undefined>>().toBe<never>();
+expectTypeOf<KeyToString<void>>().toBe<never>();
+expectTypeOf<KeyToString<object>>().toBe<never>();
+expectTypeOf<KeyToString<true>>().toBe<never>();
+expectTypeOf<KeyToString<false>>().toBe<never>();
+expectTypeOf<KeyToString<0 | true | 1n | null | symbol | 'field'>>().toBe<'0' | 'field'>();
+expectTypeOf<`key:${KeyToString<string & {}>}`>().toBe<`key:${string & {}}`>();
+expectTypeOf<`key:${KeyToString<LiteralUnion<'field', string>>}`>().toBe<'key:field' | `key:${string & {}}`>();
+expectTypeOf<`key:${KeyToString<Tagged<'field', 'Key'>>}`>().toBe<`key:${Tagged<'field', 'Key'>}`>();
+expectTypeOf<`key:${KeyToString<Tagged<string, 'Key'>>}`>().toBe<`key:${Tagged<string, 'Key'>}`>();
+expectTypeOf<KeyToString<Tagged<number, 'Index'>>>().toBe<`${Tagged<number, 'Index'>}`>();
+expectTypeOf<`key:${KeyToString<Opaque<'field', 'Key'>>}`>().toBe<`key:${Opaque<'field', 'Key'>}`>();
+expectTypeOf<KeyToString<`field-${number}`>>().toBe<`field-${number}`>();
+expectTypeOf<`key:${KeyToString<Tagged<`field-${number}`, 'Key'>>}`>().toBe<`key:${Tagged<`field-${number}`, 'Key'>}`>();
+expectTypeOf<'field'>().not.toBeAssignableTo<KeyToString<Tagged<'field', 'Key'>>>();
+expectTypeOf<string>().not.toBeAssignableTo<KeyToString<any>>();
 
 // A number in exponential notation is larger (`e+`) or smaller (`e-`) than any number in plain decimal notation, so only two exponential numbers are undecided.
 expectTypeOf<IsEqual<PositiveNumericStringGt<'1e+21', '999'>, true>>().toBe<true>();

@@ -1,5 +1,5 @@
 import {expectTypeOf} from 'nz';
-import type {JsonPointer, JsonPointerOptions, StringRepeat} from '../index.d.ts';
+import type {JsonPointer, JsonPointerOptions, StringRepeat, Tagged} from '../index.d.ts';
 
 // Basic
 expectTypeOf<JsonPointer<{foo: string}>>().toBe<'' | '/foo'>();
@@ -326,3 +326,19 @@ expectTypeOf<'/foo'>().toBeAssignableTo<JsonPointer<any>>();
 expectTypeOf<'foo'>().not.toBeAssignableTo<JsonPointer<any>>();
 expectTypeOf<'/foo'>().toBeAssignableTo<JsonPointer<unknown>>();
 expectTypeOf<'foo'>().not.toBeAssignableTo<JsonPointer<unknown>>();
+
+// Branded key patterns stay constrained at root and nested pointer positions.
+type BrandedStringKey = Tagged<string, 'StringKey'>;
+type BrandedNumberKey = Tagged<number, 'NumberKey'>;
+expectTypeOf<JsonPointer<Record<BrandedStringKey, number>>>().toBe<'' | `/${BrandedStringKey}`>();
+expectTypeOf<JsonPointer<Record<BrandedNumberKey, number>>>().toBe<'' | `/${BrandedNumberKey}`>();
+expectTypeOf<JsonPointer<Record<BrandedStringKey, {value: string}>>>()
+	.toBe<'' | `/${BrandedStringKey}` | `/${BrandedStringKey}/value`>();
+expectTypeOf<JsonPointer<Record<BrandedNumberKey, {value: string}>>>()
+	.toBe<'' | `/${BrandedNumberKey}` | `/${BrandedNumberKey}/value`>();
+expectTypeOf<JsonPointer<{items: Record<BrandedStringKey, {value: string}>}>>()
+	.toBe<'' | '/items' | `/items/${BrandedStringKey}` | `/items/${BrandedStringKey}/value`>();
+expectTypeOf<JsonPointer<{items: Record<BrandedNumberKey, {value: string}>}>>()
+	.toBe<'' | '/items' | `/items/${BrandedNumberKey}` | `/items/${BrandedNumberKey}/value`>();
+expectTypeOf<'/anything'>().not.toBeAssignableTo<JsonPointer<Record<BrandedStringKey, number>>>();
+expectTypeOf<'/0'>().not.toBeAssignableTo<JsonPointer<Record<BrandedNumberKey, number>>>();

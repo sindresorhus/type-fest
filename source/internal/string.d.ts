@@ -6,11 +6,13 @@ import type {AsciiPunctuationCharacter} from '../ascii-punctuation-character.d.t
 import type {UnwrapBrandedPrimitive} from '../unwrap-branded-primitive.d.ts';
 
 /**
-Return a string representation of the given string or number.
+Convert a string or number key to its template literal representation.
 
 Note: This type is not the return type of the `.toString()` function.
+
+Keep this separate from the public `ToString`: internal key and path matching relies on preserving branded template literal patterns and `${any}`.
 */
-export type ToString<T> = T extends string | number ? `${T}` : never;
+export type KeyToString<Key> = Key extends string | number ? `${Key}` : never;
 
 /**
 The types that `Array#join()` can stringify, and which `Join` accepts.
