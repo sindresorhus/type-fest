@@ -378,6 +378,7 @@ Click the type names for complete docs.
 - [`ArrayTrim`](source/array-trim.d.ts) - Remove the elements of the given type from both ends of an array.
 - [`ArrayFlat`](source/array-flat.d.ts) - Flatten an array type to the given depth, like [`Array#flat()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/flat).
 - [`ArrayLength`](source/array-length.d.ts) - Return the length of an array. Equivalent to `T['length']` where `T` extends any array.
+- [`TupleLength`](source/tuple-length.d.ts) - Return the length of a tuple.
 - [`EmptyArray`](source/empty-array.d.ts) - Represents a strictly empty readonly array, implemented as the readonly empty tuple `readonly []`.
 - [`ArrayAt`](source/array-at.d.ts) - Get the type of the element at the given index of an array, like [`Array#at()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/at).
 

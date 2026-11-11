@@ -336,3 +336,14 @@ expectTypeOf<SharedUnionFieldsDeepRecurseIntoArrays<readonly [string[]] | readon
 expectTypeOf<SharedUnionFieldsDeepRecurseIntoArrays<readonly [] | [number]>>().toBe<readonly [] | []>();
 type MixedAccessRest = readonly [1, ...string[]] | [2, ...number[]];
 expectTypeOf<SharedUnionFieldsDeepRecurseIntoArrays<MixedAccessRest>>().toBe<readonly [1 | 2, ...Array<string | number>] | [1 | 2, ...Array<string | number>]>();
+
+// The public TupleLength helper must filter unbounded alternatives before choosing the minimum finite length.
+expectTypeOf<SharedUnionFieldsDeepRecurseIntoArrays<[string, number?] | Date[]>>().toBe<[string | Date]>();
+expectTypeOf<SharedUnionFieldsDeepRecurseIntoArrays<readonly [string?, number?] | readonly Date[]>>().toBe<readonly []>();
+expectTypeOf<SharedUnionFieldsDeepRecurseIntoArrays<[string, ...([] | [number, boolean])] | Date[]>>().toBe<[string | Date]>();
+expectTypeOf<SharedUnionFieldsDeepRecurseIntoArrays<[string, ...number[]] | [boolean, Date?] | symbol[]>>().toBe<[string | boolean | symbol]>();
+expectTypeOf<SharedUnionFieldsDeepRecurseIntoArrays<readonly [LeftArrayEntry, LeftArrayEntry?] | readonly RightArrayEntry[]>>().toBe<readonly [{shared: string | number}]>();
+
+// Nested optional tuples select their own minimum lengths after outer tuple reconstruction.
+expectTypeOf<SharedUnionFieldsDeepRecurseIntoArrays<[[string, number?], boolean] | [Date[], number, symbol]>>().toBe<[[string | Date], boolean | number]>();
+expectTypeOf<SharedUnionFieldsDeepRecurseIntoArrays<{rows: readonly [readonly [string?, number?]]} | {rows: readonly [readonly Date[], boolean?]}>>().toBe<{rows: readonly [readonly []]}>();

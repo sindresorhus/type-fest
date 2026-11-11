@@ -1,34 +1,6 @@
 import type {GreaterThan} from '../greater-than.d.ts';
 import type {LessThan} from '../less-than.d.ts';
 import type {NegativeInfinity, PositiveInfinity} from '../numeric.d.ts';
-import type {UnknownArray} from '../unknown-array.d.ts';
-
-/**
-Infer the length of the given tuple `<T>`.
-
-Returns `never` if the given type is a non-fixed-length array like `Array<string>`.
-
-@example
-```
-type Tuple = TupleLength<[string, number, boolean]>;
-//=> 3
-
-type Array = TupleLength<string[]>;
-//=> never
-
-// Supports union types. The empty tuple has length `0`, and the array of unknown length drops out.
-type Union = TupleLength<[] | [1, 2, 3] | number[]>;
-//=> 0 | 3
-```
-*/
-export type TupleLength<T extends UnknownArray> =
-	// `extends unknown` is used to convert `T` (if `T` is a union type) to
-	// a [distributive conditional type](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-2-8.html#distributive-conditional-types))
-	T extends unknown
-		? number extends T['length']
-			? never // Return never if the given type is a non-fixed-length array like `Array<string>`
-			: T['length']
-		: never; // Should never happen
 
 /**
 Returns the maximum value from a tuple of integers.

@@ -1,4 +1,5 @@
-import type {NonRecursiveType, TupleLength, StaticPartOfArray, VariablePartOfArray, SetArrayAccess} from './internal/index.d.ts';
+import type {NonRecursiveType, StaticPartOfArray, VariablePartOfArray, SetArrayAccess} from './internal/index.d.ts';
+import type {TupleLength} from './tuple-length.d.ts';
 import type {ApplyDefaultOptions} from './apply-default-options.d.ts';
 import type {IsReadonlyArray} from './is-readonly-array.d.ts';
 import type {OmitIndexSignature} from './omit-index-signature.d.ts';
