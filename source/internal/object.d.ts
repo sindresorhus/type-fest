@@ -1,15 +1,10 @@
 import type {ExactKey} from '../exact-key.d.ts';
 import type {IsEqual} from '../is-equal.d.ts';
-import type {KeysOfUnion} from '../keys-of-union.d.ts';
 import type {IsNever} from '../is-never.d.ts';
 import type {StringToNumber} from '../string-to-number.d.ts';
-import type {Primitive} from '../primitive.d.ts';
-import type {TagContainer, UnwrapTagged} from '../tagged.d.ts';
 import type {OmitIndexSignature} from '../omit-index-signature.d.ts';
 import type {PickIndexSignature} from '../pick-index-signature.d.ts';
-import type {CollapseLiterals} from '../collapse-literals.d.ts';
 import type {DefinedKeyFilter, OptionalKeyFilter} from './keys.d.ts';
-import type {IfNotAnyOrNever} from './type.d.ts';
 import type {ToString} from './string.d.ts';
 
 /**
@@ -81,38 +76,6 @@ export type IsReadonlyProperty<ObjectType, Key extends keyof ObjectType> = IsEqu
 	{[Property in Key]: ObjectType[Property]},
 	{readonly [Property in Key]: ObjectType[Property]}
 >;
-
-/**
-Returns the base type of a branded type.
-
-@example
-```
-type Brand = {readonly __brand: unique symbol};
-
-type A = UnwrapBrand<string & Brand>;
-//=> string
-
-type B = UnwrapBrand<number & Brand>;
-//=> number
-
-type C = UnwrapBrand<PropertyKey & Brand>;
-//=> PropertyKey
-
-type D = UnwrapBrand<(1 | 200n | 'foo' | 'bar') & Brand>;
-//=> 1 | 200n | 'foo' | 'bar'
-```
-*/
-export type UnwrapBrand<T> = IfNotAnyOrNever<T, {ifNot: _UnwrapBrand<T, Primitive>}>;
-
-type _UnwrapBrand<T, Base> = T extends Primitive
-	// Separate tag layers do not match a single object containing all brand properties.
-	// `CollapseLiterals` removes `& {}` first, because TypeScript defers `keyof` on types like `` `on${string}` & {} ``.
-	? UnwrapBrandProperties<CollapseLiterals<T extends TagContainer<unknown> ? UnwrapTagged<T> : T>, Base>
-	: T;
-
-type UnwrapBrandProperties<T, Base> = T extends infer U & Pick<T, Exclude<keyof T, KeysOfUnion<Base>>>
-	? U
-	: T;
 
 /**
 Normalize keys by including string and number representations wherever applicable.

@@ -1,4 +1,4 @@
-import type {UnwrapBrand} from './internal/object.d.ts';
+import type {UnwrapBrandedPrimitive} from './unwrap-branded-primitive.d.ts';
 import type {Tagged} from './tagged.d.ts'; // For `@link`
 import type {StringToNumber} from './string-to-number.d.ts'; // For `@link`
 
@@ -46,7 +46,7 @@ A branded string is unwrapped first, so a {@link Tagged} `'true'` parses to the 
 @category Template literal
 */
 // The `string` branch widens `string` and `any` to `boolean`, and `never` distributes to `never`.
-export type StringToBoolean<S extends string> = _StringToBoolean<S extends object ? UnwrapBrand<S> : S>;
+export type StringToBoolean<S extends string> = _StringToBoolean<S extends object ? UnwrapBrandedPrimitive<S> : S>;
 
 type _StringToBoolean<S extends string> =
 	S extends `${infer Value extends boolean}`

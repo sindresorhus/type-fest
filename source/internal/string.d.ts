@@ -4,7 +4,7 @@ import type {Trim} from '../trim.d.ts';
 import type {_SplitOnDelimiter} from '../split.d.ts';
 import type {CollapseLiterals} from '../collapse-literals.d.ts';
 import type {AsciiPunctuationCharacter} from '../ascii-punctuation-character.d.ts';
-import type {UnwrapBrand} from './object.d.ts';
+import type {UnwrapBrandedPrimitive} from '../unwrap-branded-primitive.d.ts';
 
 /**
 Return a string representation of the given string or number.
@@ -53,7 +53,7 @@ export type CasedString<
 	? [Value] extends [Exclude<Value, '' | `${string}${Exclude<AsciiPunctuationCharacter, AllowedPunctuation>}${string}`>]
 		// The value is turned into a plain string, because a string enum member is not equal to the string that the transform returns.
 		// Unwrap unconditionally after the predicate so branded generics retain their primitive constraint.
-		? IsEqual<`${UnwrapBrand<Value>}`, CasedValue> extends true
+		? IsEqual<`${UnwrapBrandedPrimitive<Value>}`, CasedValue> extends true
 			? Value
 			: never
 		: never
@@ -230,7 +230,7 @@ type Path = UnwrapPathBrand<'users.name' & {readonly brand: unique symbol}>;
 ```
 */
 export type UnwrapPathBrand<Path> = Path extends unknown
-	? Exclude<keyof CollapseLiterals<Path>, keyof string | keyof number> extends never ? Path : UnwrapBrand<Path>
+	? Exclude<keyof CollapseLiterals<Path>, keyof string | keyof number> extends never ? Path : UnwrapBrandedPrimitive<Path>
 	: never;
 
 /**

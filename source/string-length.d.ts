@@ -1,4 +1,4 @@
-import type {UnwrapBrand} from './internal/object.d.ts';
+import type {UnwrapBrandedPrimitive} from './unwrap-branded-primitive.d.ts';
 import type {IfNotAnyOrNever} from './internal/type.d.ts';
 import type {IsStringLiteral} from './is-string-literal.d.ts';
 
@@ -37,7 +37,7 @@ type C = StringLength<`${string}abc`>;
 */
 export type StringLength<S extends string> = IfNotAnyOrNever<S, {
 	// Sentinels are handled here already, and plain strings do not need brand normalization.
-	ifNot: (S extends object ? UnwrapBrand<S> : S) extends infer Input extends string
+	ifNot: (S extends object ? UnwrapBrandedPrimitive<S> : S) extends infer Input extends string
 		? IsStringLiteral<Input> extends true
 			// The intersection preserves the counter's recursion budget and generic numeric result.
 			? StringLengthImplementation<Input> & number

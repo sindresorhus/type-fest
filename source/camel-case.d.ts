@@ -1,4 +1,4 @@
-import type {UnwrapBrand} from './internal/index.d.ts';
+import type {UnwrapBrandedPrimitive} from './unwrap-branded-primitive.d.ts';
 import type {ApplyDefaultOptions} from './apply-default-options.d.ts';
 import type {IsStringLiteral} from './is-string-literal.d.ts';
 import type {_DefaultWordsOptions, _Words, WordsOptions} from './words.d.ts';
@@ -122,7 +122,7 @@ export type CamelCase<Type, Options extends CamelCaseOptions = {}> = Type extend
 	? IsStringLiteral<Type> extends false
 		? Type
 		// The brand is removed first, because the entirely-uppercase pre-lowering and the leading underscores must read the string itself: an intersection with a brand does not reduce under `Uppercase` and does not match `_`. The word splitter can then reuse the normalized input and resolved options.
-		: CamelCaseUnbranded<UnwrapBrand<Type>, Options>
+		: CamelCaseUnbranded<UnwrapBrandedPrimitive<Type>, Options>
 	: Type;
 
 type CamelCaseUnbranded<Type extends string, Options extends CamelCaseOptions> =

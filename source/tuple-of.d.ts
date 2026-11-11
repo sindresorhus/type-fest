@@ -1,4 +1,4 @@
-import type {UnwrapBrand} from './internal/object.d.ts';
+import type {UnwrapBrandedPrimitive} from './unwrap-branded-primitive.d.ts';
 import type {IfNotAnyOrNever} from './internal/type.d.ts';
 import type {DigitCharacter} from './characters.d.ts';
 import type {UnknownArray} from './unknown-array.d.ts';
@@ -78,7 +78,7 @@ Note: If you need a readonly tuple, simply wrap this type with `Readonly`, for e
 @category Array
 */
 export type TupleOf<Length extends number, Fill = unknown> = IfNotAnyOrNever<Length, {
-	ifNot: _TupleOf<Length extends object ? UnwrapBrand<Length> : Length, Fill>;
+	ifNot: _TupleOf<Length extends object ? UnwrapBrandedPrimitive<Length> : Length, Fill>;
 	ifAny: Fill[];
 	ifNever: [];
 }>;

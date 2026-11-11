@@ -4,7 +4,8 @@ import type {Subtract} from './subtract.d.ts';
 import type {Absolute} from './absolute.d.ts';
 import type {IsNegative} from './numeric.d.ts';
 import type {UnknownArray} from './unknown-array.d.ts';
-import type {TupleMin, UnwrapBrand} from './internal/index.d.ts';
+import type {TupleMin} from './internal/index.d.ts';
+import type {UnwrapBrandedPrimitive} from './unwrap-branded-primitive.d.ts';
 import type {IntClosedRange} from './int-closed-range.d.ts'; // For `@link`
 import type {ArrayIndices} from './array-indices.d.ts';
 
@@ -58,7 +59,7 @@ export type IntRange<Start extends number, End extends number, Step extends numb
 				// Non-literal bounds or steps, like `number` or `any`, cannot be counted, so they give no range.
 				// Check each member's primitive values before arithmetic so a brand cannot hide an unknown number; normalization follows distribution to retain finite alternatives beside it.
 				// Numeric enum members also accept `number`, so compare printed values to recognize known bounds.
-				? `${number}` extends `${UnwrapBrand<Start> | UnwrapBrand<End> | UnwrapBrand<Step>}`
+				? `${number}` extends `${UnwrapBrandedPrimitive<Start> | UnwrapBrandedPrimitive<End> | UnwrapBrandedPrimitive<Step>}`
 					? never
 					: IsNegative<Start> extends true
 						? PrivateNegativeIntRange<Start, End, Step>

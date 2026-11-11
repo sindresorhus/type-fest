@@ -1,4 +1,4 @@
-import type {UnwrapBrand} from './internal/object.d.ts';
+import type {UnwrapBrandedPrimitive} from './unwrap-branded-primitive.d.ts';
 
 type Recursive<T> = ReadonlyArray<T | Recursive<T>>;
 
@@ -32,7 +32,7 @@ const readonlyBoolean2DMatrix = emptyMatrix<boolean>()(2);
 */
 export type MultidimensionalReadonlyArray<Element, Dimensions extends number> =
 	Dimensions extends unknown // For distributing `Dimensions` before a wide branded number can erase a zero-dimension alternative.
-		? MultidimensionalReadonlyArrayImplementation<Element, Dimensions extends object ? UnwrapBrand<Dimensions> : Dimensions>
+		? MultidimensionalReadonlyArrayImplementation<Element, Dimensions extends object ? UnwrapBrandedPrimitive<Dimensions> : Dimensions>
 		: never;
 
 // Classify the primitive dimension once so a branded runtime number keeps every nesting depth.

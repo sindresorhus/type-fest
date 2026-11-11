@@ -1,4 +1,4 @@
-import type {UnwrapBrand} from './internal/object.d.ts';
+import type {UnwrapBrandedPrimitive} from './unwrap-branded-primitive.d.ts';
 import type {NonNegativeInteger} from './numeric.d.ts'; // For `@link`
 import type {StringToNumber} from './string-to-number.d.ts'; // For `@link`
 import type {Tagged} from './tagged.d.ts'; // For `@link`
@@ -84,7 +84,7 @@ The built-in `${number}` is not enough because it also matches `'-1'`, `'1.5'`, 
 */
 export type NonNegativeIntegerString<Value extends string> =
 	// Plain strings need no unwrapping; normalize a branded input once before validating its complete spelling.
-	(Value extends object ? UnwrapBrand<Value> : Value) extends infer Input extends string
+	(Value extends object ? UnwrapBrandedPrimitive<Value> : Value) extends infer Input extends string
 		// The prefixed '1' is valid even for an empty input. Include enum values without losing the constraint on generic strings.
 		? '' extends Input | `${Input}`
 			? never

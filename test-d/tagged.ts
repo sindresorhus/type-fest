@@ -58,3 +58,11 @@ expectTypeOf<Tagged<number, 'URL', {secure: true}>>().toBeAssignableTo<Tag<'URL'
 expectTypeOf<Tagged<string, 'JSON', number>>().not.toBeAssignableTo<Tag<'JSON', string>>();
 expectTypeOf<string>().not.toBeAssignableTo<Tag<'URL', unknown>>();
 expectTypeOf<Tagged<string, 'Other'>>().not.toBeAssignableTo<Tag<'URL', unknown>>();
+
+// The metadata example keeps each tag in one layer and uses distinct names for later stages.
+type CheckedUserId = Tagged<string, 'Checked', {parsed: true; validated: true}>;
+type StoredUserId = Tagged<CheckedUserId, 'Stored', {table: 'users'}>;
+expectTypeOf<UnwrapTagged<CheckedUserId>>().toBe<string>();
+expectTypeOf<UnwrapTagged<StoredUserId>>().toBe<string>();
+expectTypeOf<GetTagMetadata<StoredUserId, 'Checked'>>().toBe<{parsed: true; validated: true}>();
+expectTypeOf<GetTagMetadata<StoredUserId, 'Stored'>>().toBe<{table: 'users'}>();

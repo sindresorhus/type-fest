@@ -1,4 +1,4 @@
-import type {UnwrapBrand} from './internal/object.d.ts';
+import type {UnwrapBrandedPrimitive} from './unwrap-branded-primitive.d.ts';
 import type {ApplyDefaultOptions} from './apply-default-options.d.ts';
 import type {IfNotAnyOrNever} from './internal/type.d.ts';
 import type {IsStringLiteral} from './is-string-literal.d.ts';
@@ -79,7 +79,7 @@ export type StringToArray<S extends string, Options extends StringToArrayOptions
 		S,
 		{
 			// The brand belongs to the complete input string, not to its individual characters.
-			ifNot: (S extends object ? UnwrapBrand<S> : S) extends infer Input extends string
+			ifNot: (S extends object ? UnwrapBrandedPrimitive<S> : S) extends infer Input extends string
 				? Input extends unknown // Classify each normalized union member before choosing its traversal.
 					? IsStringLiteral<Input> extends true
 						? StringToArrayLiteral<Input>

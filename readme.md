@@ -155,6 +155,7 @@ Click the type names for complete docs.
 - [`Flavor`](source/flavor.d.ts) - Attach a name to a type without requiring a cast, so that differently named types cannot be mixed.
 - [`Tagged`](source/tagged.d.ts) - Create a [tagged type](https://medium.com/@KevinBGreene/surviving-the-typescript-ecosystem-branding-and-type-tagging-6cf6e516523d) that can support [multiple tags](https://github.com/sindresorhus/type-fest/issues/665) and [per-tag metadata](https://medium.com/@ethanresnick/advanced-typescript-tagged-types-improved-with-type-level-metadata-5072fc125fcf).
 - [`UnwrapTagged`](source/tagged.d.ts) - Get the untagged portion of a tagged type created with `Tagged`.
+- [`UnwrapBrandedPrimitive`](source/unwrap-branded-primitive.d.ts) - Remove brand properties from primitive types while preserving literal types.
 - [`GetTagMetadata`](source/tagged.d.ts) - Given a type and a tag name, returns the metadata associated with that tag on that type.
 - [`InvariantOf`](source/invariant-of.d.ts) - Create an [invariant type](https://basarat.gitbook.io/typescript/type-system/type-compatibility#footnote-invariance), which is a type that does not accept supertypes and subtypes.
 - [`SetOptional`](source/set-optional.d.ts) - Create a type that makes the given keys optional, while keeping the remaining keys as is.

@@ -1,4 +1,4 @@
-import type {UnwrapBrand} from './internal/object.d.ts';
+import type {UnwrapBrandedPrimitive} from './unwrap-branded-primitive.d.ts';
 
 /**
 Matches any non-empty string.
@@ -30,7 +30,7 @@ foo(someString);
 @category String
 */
 // The string form also checks enum values; keep the unwrapped type so the constraint remains strict for generic strings.
-export type NonEmptyString<T extends string> = (T extends object ? UnwrapBrand<T> : T) extends infer Input extends string
+export type NonEmptyString<T extends string> = (T extends object ? UnwrapBrandedPrimitive<T> : T) extends infer Input extends string
 	? '' extends Input | `${Input}` ? never : T
 	: never;
 

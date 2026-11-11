@@ -1,4 +1,4 @@
-import type {UnwrapBrand} from './internal/index.d.ts';
+import type {UnwrapBrandedPrimitive} from './unwrap-branded-primitive.d.ts';
 import type {IsNumericLiteral} from './is-numeric-literal.d.ts';
 import type {IsNegative, PositiveInfinity} from './numeric.d.ts';
 import type {DigitCharacter} from './characters.d.ts';
@@ -37,7 +37,7 @@ type DecimalCount = StringRepeat<'foo', 2.5>;
 @category String
 @category Template literal
 */
-export type StringRepeat<S extends string, Count extends number> = _StringRepeat<S extends object ? UnwrapBrand<S> : S, Count extends object ? UnwrapBrand<Count> : Count>;
+export type StringRepeat<S extends string, Count extends number> = _StringRepeat<S extends object ? UnwrapBrandedPrimitive<S> : S, Count extends object ? UnwrapBrandedPrimitive<Count> : Count>;
 
 // Brands describe the original values, so all count checks and interpolation operate on unwrapped primitives.
 type _StringRepeat<S extends string, Count extends number> =

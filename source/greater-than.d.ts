@@ -1,7 +1,7 @@
 import type {PositiveNumericStringGt} from './internal/index.d.ts';
 import type {PositiveInfinity, NegativeInfinity, IsNegative, _Numeric} from './numeric.d.ts';
 import type {Absolute} from './absolute.d.ts';
-import type {UnwrapBrand} from './internal/object.d.ts';
+import type {UnwrapBrandedPrimitive} from './unwrap-branded-primitive.d.ts';
 
 /**
 Returns a boolean for whether a given number is greater than another number.
@@ -66,7 +66,7 @@ setPositive(-1);
 ```
 */
 export type GreaterThan<A extends _Numeric, B extends _Numeric> =
-	_GreaterThan<A extends object ? UnwrapBrand<A> : A, B extends object ? UnwrapBrand<B> : B>;
+	_GreaterThan<A extends object ? UnwrapBrandedPrimitive<A> : A, B extends object ? UnwrapBrandedPrimitive<B> : B>;
 
 // Numeric enum members accept `number`, but their printed types still identify their known values.
 type _GreaterThan<A extends _Numeric, B extends _Numeric> =

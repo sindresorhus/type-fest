@@ -1,5 +1,5 @@
 import type {WhitespaceCharacter} from './whitespace-character.d.ts';
-import type {UnwrapBrand} from './internal/index.d.ts';
+import type {UnwrapBrandedPrimitive} from './unwrap-branded-primitive.d.ts';
 
 /**
 Remove spaces from the left side.
@@ -30,6 +30,6 @@ type Example = Trim<' foo '>;
 @category String
 @category Template literal
 */
-export type Trim<V extends string> = TrimLeft<TrimRight<V extends object ? UnwrapBrand<V> : V>>;
+export type Trim<V extends string> = TrimLeft<TrimRight<V extends object ? UnwrapBrandedPrimitive<V> : V>>;
 
 export {};

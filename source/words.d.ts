@@ -2,7 +2,7 @@ import type {AsciiPunctuationCharacter} from './ascii-punctuation-character.d.ts
 import type {IsNumeric, WordSeparators} from './internal/index.d.ts';
 import type {ApplyDefaultOptions} from './apply-default-options.d.ts';
 import type {IsLowercase} from './is-lowercase.d.ts';
-import type {UnwrapBrand} from './internal/object.d.ts';
+import type {UnwrapBrandedPrimitive} from './unwrap-branded-primitive.d.ts';
 import type {IsStringLiteral} from './is-string-literal.d.ts';
 import type {IsUppercase} from './is-uppercase.d.ts';
 
@@ -107,7 +107,7 @@ type Words8 = Words<'hello::world', {splitOnPunctuation: true}>;
 */
 export type Words<Sentence extends string, Options extends WordsOptions = {}> = Sentence extends unknown // For distributing `Sentence`
 	// A branded or tagged string can be a literal, so remove the brand once before classification and walking; an intersection with a non-empty object type does not match a template literal pattern.
-	? (Sentence extends object ? UnwrapBrand<Sentence> : Sentence) extends infer Input extends string
+	? (Sentence extends object ? UnwrapBrandedPrimitive<Sentence> : Sentence) extends infer Input extends string
 		? IsStringLiteral<Input> extends true // A string type with an infinite set of possible values cannot be walked character by character, so only the element type survives.
 			// Option objects are not distributed, so for a union of option objects, an option that differs between the members reads as `boolean` and acts as disabled.
 			? _Words<Input, ApplyDefaultOptions<WordsOptions, _DefaultWordsOptions, Options>>

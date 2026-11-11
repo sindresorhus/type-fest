@@ -1,4 +1,4 @@
-import type {UnwrapBrand} from './internal/object.d.ts';
+import type {UnwrapBrandedPrimitive} from './unwrap-branded-primitive.d.ts';
 import type {IsStringLiteral} from './is-string-literal.d.ts';
 
 /**
@@ -52,7 +52,7 @@ It removes matching prefixes recursively, keeping every possible remainder so an
 @category Template literal
 @category Type Guard
 */
-export type ConsistsOnlyOf<Value extends string, Pattern extends string> = _ConsistsOnlyOf<Value extends object ? UnwrapBrand<Value> : Value, Pattern extends object ? UnwrapBrand<Pattern> : Pattern>;
+export type ConsistsOnlyOf<Value extends string, Pattern extends string> = _ConsistsOnlyOf<Value extends object ? UnwrapBrandedPrimitive<Value> : Value, Pattern extends object ? UnwrapBrandedPrimitive<Pattern> : Pattern>;
 
 type _ConsistsOnlyOf<Value extends string, Pattern extends string> = Value extends ''
 	? true

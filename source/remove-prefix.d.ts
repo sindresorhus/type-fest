@@ -1,4 +1,4 @@
-import type {UnwrapBrand} from './internal/object.d.ts';
+import type {UnwrapBrandedPrimitive} from './unwrap-branded-primitive.d.ts';
 import type {ApplyDefaultOptions} from './apply-default-options.d.ts';
 import type {IfNotAnyOrNever} from './internal/type.d.ts';
 import type {Not} from './not.d.ts';
@@ -102,8 +102,8 @@ export type RemovePrefix<S extends string, Prefix extends string, Options extend
 		// A brand describes the input, not the result of a transform, so the result is the plain string even when nothing is removed.
 		ifNot: If<
 			IsNever<Prefix>,
-			S extends object ? UnwrapBrand<S> : S,
-			_RemovePrefix<S extends object ? UnwrapBrand<S> : S, Prefix extends object ? UnwrapBrand<Prefix> : Prefix, ApplyDefaultOptions<RemovePrefixOptions, DefaultRemovePrefixOptions, Options>>
+			S extends object ? UnwrapBrandedPrimitive<S> : S,
+			_RemovePrefix<S extends object ? UnwrapBrandedPrimitive<S> : S, Prefix extends object ? UnwrapBrandedPrimitive<Prefix> : Prefix, ApplyDefaultOptions<RemovePrefixOptions, DefaultRemovePrefixOptions, Options>>
 		>;
 	}>;
 

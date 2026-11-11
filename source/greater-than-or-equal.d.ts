@@ -1,5 +1,5 @@
 import type {GreaterThan} from './greater-than.d.ts';
-import type {UnwrapBrand} from './internal/object.d.ts';
+import type {UnwrapBrandedPrimitive} from './unwrap-branded-primitive.d.ts';
 import type {_Numeric} from './numeric.d.ts';
 
 /**
@@ -62,7 +62,7 @@ setNonNegative(-2);
 ```
 */
 export type GreaterThanOrEqual<A extends _Numeric, B extends _Numeric> =
-	_GreaterThanOrEqual<A extends object ? UnwrapBrand<A> : A, B extends object ? UnwrapBrand<B> : B>;
+	_GreaterThanOrEqual<A extends object ? UnwrapBrandedPrimitive<A> : A, B extends object ? UnwrapBrandedPrimitive<B> : B>;
 
 // Numeric enum members accept `number`, but their printed types still identify their known values.
 type _GreaterThanOrEqual<A extends _Numeric, B extends _Numeric> = A extends _Numeric // For distributing `A`

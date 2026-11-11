@@ -4,7 +4,7 @@ import type {_IsBooleanLiteral} from './is-boolean-literal.d.ts';
 import type {_IsSymbolLiteral} from './is-symbol-literal.d.ts';
 import type {IsNever} from './is-never.d.ts';
 import type {CollapseLiterals} from './collapse-literals.d.ts';
-import type {UnwrapBrand} from './internal/object.d.ts';
+import type {UnwrapBrandedPrimitive} from './unwrap-branded-primitive.d.ts';
 
 /**
 Returns a boolean for whether the given type is a [literal type](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#literal-types).
@@ -67,7 +67,7 @@ type O = IsLiteral<1000n | string | true>;
 */
 // The normalized scalar predicates already reject `any`; only `never` needs a separate guard.
 // Plain primitives need no brand normalization.
-export type IsLiteral<T> = IsNever<T> extends true ? false : _IsLiteral<CollapseLiterals<T extends object ? UnwrapBrand<T> : T>>;
+export type IsLiteral<T> = IsNever<T> extends true ? false : _IsLiteral<CollapseLiterals<T extends object ? UnwrapBrandedPrimitive<T> : T>>;
 
 // Reuse the normalized input instead of repeating the public scalar predicates' boundary checks.
 type _IsLiteral<T> =

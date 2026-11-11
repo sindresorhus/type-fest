@@ -1,5 +1,5 @@
 import type {WhitespaceCharacter} from './whitespace-character.d.ts';
-import type {UnwrapBrand} from './internal/index.d.ts';
+import type {UnwrapBrandedPrimitive} from './unwrap-branded-primitive.d.ts';
 import type {ApplyDefaultOptions} from './apply-default-options.d.ts';
 import type {IsStringLiteral} from './is-string-literal.d.ts';
 
@@ -75,9 +75,9 @@ export type Replace<
 	Replacement extends string,
 	Options extends ReplaceOptions = {},
 > = _Replace<
-	Input extends object ? UnwrapBrand<Input> : Input,
-	Search extends object ? UnwrapBrand<Search> : Search,
-	Replacement extends object ? UnwrapBrand<Replacement> : Replacement,
+	Input extends object ? UnwrapBrandedPrimitive<Input> : Input,
+	Search extends object ? UnwrapBrandedPrimitive<Search> : Search,
+	Replacement extends object ? UnwrapBrandedPrimitive<Replacement> : Replacement,
 	ApplyDefaultOptions<ReplaceOptions, DefaultReplaceOptions, Options>['all'] extends true ? true : false
 >;
 

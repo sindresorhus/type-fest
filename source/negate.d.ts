@@ -1,5 +1,5 @@
 import type {NegativeInfinity, PositiveInfinity} from './numeric.d.ts';
-import type {UnwrapBrand} from './internal/object.d.ts';
+import type {UnwrapBrandedPrimitive} from './unwrap-branded-primitive.d.ts';
 import type {Absolute} from './absolute.d.ts'; // For `@link`
 
 /**
@@ -43,7 +43,7 @@ The implementation adds or removes the leading minus sign from the number's stri
 @see {@link Absolute} to get the magnitude without a sign.
 @category Numeric
 */
-export type Negate<Value extends number> = NegateImplementation<Value extends object ? UnwrapBrand<Value> : Value>;
+export type Negate<Value extends number> = NegateImplementation<Value extends object ? UnwrapBrandedPrimitive<Value> : Value>;
 
 type NegateImplementation<Value extends number> =
 	// Handle edge cases, keeping numeric enum members distinct from the widened number type.

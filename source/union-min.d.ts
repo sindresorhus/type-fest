@@ -1,7 +1,7 @@
 import type {NegativeInfinity} from './numeric.d.ts';
 import type {UnknownArray} from './unknown-array.d.ts';
 import type {IsAnyOrNever} from './internal/type.d.ts';
-import type {UnwrapBrand} from './internal/object.d.ts';
+import type {UnwrapBrandedPrimitive} from './unwrap-branded-primitive.d.ts';
 import type {IsUnion} from './is-union.d.ts';
 import type {StringToNumber} from './string-to-number.d.ts';
 import type {UnionMax} from './union-max.d.ts'; // For `@link`
@@ -41,7 +41,7 @@ The implementation counts upward using a tuple until it reaches the smallest can
 @category Numeric
 */
 export type UnionMin<NumberUnion extends number> =
-	UnionMinImplementation<NumberUnion extends object ? UnwrapBrand<NumberUnion> : NumberUnion>;
+	UnionMinImplementation<NumberUnion extends object ? UnwrapBrandedPrimitive<NumberUnion> : NumberUnion>;
 
 // Normalize the candidates once so the counter can match branded values.
 type UnionMinImplementation<NumberUnion extends number> =

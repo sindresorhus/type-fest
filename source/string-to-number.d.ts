@@ -1,4 +1,4 @@
-import type {UnwrapBrand} from './internal/object.d.ts';
+import type {UnwrapBrandedPrimitive} from './unwrap-branded-primitive.d.ts';
 import type {NegativeInfinity, PositiveInfinity} from './numeric.d.ts';
 import type {StringToBoolean} from './string-to-boolean.d.ts'; // For `@link`
 
@@ -54,7 +54,7 @@ type TooLarge = StringToNumber<'9007199254740993'>;
 @category Template literal
 */
 // The parser already returns `number` for `any` and distributes `never` to `never`.
-export type StringToNumber<S extends string> = _StringToNumber<S extends object ? UnwrapBrand<S> : S>;
+export type StringToNumber<S extends string> = _StringToNumber<S extends object ? UnwrapBrandedPrimitive<S> : S>;
 
 type _StringToNumber<S extends string> =
 	S extends `${infer N extends number}`

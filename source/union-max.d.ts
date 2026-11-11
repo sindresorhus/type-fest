@@ -1,7 +1,7 @@
 import type {NegativeInfinity, PositiveInfinity} from './numeric.d.ts';
 import type {UnknownArray} from './unknown-array.d.ts';
 import type {IsAnyOrNever} from './internal/type.d.ts';
-import type {UnwrapBrand} from './internal/object.d.ts';
+import type {UnwrapBrandedPrimitive} from './unwrap-branded-primitive.d.ts';
 import type {IsUnion} from './is-union.d.ts';
 import type {StringToNumber} from './string-to-number.d.ts';
 import type {UnionMin} from './union-min.d.ts'; // For `@link`
@@ -41,7 +41,7 @@ The implementation counts upward using a tuple, removing lower union members unt
 @category Numeric
 */
 export type UnionMax<NumberUnion extends number> =
-	UnionMaxImplementation<NumberUnion extends object ? UnwrapBrand<NumberUnion> : NumberUnion>;
+	UnionMaxImplementation<NumberUnion extends object ? UnwrapBrandedPrimitive<NumberUnion> : NumberUnion>;
 
 // Normalize the candidates once so the counter can match and remove branded values.
 type UnionMaxImplementation<NumberUnion extends number> =

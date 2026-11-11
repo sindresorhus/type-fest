@@ -1,4 +1,4 @@
-import type {UnwrapBrand} from './internal/object.d.ts';
+import type {UnwrapBrandedPrimitive} from './unwrap-branded-primitive.d.ts';
 import type {IsStringLiteral} from './is-string-literal.d.ts';
 
 /**
@@ -33,7 +33,7 @@ type DynamicText = StringReverse<`prefix${string}`>;
 */
 export type StringReverse<Value extends string> =
 	// Template literal inference does not match a branded string, so the brand is removed first.
-	(Value extends object ? UnwrapBrand<Value> : Value) extends infer Input extends string
+	(Value extends object ? UnwrapBrandedPrimitive<Value> : Value) extends infer Input extends string
 		? Input extends unknown // To distribute `Input`, which also preserves `never`
 			? IsStringLiteral<Input> extends true
 				? _StringReverse<Input>

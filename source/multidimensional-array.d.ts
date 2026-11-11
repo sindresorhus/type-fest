@@ -1,4 +1,4 @@
-import type {UnwrapBrand} from './internal/object.d.ts';
+import type {UnwrapBrandedPrimitive} from './unwrap-branded-primitive.d.ts';
 
 type Recursive<T> = Array<T | Recursive<T>>;
 
@@ -32,7 +32,7 @@ const boolean2DMatrix = emptyMatrix<boolean>()(2);
 */
 export type MultidimensionalArray<Element, Dimensions extends number> =
 	Dimensions extends unknown // For distributing `Dimensions` before a wide branded number can erase a zero-dimension alternative.
-		? MultidimensionalArrayImplementation<Element, Dimensions extends object ? UnwrapBrand<Dimensions> : Dimensions>
+		? MultidimensionalArrayImplementation<Element, Dimensions extends object ? UnwrapBrandedPrimitive<Dimensions> : Dimensions>
 		: never;
 
 // Classify the primitive dimension once so a branded runtime number keeps every nesting depth.

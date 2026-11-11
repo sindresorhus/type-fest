@@ -132,6 +132,8 @@ export type GetTagMetadata<Type extends Tag<TagName, unknown>, TagName extends P
 /**
 Get the untagged portion of a tagged type created with `Tagged`.
 
+For nested tags, keep each tag’s metadata in one layer and add one distinct tag name per layer. Reusing a name with different metadata, or nesting multiple layers that each add several names, is not supported.
+
 Why is this necessary?
 
 1. Use a `Tagged` type as object keys
@@ -154,6 +156,23 @@ const money = moneyByAccountType.SAVINGS; // TS error: Property 'SAVINGS' does n
 // Attempting to pass a non-Tagged type to UnwrapTagged will raise a type error.
 // @ts-expect-error
 type WontWork = UnwrapTagged<string>;
+```
+
+@example
+```
+import type {Tagged, UnwrapTagged} from 'type-fest';
+
+// Keep a tag’s metadata in one layer.
+type CheckedUserId = Tagged<string, 'Checked', {parsed: true; validated: true}>;
+
+type UserId = UnwrapTagged<CheckedUserId>;
+//=> string
+
+// Use a distinct tag name for another stage.
+type StoredUserId = Tagged<CheckedUserId, 'Stored', {table: 'users'}>;
+
+type StoredUserIdValue = UnwrapTagged<StoredUserId>;
+//=> string
 ```
 
 @category Type

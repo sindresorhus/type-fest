@@ -1,4 +1,4 @@
-import type {UnwrapBrand} from './internal/object.d.ts';
+import type {UnwrapBrandedPrimitive} from './unwrap-branded-primitive.d.ts';
 import type {Absolute} from './absolute.d.ts';
 import type {IntRange} from './int-range.d.ts';
 import type {IfNotAnyOrNever} from './internal/type.d.ts';
@@ -66,7 +66,7 @@ Note: A non-integer index is not supported, even though `Array#at()` truncates i
 @category Array
 */
 export type ArrayAt<TArray extends UnknownArray, Index extends number> =
-	ArrayAtImplementation<TArray, Index extends object ? UnwrapBrand<Index> : Index>;
+	ArrayAtImplementation<TArray, Index extends object ? UnwrapBrandedPrimitive<Index> : Index>;
 
 // Normalize the index once before its printed value or tuple position is checked.
 type ArrayAtImplementation<TArray extends UnknownArray, Index extends number> = IfNotAnyOrNever<TArray, {

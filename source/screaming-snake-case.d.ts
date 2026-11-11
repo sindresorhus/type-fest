@@ -1,4 +1,4 @@
-import type {UnwrapBrand} from './internal/index.d.ts';
+import type {UnwrapBrandedPrimitive} from './unwrap-branded-primitive.d.ts';
 import type {SnakeCase} from './snake-case.d.ts';
 import type {WordsOptions} from './words.d.ts';
 
@@ -24,7 +24,7 @@ export type ScreamingSnakeCase<
 	Value,
 	Options extends WordsOptions = {},
 > = Value extends string
-	? Uppercase<UnwrapBrand<SnakeCase<Value, Options>>>
+	? Uppercase<UnwrapBrandedPrimitive<SnakeCase<Value, Options>>>
 	: Value;
 
 export {};

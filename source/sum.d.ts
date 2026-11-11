@@ -1,5 +1,6 @@
 import type {Negate} from './negate.d.ts';
-import type {UnwrapBrand, NonNegativeIntegerSum} from './internal/index.d.ts';
+import type {NonNegativeIntegerSum} from './internal/index.d.ts';
+import type {UnwrapBrandedPrimitive} from './unwrap-branded-primitive.d.ts';
 import type {PositiveInfinity, NegativeInfinity, IsNegative} from './numeric.d.ts';
 import type {Subtract} from './subtract.d.ts';
 import type {Absolute} from './absolute.d.ts';
@@ -38,7 +39,7 @@ type F = Sum<999_999, 1>;
 @category Numeric
 */
 export type Sum<A extends number, B extends number> =
-	SumImplementation<A extends object ? UnwrapBrand<A> : A, B extends object ? UnwrapBrand<B> : B>;
+	SumImplementation<A extends object ? UnwrapBrandedPrimitive<A> : A, B extends object ? UnwrapBrandedPrimitive<B> : B>;
 
 // Normalize operands once before validating their digits and computing the result.
 type SumImplementation<A extends number, B extends number> =

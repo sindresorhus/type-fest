@@ -1,4 +1,5 @@
-import type {MaxLength, UnwrapBrand} from './internal/index.d.ts';
+import type {MaxLength} from './internal/index.d.ts';
+import type {UnwrapBrandedPrimitive} from './unwrap-branded-primitive.d.ts';
 import type {IsReadonlyArray} from './is-readonly-array.d.ts';
 import type {GreaterThanOrEqual} from './greater-than-or-equal.d.ts';
 import type {Subtract} from './subtract.d.ts';
@@ -165,7 +166,7 @@ export type ArraySplice<
 	Start extends number,
 	DeleteCount extends number,
 	Items extends UnknownArray = [],
-> = ArraySpliceWithValues<T, Start extends object ? UnwrapBrand<Start> : Start, DeleteCount extends object ? UnwrapBrand<DeleteCount> : DeleteCount, Items>;
+> = ArraySpliceWithValues<T, Start extends object ? UnwrapBrandedPrimitive<Start> : Start, DeleteCount extends object ? UnwrapBrandedPrimitive<DeleteCount> : DeleteCount, Items>;
 
 // Strip numeric metadata before testing width, counting optional elements, or splitting the tuple.
 type ArraySpliceWithValues<T extends UnknownArray, Start extends number, DeleteCount extends number, Items extends UnknownArray> =

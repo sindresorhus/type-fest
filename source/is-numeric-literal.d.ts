@@ -1,5 +1,5 @@
 import type {CollapseLiterals} from './collapse-literals.d.ts';
-import type {UnwrapBrand} from './internal/object.d.ts';
+import type {UnwrapBrandedPrimitive} from './unwrap-branded-primitive.d.ts';
 import type {IsNever} from './is-never.d.ts';
 
 /**
@@ -38,7 +38,7 @@ type G = IsNumericLiteral<1 | bigint>;
 */
 // The normalized predicate rejects `any`; only `never` needs a separate guard.
 // Plain primitives need no brand normalization.
-export type IsNumericLiteral<T> = IsNever<T> extends true ? false : _IsNumericLiteral<CollapseLiterals<T extends object ? UnwrapBrand<T> : T>>;
+export type IsNumericLiteral<T> = IsNever<T> extends true ? false : _IsNumericLiteral<CollapseLiterals<T extends object ? UnwrapBrandedPrimitive<T> : T>>;
 
 // Numeric enum members accept `number`, but only constant members have known values. Comparing printed types also rejects computed members, whose numeric value is unknown.
 export type _IsNumericLiteral<T> = T extends number | bigint

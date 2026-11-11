@@ -2,7 +2,7 @@ import type {If} from './if.d.ts';
 import type {IsAny} from './is-any.d.ts';
 import type {IsLiteral} from './is-literal.d.ts';
 import type {ExactKey} from './exact-key.d.ts';
-import type {UnwrapBrand} from './internal/object.d.ts';
+import type {UnwrapBrandedPrimitive} from './unwrap-branded-primitive.d.ts';
 import type {Tagged} from './tagged.d.ts'; // For `@link`
 import type {TupleToObject} from './tuple-to-object.d.ts'; // For `@link`
 
@@ -57,16 +57,16 @@ Note: Every element must have the key property, and it must hold a `string` or a
 @see {@link TupleToObject}
 @category Array
 */
-// The element's key value names its property. `UnwrapBrand` stops a branded value from erasing the key, and `& (string | number)` keeps the mapped key a valid property key for the compiler. Validate each element before combining its key values, so `any` cannot hide another element's invalid key type.
+// The element's key value names its property. `UnwrapBrandedPrimitive` stops a branded value from erasing the key, and `& (string | number)` keeps the mapped key a valid property key for the compiler. Validate each element before combining its key values, so `any` cannot hide another element's invalid key type.
 export type ArrayToRecord<
 	ArrayType extends readonly object[],
 	KeyProperty extends keyof ArrayType[number] | keyof WithKeyAliases<ArrayType[number]>,
 > = If<IsAny<ArrayType>, any,
 	false extends HasValidKey<ArrayType[number], KeyProperty>
 		? never
-		: UnwrapBrand<KeyValues<ArrayType[number], KeyProperty>> & (string | number) extends infer Keys extends string | number
+		: UnwrapBrandedPrimitive<KeyValues<ArrayType[number], KeyProperty>> & (string | number) extends infer Keys extends string | number
 			? IsLiteral<Keys> extends true
-				? {[Item in ArrayType[number] as UnwrapBrand<Item[ExactKey<Item, KeyProperty>]> & (string | number)]: Item}
+				? {[Item in ArrayType[number] as UnwrapBrandedPrimitive<Item[ExactKey<Item, KeyProperty>]> & (string | number)]: Item}
 				: Record<Keys, ArrayType[number]>
 			: never>;
 

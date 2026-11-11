@@ -1,4 +1,4 @@
-import type {UnwrapBrand} from './internal/object.d.ts';
+import type {UnwrapBrandedPrimitive} from './unwrap-branded-primitive.d.ts';
 import type {IsFloat} from './is-float.d.ts';
 import type {IsInteger} from './is-integer.d.ts';
 import type {IsNumericLiteral} from './is-numeric-literal.d.ts';
@@ -211,7 +211,7 @@ export type Negative<T extends _Numeric> = T extends NegativeInfinity ? never : 
 
 // Matches values with a negative sign, including `-Infinity`.
 // Read the sign from the unbranded primitive, because `${T}` does not reduce for a literal intersected with an object type, but keep the original brand on accepted values.
-type NegativeSign<T extends _Numeric> = T extends Zero ? never : `${T extends object ? UnwrapBrand<T> : T}` extends `-${string}` ? T : never;
+type NegativeSign<T extends _Numeric> = T extends Zero ? never : `${T extends object ? UnwrapBrandedPrimitive<T> : T}` extends `-${string}` ? T : never;
 
 /**
 A negative (`-∞ < x < 0`) `number` that is an integer.

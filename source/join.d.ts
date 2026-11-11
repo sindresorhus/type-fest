@@ -1,4 +1,4 @@
-import type {UnwrapBrand} from './internal/object.d.ts';
+import type {UnwrapBrandedPrimitive} from './unwrap-branded-primitive.d.ts';
 import type {JoinableItem} from './internal/string.d.ts';
 
 // `null` and `undefined` are treated uniquely in the built-in join method, in a way that differs from the default `toString` that would result in the type `${undefined}`. That's why we need to handle it specifically with this helper.
@@ -6,7 +6,7 @@ import type {JoinableItem} from './internal/string.d.ts';
 type NullishCoalesce<
 	Value extends JoinableItem,
 	Fallback extends string,
-> = Value extends undefined | null ? Fallback : Value extends object ? UnwrapBrand<Value> : Value;
+> = Value extends undefined | null ? Fallback : Value extends object ? UnwrapBrandedPrimitive<Value> : Value;
 
 /**
 Join an array of strings and/or numbers using the given string as a delimiter.
@@ -64,7 +64,7 @@ export type Join<
 	Delimiter extends string,
 > = Delimiter extends unknown
 	// Select one delimiter for the whole recursion, so a union cannot mix separators in the result.
-	? JoinHelper<Items, Delimiter extends object ? UnwrapBrand<Delimiter> : Delimiter>
+	? JoinHelper<Items, Delimiter extends object ? UnwrapBrandedPrimitive<Delimiter> : Delimiter>
 	: never;
 
 type JoinHelper<

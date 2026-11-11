@@ -1,5 +1,6 @@
 import type {Negate} from './negate.d.ts';
-import type {UnwrapBrand, NonNegativeIntegerSum, NonNegativeIntegerDifference} from './internal/index.d.ts';
+import type {NonNegativeIntegerSum, NonNegativeIntegerDifference} from './internal/index.d.ts';
+import type {UnwrapBrandedPrimitive} from './unwrap-branded-primitive.d.ts';
 import type {PositiveInfinity, NegativeInfinity, IsNegative} from './numeric.d.ts';
 import type {LessThan} from './less-than.d.ts';
 import type {Absolute} from './absolute.d.ts';
@@ -41,7 +42,7 @@ type G = Subtract<1_000_000, 1>;
 @category Numeric
 */
 export type Subtract<A extends number, B extends number> =
-	SubtractImplementation<A extends object ? UnwrapBrand<A> : A, B extends object ? UnwrapBrand<B> : B>;
+	SubtractImplementation<A extends object ? UnwrapBrandedPrimitive<A> : A, B extends object ? UnwrapBrandedPrimitive<B> : B>;
 
 // Normalize operands once before validating their digits and computing the result.
 type SubtractImplementation<A extends number, B extends number> =

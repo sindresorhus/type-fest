@@ -1,4 +1,4 @@
-import type {UnwrapBrand} from './internal/object.d.ts';
+import type {UnwrapBrandedPrimitive} from './unwrap-branded-primitive.d.ts';
 import type {IfNotAnyOrNever} from './internal/type.d.ts';
 import type {LessThan} from './less-than.d.ts';
 import type {Subtract} from './subtract.d.ts';
@@ -37,7 +37,7 @@ Note: An `object` or `{}` element is kept as one element even though it could be
 
 @category Array
 */
-export type ArrayFlat<Array_ extends UnknownArray, Depth extends number = 1> = ArrayFlatImplementation<Array_, Depth extends object ? UnwrapBrand<Depth> : Depth>;
+export type ArrayFlat<Array_ extends UnknownArray, Depth extends number = 1> = ArrayFlatImplementation<Array_, Depth extends object ? UnwrapBrandedPrimitive<Depth> : Depth>;
 
 type ArrayFlatImplementation<Array_ extends UnknownArray, Depth extends number> = IfNotAnyOrNever<Array_, {
 	ifNot: Array_ extends unknown // For distributing `Array_`

@@ -1,5 +1,5 @@
 import type {CollapseLiterals} from './collapse-literals.d.ts';
-import type {UnwrapBrand} from './internal/object.d.ts';
+import type {UnwrapBrandedPrimitive} from './unwrap-branded-primitive.d.ts';
 import type {IsNever} from './is-never.d.ts';
 
 /**
@@ -29,7 +29,7 @@ type D = IsBooleanLiteral<true | false>;
 */
 // The normalized predicate rejects `any`; only `never` needs a separate guard.
 // Plain primitives need no brand normalization.
-export type IsBooleanLiteral<T> = IsNever<T> extends true ? false : _IsBooleanLiteral<CollapseLiterals<T extends object ? UnwrapBrand<T> : T>>;
+export type IsBooleanLiteral<T> = IsNever<T> extends true ? false : _IsBooleanLiteral<CollapseLiterals<T extends object ? UnwrapBrandedPrimitive<T> : T>>;
 
 export type _IsBooleanLiteral<T> = boolean extends T
 	? false

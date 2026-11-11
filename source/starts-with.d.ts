@@ -1,4 +1,4 @@
-import type {UnwrapBrand} from './internal/object.d.ts';
+import type {UnwrapBrandedPrimitive} from './unwrap-branded-primitive.d.ts';
 import type {IsNever} from './is-never.d.ts';
 import type {IsStringLiteral} from './is-string-literal.d.ts';
 
@@ -55,7 +55,7 @@ type Events = UserEvents<'user:created' | 'order:created' | 'user:deleted'>;
 @category Template literal
 @category Type Guard
 */
-export type StartsWith<Value extends string, Prefix extends string> = _StartsWith<Value extends object ? UnwrapBrand<Value> : Value, Prefix extends object ? UnwrapBrand<Prefix> : Prefix>;
+export type StartsWith<Value extends string, Prefix extends string> = _StartsWith<Value extends object ? UnwrapBrandedPrimitive<Value> : Value, Prefix extends object ? UnwrapBrandedPrimitive<Prefix> : Prefix>;
 
 /**
 Check each input against the complete prefix union, falling back to `boolean` when a template match cannot decide an unknown value. The literal-prefix check must come before the template match: for a non-literal prefix such as `string`, the template pattern collapses to a plain string and would match every input other than `never` and `any`.
