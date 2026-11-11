@@ -264,6 +264,7 @@ Click the type names for complete docs.
 - [`IsStringLiteral`](source/is-string-literal.d.ts) - Returns a boolean for whether the given type is a `string` [literal type](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#literal-types).
 - [`IsNumericLiteral`](source/is-numeric-literal.d.ts) - Returns a boolean for whether the given type is a `number` or `bigint` [literal type](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#literal-types).
 - [`IsNumberLike`](source/is-number-like.d.ts) - Returns a boolean for whether the given type is a `number` or a numeric string.
+- [`IsNumericString`](source/is-numeric-string.d.ts) - Returns a boolean for whether the given type is a numeric string without surrounding whitespace.
 - [`IsBooleanLiteral`](source/is-boolean-literal.d.ts) - Returns a boolean for whether the given type is a `true` or `false` [literal type](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#literal-types).
 - [`IsSymbolLiteral`](source/is-symbol-literal.d.ts) - Returns a boolean for whether the given type is a `symbol` [literal type](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#literal-types).
 - [`IsAny`](source/is-any.d.ts) - Returns a boolean for whether the given type is `any`.

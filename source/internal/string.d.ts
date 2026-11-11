@@ -1,6 +1,5 @@
 import type {IsEqual} from '../is-equal.d.ts';
 import type {IsStringLiteral} from '../is-string-literal.d.ts';
-import type {Trim} from '../trim.d.ts';
 import type {_SplitOnDelimiter} from '../split.d.ts';
 import type {CollapseLiterals} from '../collapse-literals.d.ts';
 import type {AsciiPunctuationCharacter} from '../ascii-punctuation-character.d.ts';
@@ -19,17 +18,6 @@ The types that `Array#join()` can stringify, and which `Join` accepts.
 The builtin `join` method supports all these natively in the same way that typescript handles them so we can safely accept all of them.
 */
 export type JoinableItem = string | number | bigint | boolean | undefined | null;
-
-/**
-Returns a boolean for whether the string is numeric.
-
-This type is a workaround for [Microsoft/TypeScript#46109](https://github.com/microsoft/TypeScript/issues/46109#issuecomment-930307987).
-*/
-export type IsNumeric<T extends string> = T extends `${number}`
-	? Trim<T> extends T
-		? true
-		: false
-	: false;
 
 /**
 Returns `Value` when it is a string literal that is equal to `CasedValue`, the result of a case transform on it, and `never` otherwise.
