@@ -1,4 +1,4 @@
-import type {ToPath, ToString, UnwrapPathBrand} from './internal/index.d.ts';
+import type {ParsePathToStringSegments, ToString, UnwrapPathBrand} from './internal/index.d.ts';
 import type {IsAny} from './is-any.d.ts';
 import type {Get} from './get.d.ts'; // For `@link`
 import type {Paths} from './paths.d.ts'; // For `@link`
@@ -20,7 +20,7 @@ Convert each array index in the given path segments into a number.
 type ToIndexes<Segments extends string[]> = {[Index in keyof Segments]: ToIndex<Segments[Index]>};
 
 /**
-Convert a path string into a tuple of its keys, with array indices as numbers.
+Convert a property path into a tuple of keys, with numeric indices.
 
 It splits a path like {@link Get} does, with dot notation (`'users.0.name'`) and bracket notation (`'users[0].name'`).
 
@@ -28,18 +28,18 @@ It splits a path like {@link Get} does, with dot notation (`'users.0.name'`) and
 - Other keys stay strings, like `'01'`, `'-1'`, `'1e3'`, and `'9007199254740993'` (which a number cannot hold exactly).
 - A number path is read as its string form, so `ParsePath<1.5>` is `[1, 5]`.
 - A placeholder in a template literal path, like `${string}`, is read as one key.
-- A `string` path, including the one in `LiteralUnion<'a', string>`, gives `Array<string | number>`.
-- A union of paths gives a union of tuples.
+- A `string` or `any` path gives `Array<string | number>`. This also applies to the `string` member of `LiteralUnion<'a', string>`.
+- A union of paths gives a union of tuples; `never` gives `never`. Path brands are removed before parsing.
 
 Use-cases:
 - Type the path for an API that takes an array of keys, like the `name` of an Ant Design form field, or `_.get(object, ['users', 0, 'name'])`.
 - Get the paths from {@link Paths} as tuples with `ParsePath<Paths<BaseType>>`.
 
-If a function parameter is constrained to a `ParsePath` result, make its type parameter `const`. Otherwise, TypeScript widens number indices like `0` to `number`, and it often infers the whole constraint, so `Get<BaseType, Path>` gives a union of every value.
+For a parameter constrained to the result, use a `const` type parameter to preserve literal indices and infer the value at the selected path.
 
 The result is a mutable tuple. To also accept a readonly path, constrain the parameter to `Readonly<ParsePath<…>>`.
 
-Note: Like with `Get` and `Paths`, a key that contains a dot or brackets, like `'a.b'` or `'b[0]'`, cannot be written in a path string, because escapes like `\.` are not supported.
+This type splits paths without validating their syntax or checking whether the keys exist. Empty keys are preserved, so `ParsePath<''>` is `['']`. Quotes and backslashes are literal characters, so `ParsePath<'a["b"]'>` is `['a', '"b"']`. Escapes like `\.` are not supported. To access keys that contain dots or brackets, pass a tuple directly to `Get`.
 
 @example
 ```
@@ -96,6 +96,6 @@ type ParsePathImplementation<Path extends string | number> =
 	// Check `Path` for the `string & {}` of `LiteralUnion`, because its string form is not `string`. Also check the string form, because checking only `Path` stops a function parameter constrained to the result from inferring string literals when it is not `const`.
 	string extends Path | ToString<Path>
 		? Array<string | number>
-		: ToIndexes<ToPath<ToString<Path>>>;
+		: ToIndexes<ParsePathToStringSegments<ToString<Path>>>;
 
 export {};

@@ -93,7 +93,7 @@ type _Split<
 /**
 Splits `S` on `Delimiter`.
 
-`_Split` distributes and checks both inputs before recursion, so this loop does not repeat those checks on every step. `ToPath` fixes its delimiter and permits non-literal paths.
+`_Split` distributes and checks both inputs before recursion, so this loop does not repeat those checks on every step. `ParsePathToStringSegments` fixes its delimiter and permits non-literal paths.
 */
 export type _SplitOnDelimiter<
 	S extends string,

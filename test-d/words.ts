@@ -3,7 +3,7 @@ import type {Words} from '../source/words.d.ts';
 import type {Tagged} from '../source/tagged.d.ts';
 import type {StringRepeat} from '../source/string-repeat.d.ts';
 import type {TupleOf} from '../source/tuple-of.d.ts';
-import type {AsciiPunctuationCharacter, WhitespaceCharacter} from '../index.d.ts';
+import type {AsciiPunctuationCharacter, DigitCharacter, WhitespaceCharacter} from '../index.d.ts';
 
 expectTypeOf<Words<''>>().toBe<[]>();
 expectTypeOf<Words<'a'>>().toBe<['a']>();
@@ -97,6 +97,12 @@ expectTypeOf<Words<'01item01'>>().toBe<['01', 'item', '01']>();
 expectTypeOf<Words<'10item10'>>().toBe<['10', 'item', '10']>();
 expectTypeOf<Words<'010item010'>>().toBe<['010', 'item', '010']>();
 expectTypeOf<Words<'item0_item_1 item -2'>>().toBe<['item', '0', 'item', '1', 'item', '2']>();
+
+// Numeric boundaries use individual ASCII digits, rather than parsing number syntax.
+expectTypeOf<{[Digit in DigitCharacter]: Words<`a${Digit}b`>}>().toBe<{[Digit in DigitCharacter]: ['a', Digit, 'b']}>();
+expectTypeOf<{[Digit in DigitCharacter]: Words<`a${Digit}b`, {splitOnNumbers: false}>}>().toBe<{[Digit in DigitCharacter]: [`a${Digit}b`]}>();
+expectTypeOf<{[Text in '１２' | '١٢' | '²' | '½']: Words<`a${Text}b`>}>().toBe<{[Text in '１２' | '١٢' | '²' | '½']: [`a${Text}b`]}>();
+expectTypeOf<Words<'v1e3'>>().toBe<['v', '1', 'e', '3']>();
 
 // SplitOnPunctuation
 

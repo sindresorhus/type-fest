@@ -453,3 +453,69 @@ function _visitParsedPath<Path extends string, Result>(path: ParsePath<Path>, vi
 function _readParsedName<Options extends GetOptions>(value: Get<{user: {name: string}}, ParsePath<'user.name'>, Options>): string {
 	return value;
 }
+
+// Alternatives retain their complete paths, rather than combining unrelated keys.
+type ContactPath = ParsePath<'users[0].email' | 'teams[1].name'>;
+expectTypeOf<ContactPath>().toBe<['users', 0, 'email'] | ['teams', 1, 'name']>();
+expectTypeOf<['users', 1, 'email']>().not.toBeAssignableTo<ContactPath>();
+expectTypeOf<['teams', 0, 'name']>().not.toBeAssignableTo<ContactPath>();
+expectTypeOf<['users', 0, 'name']>().not.toBeAssignableTo<ContactPath>();
+expectTypeOf<['users', 0, 'email', 'extra']>().not.toBeAssignableTo<ContactPath>();
+expectTypeOf<Extract<ContactPath, ['users', ...unknown[]]>>().toBe<['users', 0, 'email']>();
+expectTypeOf<ParsePath<'' | 'users[0]'>>().toBe<[''] | ['users', 0]>();
+
+// Nested dynamic segments retain surrounding literal keys and index positions.
+expectTypeOf<ParsePath<`users[${number}].settings.${string}.enabled`>>().toBe<['users', number, 'settings', string, 'enabled']>();
+expectTypeOf<ParsePath<`[${number}].${string}[${number}]`>>().toBe<[number, string, number]>();
+expectTypeOf<ParsePath<`users[${0 | 1}].${'name' | 'email'}`>>().toBe<['users', 0, 'name'] | ['users', 0, 'email'] | ['users', 1, 'name'] | ['users', 1, 'email']>();
+expectTypeOf<['users', '0', 'settings', 'theme', 'enabled']>().not.toBeAssignableTo<ParsePath<`users[${number}].settings.${string}.enabled`>>();
+
+// Ordinary punctuation, whitespace, quotes, and Unicode remain part of string keys.
+expectTypeOf<ParsePath<'/api/users.*.$.first-name'>>().toBe<['/api/users', '*', '$', 'first-name']>();
+expectTypeOf<ParsePath<'users.😀.姓名'>>().toBe<['users', '😀', '姓名']>();
+expectTypeOf<ParsePath<'users.\t.\n'>>().toBe<['users', '\t', '\n']>();
+expectTypeOf<ParsePath<'users["0"]'>>().toBe<['users', '"0"']>();
+expectTypeOf<ParsePath<'users["first.name"]'>>().toBe<['users', '"first', 'name"']>();
+expectTypeOf<ParsePath<'users\\.name'>>().toBe<['users\\', 'name']>();
+expectTypeOf<Get<{'users.name': 1}, ParsePath<'users\\.name'>>>().toBe<unknown>();
+expectTypeOf<Get<{'users.name': 1}, ['users.name']>>().toBe<1>();
+
+// Empty keys survive at bracket boundaries and can be read by `Get`.
+expectTypeOf<ParsePath<'[][0].'>>().toBe<['', 0, '']>();
+expectTypeOf<ParsePath<'users[][]'>>().toBe<['users', '', '']>();
+expectTypeOf<ParsePath<'[0]..name'>>().toBe<[0, '', 'name']>();
+expectTypeOf<Get<{'': [{'': 'value'}]}, ParsePath<'[][0].'>>>().toBe<'value'>();
+expectTypeOf<Get<{users: {'': {'': 'value'}}}, ParsePath<'users[][]'>>>().toBe<'value'>();
+
+// Branding a template path preserves its dynamic segments and literal alternatives.
+expectTypeOf<ParsePath<Tagged<`users[${number}].name`, 'Path'>>>().toBe<['users', number, 'name']>();
+expectTypeOf<ParsePath<Tagged<`settings.${string}.enabled`, 'Path'>>>().toBe<['settings', string, 'enabled']>();
+expectTypeOf<ParsePath<Tagged<LiteralUnion<'users[0]', string>, 'Path'>>>().toBe<['users', 0] | Array<string | number>>();
+
+// `Paths` filters still apply before conversion to tuples.
+type OptionalPair = {pair: readonly [string, {id: number}?]};
+expectTypeOf<ParsePath<Paths<OptionalPair>>>().toBe<['pair'] | ['pair', 0] | ['pair', 1] | ['pair', 1, 'id']>();
+expectTypeOf<ParsePath<Paths<OptionalPair, {leavesOnly: true}>>>().toBe<['pair', 0] | ['pair', 1, 'id']>();
+expectTypeOf<ParsePath<Paths<OptionalPair, {depth: 2; bracketNotation: true}>>>().toBe<['pair', 1, 'id']>();
+expectTypeOf<Get<OptionalPair, ParsePath<'pair[1].id'>>>().toBe<number | undefined>();
+expectTypeOf<ParsePath<Paths<{rows: []}, {leavesOnly: true}>>>().toBe<['rows']>();
+expectTypeOf<ParsePath<Paths<{rows: Array<{id: string}>}, {maxRecursionDepth: 0}>>>().toBe<['rows']>();
+expectTypeOf<Join<ParsePath<'users[0].01.-1'>, '.'>>().toBe<'users.0.01.-1'>();
+
+// Readonly consumers preserve the selected tuple and reject unrelated paths.
+declare function selectContact<const Path extends Readonly<ContactPath>>(path: Path): Path;
+declare const readonlyContact: readonly ['users', 0, 'email'];
+expectTypeOf(selectContact(readonlyContact)).toBe<readonly ['users', 0, 'email']>();
+expectTypeOf(selectContact(['teams', 1, 'name'])).toBe<readonly ['teams', 1, 'name']>();
+// @ts-expect-error The index belongs to the other alternative.
+selectContact(['users', 1, 'email']);
+
+// Values outside the string and number contract are rejected.
+// @ts-expect-error Boolean paths are not supported.
+type BooleanPath = ParsePath<boolean>;
+// @ts-expect-error Bigint paths are not supported.
+type BigintPath = ParsePath<bigint>;
+// @ts-expect-error Null paths are not supported.
+type NullPath = ParsePath<null>;
+// @ts-expect-error Undefined paths are not supported.
+type UndefinedPath = ParsePath<undefined>;

@@ -1,5 +1,6 @@
 import type {AsciiPunctuationCharacter} from './ascii-punctuation-character.d.ts';
-import type {IsNumeric, WordSeparators} from './internal/index.d.ts';
+import type {WordSeparators} from './internal/index.d.ts';
+import type {DigitCharacter} from './characters.d.ts';
 import type {ApplyDefaultOptions} from './apply-default-options.d.ts';
 import type {IsLowercase} from './is-lowercase.d.ts';
 import type {UnwrapBrandedPrimitive} from './unwrap-branded-primitive.d.ts';
@@ -133,14 +134,14 @@ export type _Words<
 			// First character of word
 			? _Words<RemainingCharacters, Options, FirstCharacter, FirstCharacter, Result>
 			// Case change between numeric and non-numeric characters.
-			: [IsNumeric<LastCharacter>, IsNumeric<FirstCharacter>] extends [false, true] | [true, false]
+			: [IsDigit<LastCharacter>, IsDigit<FirstCharacter>] extends [false, true] | [true, false]
 				? Options['splitOnNumbers'] extends true
 					// Split on number: push word
 					? _Words<RemainingCharacters, Options, FirstCharacter, FirstCharacter, [...Result, ...SkipEmptyWord<CurrentWord>]>
 					// No split on number: concat word
 					: _Words<RemainingCharacters, Options, FirstCharacter, `${CurrentWord}${FirstCharacter}`, Result>
 				// No case change: concat word
-				: [true, true] extends [IsNumeric<LastCharacter>, IsNumeric<FirstCharacter>]
+				: [true, true] extends [IsDigit<LastCharacter>, IsDigit<FirstCharacter>]
 					? _Words<RemainingCharacters, Options, FirstCharacter, `${CurrentWord}${FirstCharacter}`, Result>
 				// Case change: lower to upper, push word
 					: [true, true] extends [IsLowercase<LastCharacter>, IsUppercase<FirstCharacter>]
@@ -160,6 +161,11 @@ export type _Words<
 						// No case change: concat word
 							: _Words<RemainingCharacters, Options, FirstCharacter, `${CurrentWord}${FirstCharacter}`, Result>
 	: [...Result, ...SkipEmptyWord<CurrentWord>];
+
+/**
+Whether the given character is an ASCII decimal digit.
+*/
+type IsDigit<Character extends string> = Character extends DigitCharacter ? true : false;
 
 /**
 Whether the given character is a capital letter, which is what decides whether it begins a new word.

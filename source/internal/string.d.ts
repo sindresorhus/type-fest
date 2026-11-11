@@ -204,19 +204,20 @@ type B = PositiveNumericCharacterGt<'1', '1'>;
 type PositiveNumericCharacterGt<A extends string, B extends string> = NumericString extends `${string}${B}${string}${A}${string}` ? true : false;
 
 /**
-Splits a dot-prop style path into a tuple comprised of the properties in the path. Handles square-bracket notation.
+Split a property path into a tuple of string keys, including numeric indices as strings. Handles dot and square-bracket notation.
 
 @example
 ```
-type A = ToPath<'foo.bar.baz'>;
+type A = ParsePathToStringSegments<'foo.bar.baz'>;
 //=> ['foo', 'bar', 'baz']
 
-type B = ToPath<'foo[0].bar.baz'>;
+type B = ParsePathToStringSegments<'foo[0].bar.baz'>;
 //=> ['foo', '0', 'bar', 'baz']
 ```
 */
 // Path parsing always uses a dot and permits non-literal input, so it can reuse the split loop after bracket normalization.
-export type ToPath<Path extends string> = _SplitOnDelimiter<FixPathSquareBrackets<Path>, '.'>;
+// Keep this separate from `ParsePath`: `Get` reads string keys directly, so converting indices to numbers would add work only to convert them back to strings.
+export type ParsePathToStringSegments<Path extends string> = _SplitOnDelimiter<FixPathSquareBrackets<Path>, '.'>;
 
 /**
 Remove brands from property paths while preserving empty intersections used by `LiteralUnion`.

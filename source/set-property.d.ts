@@ -5,7 +5,7 @@ import type {DigitCharacter} from './characters.d.ts';
 import type {OmitIndexSignature} from './omit-index-signature.d.ts';
 import type {PickIndexSignature} from './pick-index-signature.d.ts';
 import type {UnknownArray} from './unknown-array.d.ts';
-import type {SetArrayAccess, SimplifyObject, ToPath, ToString, UnwrapPathBrand} from './internal/index.d.ts';
+import type {SetArrayAccess, SimplifyObject, ParsePathToStringSegments, ToString, UnwrapPathBrand} from './internal/index.d.ts';
 import type {IsReadonlyArray} from './is-readonly-array.d.ts';
 
 /**
@@ -101,7 +101,7 @@ type SetPropertyInArray<ArrayType extends UnknownArray, Key extends PropertyKey,
 Read the path as `Get` does: an array is kept, and anything else is split on `.` and `[...]`.
 */
 type NormalizePath<Path extends string | number | ReadonlyArray<string | number>> =
-	Path extends ReadonlyArray<string | number> ? Path : ToPath<ToString<UnwrapPathBrand<Path>>>;
+	Path extends ReadonlyArray<string | number> ? Path : ParsePathToStringSegments<ToString<UnwrapPathBrand<Path>>>;
 
 /**
 Set a deeply-nested property on an object using a key path, like [Lodash's `.set()`](https://lodash.com/docs#set) function.

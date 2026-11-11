@@ -1,6 +1,6 @@
 import type {ExactKey} from './exact-key.d.ts';
 import type {ConsistsOnlyOf} from './consists-only-of.d.ts';
-import type {ToPath, ToString, UnwrapPathBrand} from './internal/index.d.ts';
+import type {ParsePathToStringSegments, ToString, UnwrapPathBrand} from './internal/index.d.ts';
 import type {ApplyDefaultOptions} from './apply-default-options.d.ts';
 import type {KeyAsString} from './key-as-string.d.ts';
 import type {DigitCharacter} from './characters.d.ts';
@@ -229,7 +229,7 @@ export type Get<
 > =
 	GetWithPath<
 		BaseType,
-		Path extends ReadonlyArray<string | number> ? Path : ToPath<ToString<UnwrapPathBrand<Path>>>,
+		Path extends ReadonlyArray<string | number> ? Path : ParsePathToStringSegments<ToString<UnwrapPathBrand<Path>>>,
 		ApplyDefaultOptions<GetOptions, DefaultGetOptions, Options>
 	>;
 
