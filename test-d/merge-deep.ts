@@ -528,6 +528,38 @@ expectTypeOf(allOptionalTupleIntoArray).toBe<[number?, ...number[]]>();
 declare const arrayIntoAllOptionalTuple: MergeDeep<number[], [string?], {recurseIntoArrays: true}>;
 expectTypeOf(arrayIntoAllOptionalTuple).toBe<[string?, ...number[]]>();
 
+// An optional first position is merged with the other side instead of collapsing to `undefined`, and it stays optional only when both sides can omit it.
+declare const optionalFirstTuple: MergeDeep<[{a: 1}?, {b: 1}?], [{c: 1}?], {recurseIntoArrays: true}>;
+expectTypeOf(optionalFirstTuple).toBe<[{a: 1; c: 1}?, {b: 1}?]>();
+
+declare const readonlyOptionalFirstTuple: MergeDeep<readonly [{a: 1}?, {b: 1}?], readonly [{c: 1}?], {recurseIntoArrays: true}>;
+expectTypeOf(readonlyOptionalFirstTuple).toBe<[{a: 1; c: 1}?, {b: 1}?]>();
+
+declare const requiredOptionalFirstTuple: MergeDeep<[{a: 1}, {b: 1}?], [{c: 1}?, {d: 1}?], {recurseIntoArrays: true}>;
+expectTypeOf(requiredOptionalFirstTuple).toBe<[{a: 1; c: 1}, {b: 1; d: 1}?]>();
+
+// An optional first position followed by a rest element merges with a required first position and its rest.
+declare const optionalFirstTupleWithRest: MergeDeep<[{a: 1}?, ...Array<{b: 1}>], [{c: 1}, ...Array<{d: 1}>], {recurseIntoArrays: true}>;
+expectTypeOf(optionalFirstTupleWithRest).toBe<[{a: 1; c: 1}, ...Array<{b: 1; d: 1}>]>();
+
+// A tuple with an optional first position keeps that modifier when merged with a dense array.
+declare const optionalFirstTupleIntoArray: MergeDeep<[{a: 1}?, ...Array<{b: 1}>], Array<{c: 1}>, {recurseIntoArrays: true}>;
+expectTypeOf(optionalFirstTupleIntoArray).toBe<[{a: 1; c: 1}?, ...Array<{b: 1; c: 1}>]>();
+
+declare const arrayIntoOptionalFirstTuple: MergeDeep<Array<{a: 1}>, [{c: 1}?, ...Array<{d: 1}>], {recurseIntoArrays: true}>;
+expectTypeOf(arrayIntoOptionalFirstTuple).toBe<[{a: 1; c: 1}?, ...Array<{a: 1; d: 1}>]>();
+
+// The array merge mode still reaches the rest elements after an optional first position is merged.
+declare const optionalFirstSpreadIntoArray: MergeDeep<[string?, ...string[]], number[], {recurseIntoArrays: true; arrayMergeMode: 'spread'}>;
+expectTypeOf(optionalFirstSpreadIntoArray).toBe<[number?, ...Array<string | number>]>();
+
+declare const optionalFirstReplaceIntoArray: MergeDeep<[string?, ...string[]], number[], {recurseIntoArrays: true; arrayMergeMode: 'replace'}>;
+expectTypeOf(optionalFirstReplaceIntoArray).toBe<[number?, ...number[]]>();
+
+// The same merge works when the tuple is nested in a record.
+declare const optionalFirstTupleNested: MergeDeep<{rows: [{a: 1}?, ...Array<{b: 1}>]}, {rows: Array<{c: 1}>}, {recurseIntoArrays: true; arrayMergeMode: 'spread'}>;
+expectTypeOf(optionalFirstTupleNested).toBe<{rows: [{a: 1; c: 1}?, ...Array<{b: 1; c: 1}>]}>();
+
 // Recursing into a merge still creates a fresh mutable array when an operand is an empty readonly tuple.
 declare const readonlyEmptyDestination: MergeDeep<readonly [], readonly [1, 2], {recurseIntoArrays: true}>;
 expectTypeOf(readonlyEmptyDestination).toBe<[1, 2]>();

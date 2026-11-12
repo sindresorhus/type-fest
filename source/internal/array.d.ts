@@ -25,18 +25,6 @@ export type IsEqualOrExtend<Type, Item, Distribute extends boolean> =
 		: IsEqual<Type, Item>;
 
 /**
-Extracts the type of the first element of an array or tuple.
-*/
-export type FirstArrayElement<TArray extends UnknownArray> = TArray extends readonly [infer THead, ...unknown[]]
-	? THead
-	// A tuple whose elements are all optional has no required first element, but it still has a first element.
-	: '0' extends keyof TArray
-		? TArray extends readonly [(infer THead)?, ...unknown[]]
-			? THead
-			: never
-		: never;
-
-/**
 Returns the static, fixed-length portion of the given array, excluding variable-length parts.
 
 Known limitations:

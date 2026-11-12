@@ -354,6 +354,7 @@ Click the type names for complete docs.
 - [`JoinUnion`](source/join-union.d.ts) - Join a union of strings and/or numbers using the given string as a delimiter.
 - [`ArraySlice`](source/array-slice.d.ts) - Returns an array slice of a given range, just like `Array#slice()`.
 - [`ArrayElement`](source/array-element.d.ts) - Extracts the element type of an array or tuple.
+- [`FirstArrayElement`](source/first-array-element.d.ts) - Extract the type of the first element of an array.
 - [`LastArrayElement`](source/last-array-element.d.ts) - Extract the type of the last element of an array.
 - [`FixedLengthArray`](source/fixed-length-array.d.ts) - Create a type that represents an array of the given type and length. The `Array` prototype methods that manipulate its length are excluded from the resulting type.
 - [`MultidimensionalArray`](source/multidimensional-array.d.ts) - Create a type that represents a multidimensional array of the given type and dimension.
@@ -506,6 +507,7 @@ Click the type names for complete docs.
 - `Maybe`, `Option` - See [`Optional`](source/optional.d.ts)
 - `MaybePromise` - See [`Promisable`](source/promisable.d.ts)
 - `MaybeFunction`, `MaybeLazy`, `ValueOrGetter`, `Getter` - See [`Thunkable`](source/thunkable.d.ts)
+- `Head`, `ArrayHead`, `First` - See [`FirstArrayElement`](source/first-array-element.d.ts)
 - `LastOfUnion` - See [`UnionMember`](source/union-member.d.ts)
 - `FirstOfUnion` - See [`UnionMember`](source/union-member.d.ts)
 - `UnionToArray` - See [`UnionToTuple`](source/union-to-tuple.d.ts)

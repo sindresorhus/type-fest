@@ -9,7 +9,6 @@ import type {Merge} from './merge.d.ts';
 import type {ModifyDeep} from './modify-deep.d.ts'; // For `@link`
 import type {Except} from './except.d.ts';
 import type {
-	FirstArrayElement,
 	SimplifyObject,
 	UndefinedToOptionalObject,
 	KeyAliases,
@@ -30,6 +29,20 @@ type ArrayTail<TArray extends UnknownArray> = TArray extends unknown // For dist
 		? Writable<_ArrayTail<TArray>>
 		: []
 	: never; // Should never happen
+
+/**
+The type declared at the first position of a tuple, or `never` if there is none.
+
+The exported `FirstArrayElement` follows the runtime value and adds `undefined` to an optional first position. This returns the declared type instead, because the callers add the `?` modifier themselves and then merge the element type with the other side. An added `undefined` would change the merge result.
+*/
+type FirstTupleElement<TArray extends UnknownArray> = TArray extends readonly [infer Head, ...unknown[]]
+	? Head
+	// A tuple whose elements are all optional has no required first element, but it still has a first element.
+	: '0' extends keyof TArray
+		? TArray extends readonly [(infer Head)?, ...unknown[]]
+			? Head
+			: never
+		: never;
 
 type SimplifyDeepExcludeArray<T> = SimplifyDeep<T, UnknownArray>;
 
@@ -201,8 +214,8 @@ type OmitRestTypeHelper<
 > = Tail extends []
 	? Result
 	: Type extends readonly [unknown, ...unknown[]]
-		? OmitRestType<Tail, [...Result, FirstArrayElement<Type>]>
-		: OmitRestType<Tail, [...Result, FirstArrayElement<Type>?]>;
+		? OmitRestType<Tail, [...Result, FirstTupleElement<Type>]>
+		: OmitRestType<Tail, [...Result, FirstTupleElement<Type>?]>;
 
 /**
 Get the elements of an array type, without the rest element.
@@ -280,8 +293,8 @@ type DoMergeDeepTupleAndTupleRecursive<
 					Destination extends readonly [unknown, ...unknown[]] ? false : true,
 					Source extends readonly [unknown, ...unknown[]] ? false : true
 				> extends true
-					? [MergeDeepArrayOrTupleElements<FirstArrayElement<Destination>, FirstArrayElement<Source>, RemoveNever, Options>?]
-					: [MergeDeepArrayOrTupleElements<FirstArrayElement<Destination>, FirstArrayElement<Source>, RemoveNever, Options>],
+					? [MergeDeepArrayOrTupleElements<FirstTupleElement<Destination>, FirstTupleElement<Source>, RemoveNever, Options>?]
+					: [MergeDeepArrayOrTupleElements<FirstTupleElement<Destination>, FirstTupleElement<Source>, RemoveNever, Options>],
 			]
 		>;
 
@@ -312,8 +325,8 @@ type MergeTupleAndArrayType<
 	: MergeTupleAndArrayType<
 		ArrayTail<Tuple>, ArrayType, RemoveNever, Options,
 		[...Result, ...Tuple extends readonly [unknown, ...unknown[]]
-			? [MergeDeepArrayOrTupleElements<FirstArrayElement<Tuple>, ArrayType, RemoveNever, Options>]
-			: [MergeDeepArrayOrTupleElements<FirstArrayElement<Tuple>, ArrayType, RemoveNever, Options>?]]
+			? [MergeDeepArrayOrTupleElements<FirstTupleElement<Tuple>, ArrayType, RemoveNever, Options>]
+			: [MergeDeepArrayOrTupleElements<FirstTupleElement<Tuple>, ArrayType, RemoveNever, Options>?]]
 	>;
 
 /**
@@ -343,8 +356,8 @@ type MergeArrayTypeAndTuple<
 	: MergeArrayTypeAndTuple<
 		ArrayType, ArrayTail<Tuple>, RemoveNever, Options,
 		[...Result, ...Tuple extends readonly [unknown, ...unknown[]]
-			? [MergeDeepArrayOrTupleElements<ArrayType, FirstArrayElement<Tuple>, RemoveNever, Options>]
-			: [MergeDeepArrayOrTupleElements<ArrayType, FirstArrayElement<Tuple>, RemoveNever, Options>?]]
+			? [MergeDeepArrayOrTupleElements<ArrayType, FirstTupleElement<Tuple>, RemoveNever, Options>]
+			: [MergeDeepArrayOrTupleElements<ArrayType, FirstTupleElement<Tuple>, RemoveNever, Options>?]]
 	>;
 
 /**

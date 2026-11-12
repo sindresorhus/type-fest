@@ -1,7 +1,6 @@
 import {expectTypeOf} from 'nz';
 import type {IsEqual} from '../../index.d.ts';
 import type {
-	FirstArrayElement,
 	HasNoStaticElements,
 	IsArrayOfUnknownLength,
 	IsEqualOrExtend,
@@ -10,16 +9,6 @@ import type {
 	StaticPartOfArray,
 	VariablePartOfArray,
 } from '../../source/internal/index.d.ts';
-
-expectTypeOf<IsEqual<FirstArrayElement<[1, 2, 3]>, 1>>().toBe<true>();
-expectTypeOf<IsEqual<FirstArrayElement<[]>, never>>().toBe<true>();
-expectTypeOf<IsEqual<FirstArrayElement<string[]>, never>>().toBe<true>();
-expectTypeOf<IsEqual<FirstArrayElement<readonly string[]>, never>>().toBe<true>();
-expectTypeOf<IsEqual<FirstArrayElement<[1, ...string[]]>, 1>>().toBe<true>();
-
-// An optional first position still declares an element type.
-expectTypeOf<FirstArrayElement<[number?]>>().toBe<number>();
-expectTypeOf<FirstArrayElement<readonly [(number | undefined)?]>>().toBe<number | undefined>();
 
 expectTypeOf<IsEqual<StaticPartOfArray<[string, number, boolean, ...string[]]>, [string, number, boolean]>>().toBe<true>();
 expectTypeOf<IsEqual<StaticPartOfArray<string[]>, []>>().toBe<true>();

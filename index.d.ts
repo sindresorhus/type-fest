@@ -292,6 +292,7 @@ export type {Includes, IncludesOptions} from './source/includes.d.ts';
 export type {IndexOf, IndexOfOptions} from './source/index-of.d.ts';
 export type {Get, GetOptions} from './source/get.d.ts';
 export type {SetProperty} from './source/set-property.d.ts';
+export type {FirstArrayElement} from './source/first-array-element.d.ts';
 export type {LastArrayElement} from './source/last-array-element.d.ts';
 export type {ConditionalSimplify} from './source/conditional-simplify.d.ts';
 export type {ConditionalSimplifyDeep} from './source/conditional-simplify-deep.d.ts';
