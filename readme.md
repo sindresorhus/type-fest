@@ -191,6 +191,8 @@ Click the type names for complete docs.
 - [`ObjectEntry`](source/entry.d.ts) - Create a type that describes a single key-value pair produced by `Object.entries`, even for a generic object type.
 - [`Entries`](source/entries.d.ts) - Create a type that describes the key-value pairs produced when calling a collection’s `entries` method.
 - [`ObjectEntries`](source/entries.d.ts) - Create a type that describes the key-value pairs produced by `Object.entries`, even for a generic object type.
+- [`FromEntries`](source/from-entries.d.ts) - Create an object type from an array of key-value pairs.
+- [`InvertRecord`](source/invert-record.d.ts) - Create a record that maps each property value to its original keys.
 - [`Simplify`](source/simplify.d.ts) - Useful to flatten the type output to improve type hints shown in editors. And also to transform an interface into a type to aid with assignability.
 - [`SimplifyDeep`](source/simplify-deep.d.ts) - Deeply simplifies an object type.
 - [`SimplifyUnion`](source/simplify-union.d.ts) - Flattens a union type to improve type hints shown in editors, by showing the members instead of the type alias names.
@@ -316,6 +318,8 @@ Click the type names for complete docs.
 - [`SetParameterType`](source/set-parameter-type.d.ts) - Create a function that replaces some parameters with the given parameters.
 - [`RequireArity`](source/require-arity.d.ts) - Require a function to have at least the given number of required parameters.
 - [`Thunkable`](source/thunkable.d.ts) - Create a type that represents either the value or a function that returns the value.
+- [`Curry`](source/curry.d.ts) - Convert a function into a chain of functions that each accept one argument.
+- [`Pipe`](source/pipe.d.ts) - Create the signature of a function pipeline, checking that adjacent stages are compatible.
 
 ### Async
 
@@ -367,6 +371,7 @@ Click the type names for complete docs.
 - [`LiteralList`](source/literal-list.d.ts) - Enforces that a tuple contains exactly the members of a union type, with no duplicates or omissions.
 - [`TupleToObject`](source/tuple-to-object.d.ts) - Transforms a tuple into an object, mapping each tuple index to its corresponding type as a key-value pair.
 - [`ArrayToRecord`](source/array-to-record.d.ts) - Transforms an array of objects into a record keyed by one of their properties.
+- [`ArrayGroupBy`](source/array-group-by.d.ts) - Group an array of objects by a property, preserving the order within each group.
 - [`TupleToEnum`](source/tuple-to-enum.d.ts) - Create an enum-like object type from a tuple of property keys, where each key maps to itself, or to its index with the `numeric` option.
 - [`TupleOf`](source/tuple-of.d.ts) - Create a tuple type of the specified length with elements of the specified type.
 - [`TupleMax`](source/tuple-max.d.ts) - Returns the maximum number in a tuple of numbers.
@@ -386,6 +391,9 @@ Click the type names for complete docs.
 - [`TupleLength`](source/tuple-length.d.ts) - Return the length of a tuple.
 - [`EmptyArray`](source/empty-array.d.ts) - Represents a strictly empty readonly array, implemented as the readonly empty tuple `readonly []`.
 - [`ArrayAt`](source/array-at.d.ts) - Get the type of the element at the given index of an array, like [`Array#at()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/at).
+- [`ArrayZip`](source/array-zip.d.ts) - Pair the elements at matching positions in two arrays.
+- [`ArrayChunk`](source/array-chunk.d.ts) - Split an array into consecutive chunks of the given size.
+- [`ArrayUnique`](source/array-unique.d.ts) - Remove duplicate element types from an array, preserving their first occurrence.
 
 ### Numeric
 
@@ -533,6 +541,13 @@ Click the type names for complete docs.
 - `SetProp`, `SetPath`, `KeyPathSet`, `SetPathValue`, `SetFieldTypeDeep` - See [`SetProperty`](source/set-property.d.ts)
 - `ExtendsFrom`, `SubsetUnion` - See [`SubsetOf`](source/subset-of.d.ts)
 - `TypedEventTarget` - See [`StrictEventTarget`](source/strict-event-target.d.ts)
+- `Zip` - See [`ArrayZip`](source/array-zip.d.ts)
+- `Chunk` - See [`ArrayChunk`](source/array-chunk.d.ts)
+- `GroupBy` - See [`ArrayGroupBy`](source/array-group-by.d.ts)
+- `Uniq`, `Unique` - See [`ArrayUnique`](source/array-unique.d.ts)
+- `Flow` - See [`Pipe`](source/pipe.d.ts)
+- `ObjectFromEntries` - See [`FromEntries`](source/from-entries.d.ts)
+- `Invert` - See [`InvertRecord`](source/invert-record.d.ts)
 
 ## Tips
 
