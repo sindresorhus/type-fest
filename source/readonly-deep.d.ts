@@ -1,4 +1,5 @@
-import type {CallSignatureOf, HasMultipleCallSignatures, IsArrayOfUnknownLength, NonRecursiveLeaf, NonRecursiveType} from './internal/index.d.ts';
+import type {HasMultipleCallSignatures} from './has-multiple-call-signatures.d.ts';
+import type {CallSignatureOf, IsArrayOfUnknownLength, NonRecursiveLeaf, NonRecursiveType} from './internal/index.d.ts';
 import type {ApplyDefaultOptions} from './apply-default-options.d.ts';
 import type {IsNever} from './is-never.d.ts';
 
@@ -115,7 +116,7 @@ readonlyTheme.name = 'solarized';
 readonlyTheme.background.r = 3; // OK: `Color` is kept as is, so its properties stay writable
 ```
 
-Note that types containing overloaded functions are not made deeply readonly due to a [TypeScript limitation](https://github.com/microsoft/TypeScript/issues/29732).
+Overloaded functions, including their properties, are kept as is due to a [TypeScript limitation](https://github.com/microsoft/TypeScript/issues/29732). See {@link HasMultipleCallSignatures} for overload detection limitations.
 
 Note that the methods of an array, such as `join`, can still be reassigned, because TypeScript treats `Readonly<ReadonlyArray<T>>` the same as `ReadonlyArray<T>`. The methods of a `Map` or a `Set` are made readonly.
 

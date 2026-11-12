@@ -307,6 +307,7 @@ Click the type names for complete docs.
 
 - [`FunctionParameters`](source/function-parameters.d.ts) - Extract the parameters of a function type as a tuple.
 - [`Overloads`](source/overloads.d.ts) - Extract all overload signatures of the given function type as a tuple, preserving declaration order.
+- [`HasMultipleCallSignatures`](source/has-multiple-call-signatures.d.ts) - Returns a boolean for whether the given function type has multiple distinct call signatures.
 - [`OverloadParameters`](source/overload-parameters.d.ts) - Extract the parameter types of all overloads as a union.
 - [`OverloadReturnType`](source/overload-return-type.d.ts) - Extract the return types of all overloads as a union.
 - [`GuardedType`](source/guarded-type.d.ts) - Extract the type that a type predicate function narrows its parameter to.

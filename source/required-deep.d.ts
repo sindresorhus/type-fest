@@ -1,4 +1,5 @@
-import type {CallSignatureOf, HasMultipleCallSignatures, IsArrayOfUnknownLength, NonRecursiveLeaf} from './internal/index.d.ts';
+import type {HasMultipleCallSignatures} from './has-multiple-call-signatures.d.ts';
+import type {CallSignatureOf, IsArrayOfUnknownLength, NonRecursiveLeaf} from './internal/index.d.ts';
 import type {ApplyDefaultOptions} from './apply-default-options.d.ts';
 import type {IsNever} from './is-never.d.ts';
 
@@ -84,7 +85,7 @@ type RequiredKeptSettings = RequiredDeep<Settings, {keep: Color}>;
 // }
 ```
 
-Note that types containing overloaded functions are not made deeply required due to a [TypeScript limitation](https://github.com/microsoft/TypeScript/issues/29732).
+Overloaded functions, including their properties, are kept as is due to a [TypeScript limitation](https://github.com/microsoft/TypeScript/issues/29732). See {@link HasMultipleCallSignatures} for overload detection limitations.
 
 Note that an `Error` is walked like any other object, because a plain object with `name` and `message` is structurally an `Error` too. So `RequiredDeep<Error>` makes `stack` required, and a real `Error` is not assignable to it. Pass `{keep: Error}` as the second type argument to keep it as is.
 

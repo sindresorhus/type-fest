@@ -1,4 +1,5 @@
-import type {CallSignatureOf, HasMultipleCallSignatures, NonRecursiveLeaf} from './internal/index.d.ts';
+import type {HasMultipleCallSignatures} from './has-multiple-call-signatures.d.ts';
+import type {CallSignatureOf, NonRecursiveLeaf} from './internal/index.d.ts';
 import type {ApplyDefaultOptions} from './apply-default-options.d.ts';
 import type {IsNever} from './is-never.d.ts';
 
@@ -156,6 +157,8 @@ partialItem.name = 'shirt'; // OK
 partialItem.color = new Color(); // OK: the property is optional, but the kept `Color` itself is untouched
 partialItem.color.r = 3; // OK: the assignment above narrows `partialItem.color` to `Color`, which is kept as is
 ```
+
+Overloaded functions, including their properties, are kept as is due to a [TypeScript limitation](https://github.com/microsoft/TypeScript/issues/29732). See {@link HasMultipleCallSignatures} for overload detection limitations.
 
 @see {@link PartialDeepOptions}
 

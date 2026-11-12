@@ -1,4 +1,5 @@
-import type {CallSignatureOf, HasMultipleCallSignatures, IsArrayOfUnknownLength, NonRecursiveLeaf, NonRecursiveType} from './internal/index.d.ts';
+import type {HasMultipleCallSignatures} from './has-multiple-call-signatures.d.ts';
+import type {CallSignatureOf, IsArrayOfUnknownLength, NonRecursiveLeaf, NonRecursiveType} from './internal/index.d.ts';
 import type {ApplyDefaultOptions} from './apply-default-options.d.ts';
 import type {IsNever} from './is-never.d.ts';
 import type {Writable} from './writable.d.ts'; // For `@link`
@@ -77,7 +78,7 @@ writableTheme.name = 'solarized'; // OK
 writableTheme.background.r = 3; // Error: `Color` is kept as is, so its properties stay readonly
 ```
 
-Note that types containing overloaded functions are not made deeply writable due to a [TypeScript limitation](https://github.com/microsoft/TypeScript/issues/29732).
+Overloaded functions, including their properties, are kept as is due to a [TypeScript limitation](https://github.com/microsoft/TypeScript/issues/29732). See {@link HasMultipleCallSignatures} for overload detection limitations.
 
 @see {@link Writable}
 @see {@link WritableDeepOptions}

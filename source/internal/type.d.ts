@@ -50,26 +50,6 @@ export type IsBothExtends<BaseType, FirstType, SecondType> = FirstType extends B
 	: false;
 
 /**
-Test if the given function has multiple call signatures.
-
-Needed to handle the case of a single call signature with properties.
-
-Multiple call signatures cannot currently be supported due to a TypeScript limitation.
-@see https://github.com/microsoft/TypeScript/issues/29732
-*/
-export type HasMultipleCallSignatures<T extends (...arguments_: any[]) => unknown> =
-	T extends {
-		(this: infer FirstReceiver, ...arguments_: infer FirstArguments): infer FirstReturn;
-		(this: infer SecondReceiver, ...arguments_: infer SecondArguments): infer SecondReturn;
-	}
-		? [SecondReceiver, SecondArguments, SecondReturn] extends [FirstReceiver, FirstArguments, FirstReturn]
-			? [FirstReceiver, FirstArguments, FirstReturn] extends [SecondReceiver, SecondArguments, SecondReturn]
-				? false
-				: true
-			: true
-		: false;
-
-/**
 Returns a boolean for whether the given `boolean` is not `false`.
 */
 export type IsNotFalse<T extends boolean> = [T] extends [false] ? false : true;

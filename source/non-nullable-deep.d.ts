@@ -1,6 +1,7 @@
+import type {HasMultipleCallSignatures} from './has-multiple-call-signatures.d.ts';
 import type {ApplyDefaultOptions} from './apply-default-options.d.ts';
 import type {IsArrayOfUnknownLength} from './internal/array.d.ts';
-import type {HasMultipleCallSignatures, NonRecursiveLeaf} from './internal/type.d.ts';
+import type {NonRecursiveLeaf} from './internal/type.d.ts';
 import type {FunctionParameters} from './function-parameters.d.ts';
 import type {IsNever} from './is-never.d.ts';
 import type {RequiredDeep} from './required-deep.d.ts'; // For `@link`
@@ -33,6 +34,7 @@ export type NonNullableDeepOptions = {
 Recursively removes `null` and `undefined` from the specified type.
 
 Known limitations:
+- Overloaded functions, including their properties, are kept as is due to a [TypeScript limitation](https://github.com/microsoft/TypeScript/issues/29732). See {@link HasMultipleCallSignatures} for overload detection limitations.
 - A generic function is rebuilt from its `Parameters` and `ReturnType`, which instantiate its type parameter with `unknown`, so `NonNullableDeep<<T>(value: T) => T>` is `(value: unknown) => unknown` rather than the original. Pass the function type through the `keep` option to preserve its generic signature.
 - A thenable with members other than `then`, like a query builder, is kept as is, so its resolved value is not cleaned. Rebuilding it as a `PromiseLike` would drop those members.
 
