@@ -233,3 +233,8 @@ acceptRequired<string>({});
 declare function makeConstSettings<const Input>(input: Input): UndefinedOnPartial<Input>;
 expectTypeOf(makeConstSettings({required: 'x', optional: undefined as number | undefined}))
 	.toBe<{readonly required: 'x'; readonly optional: number | undefined}>();
+
+// Collection metadata belongs to the collection and must not enter the object transformation.
+type AnnotatedWeakSet = WeakSet<symbol> & {readonly label?: string};
+expectTypeOf<UndefinedOnPartial<AnnotatedWeakSet>>().toBe<AnnotatedWeakSet>();
+expectTypeOf<UndefinedOnPartial<AnnotatedWeakSet | {value?: string}>>().toBe<AnnotatedWeakSet | {value?: string | undefined}>();

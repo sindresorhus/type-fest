@@ -1,4 +1,5 @@
-import type {MapsSetsOrArrays, NonRecursiveType, SimplifyObject} from './internal/index.d.ts';
+import type {UnknownCollection} from './unknown-collection.d.ts';
+import type {NonRecursiveType, SimplifyObject} from './internal/index.d.ts';
 import type {ValuesOfUnion} from './values-of-union.d.ts';
 import type {ReadonlyKeysOf} from './readonly-keys-of.d.ts';
 import type {KeysOfUnion} from './keys-of-union.d.ts';
@@ -91,7 +92,7 @@ Note: If one union member has a string enum key and another member has a plain s
 @category Union
 */
 export type AllUnionFields<Union> =
-	Extract<Union, NonRecursiveType | MapsSetsOrArrays> extends infer SkippedMembers
+	Extract<Union, NonRecursiveType | UnknownCollection> extends infer SkippedMembers
 		? NormalizeNumericKeys<Exclude<Union, SkippedMembers>> extends infer RelevantMembers
 			? // eslint-disable-line @stylistic/operator-linebreak
 			| SkippedMembers

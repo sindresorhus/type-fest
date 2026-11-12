@@ -1096,3 +1096,12 @@ declare class GenericService<Value extends string> {
 function _readMergedServiceName<Value extends string>(value: MergeDeep<GenericService<Value>, {connection: {options: {enabled: true}}}>): string {
 	return value.connection.name;
 }
+
+// Collections are terminal values, including their keys, items, and additional properties.
+type CollectionPayload = {id: string} & {label?: string | undefined};
+type CollectionWithMetadata = ReadonlyMap<string, CollectionPayload> & {readonly metadata?: CollectionPayload};
+expectTypeOf<MergeDeep<{value: CollectionWithMetadata}, {}>>().toBe<{value: CollectionWithMetadata}>();
+expectTypeOf<MergeDeep<{}, {value: CollectionWithMetadata}>>().toBe<{value: CollectionWithMetadata}>();
+expectTypeOf<MergeDeep<{value: Set<string>}, {value: CollectionWithMetadata}>>().toBe<{value: CollectionWithMetadata}>();
+expectTypeOf<MergeDeep<[{value: CollectionWithMetadata}], [{enabled: true}], {recurseIntoArrays: true}>>()
+	.toBe<[{value: CollectionWithMetadata; enabled: true}]>();

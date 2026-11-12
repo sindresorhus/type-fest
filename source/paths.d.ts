@@ -1,4 +1,5 @@
-import type {NonRecursiveType, KeyToString, MapsSetsOrArrays, CountExactInArray} from './internal/index.d.ts';
+import type {UnknownCollection} from './unknown-collection.d.ts';
+import type {NonRecursiveType, KeyToString, CountExactInArray} from './internal/index.d.ts';
 import type {IsNumberLike} from './is-number-like.d.ts';
 import type {ApplyDefaultOptions} from './apply-default-options.d.ts';
 import type {IsAny} from './is-any.d.ts';
@@ -330,7 +331,7 @@ The types that `Paths` does not recurse into.
 */
 type NonRecursivePathsType<Options extends Required<PathsOptions>> =
 	| NonRecursiveType
-	| Exclude<MapsSetsOrArrays, UnknownArray>
+	| Exclude<UnknownCollection, UnknownArray>
 	| (Options['recurseIntoArrays'] extends false ? UnknownArray : never);
 
 /**

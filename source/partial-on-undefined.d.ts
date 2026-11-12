@@ -1,4 +1,5 @@
-import type {MapsSetsOrArrays, NonRecursiveType, SimplifyObject} from './internal/index.d.ts';
+import type {UnknownCollection} from './unknown-collection.d.ts';
+import type {NonRecursiveType, SimplifyObject} from './internal/index.d.ts';
 import type {IsUnknown} from './is-unknown.d.ts';
 import type {OmitIndexSignature} from './omit-index-signature.d.ts';
 import type {PartialOnUndefinedDeep} from './partial-on-undefined-deep.d.ts'; // For `@link`
@@ -54,7 +55,7 @@ const invalidPatch: PartialOnUndefined<UserPatch> = {
 @category Object
 */
 export type PartialOnUndefined<Type> =
-	Type extends NonRecursiveType | MapsSetsOrArrays
+	Type extends NonRecursiveType | UnknownCollection
 		? Type
 		: Type extends object
 			? PartialOnUndefinedObject<Type>

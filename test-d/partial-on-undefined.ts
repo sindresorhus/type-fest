@@ -245,3 +245,8 @@ const optionalFormatter: PartialOnUndefined<{readonly toString: (() => string) |
 expectTypeOf(optionalFormatter.toString).toBe<(() => string) | undefined>();
 // @ts-expect-error A valid formatter cannot overwrite the readonly field.
 optionalFormatter.toString = () => 'changed';
+
+// Collection metadata belongs to the collection and must not enter the object transformation.
+type AnnotatedMap = ReadonlyMap<string, number> & {readonly label: string | undefined};
+expectTypeOf<PartialOnUndefined<AnnotatedMap>>().toBe<AnnotatedMap>();
+expectTypeOf<PartialOnUndefined<AnnotatedMap | {value: string | undefined}>>().toBe<AnnotatedMap | {value?: string | undefined}>();

@@ -1,6 +1,7 @@
 import {expectTypeOf} from 'nz';
+import type {UnknownCollection} from '../index.d.ts';
 import type {ExclusifyUnion} from '../source/exclusify-union.d.ts';
-import type {MapsSetsOrArrays, NonRecursiveType} from '../source/internal/type.d.ts';
+import type {NonRecursiveType} from '../source/internal/type.d.ts';
 
 expectTypeOf<ExclusifyUnion<{a: string} | {b: number}>>().toBe<{a: string; b?: never} | {a?: never; b: number}>();
 expectTypeOf<ExclusifyUnion<{a: string} | {b: number} | {c: boolean}>>().toBe<{a: string; b?: never; c?: never} | {a?: never; b: number; c?: never} | {a?: never; b?: never; c: boolean}>();
@@ -31,7 +32,7 @@ expectTypeOf<ExclusifyUnion<Set<string> | Map<string, string>>>().toBe<Set<strin
 expectTypeOf<ExclusifyUnion<WeakSet<{a: string}> | WeakMap<{a: string}, string>>>().toBe<WeakSet<{a: string}> | WeakMap<{a: string}, string>>();
 expectTypeOf<ExclusifyUnion<string[] | Set<string>>>().toBe<string[] | Set<string>>();
 expectTypeOf<ExclusifyUnion<NonRecursiveType>>().toBe<NonRecursiveType>();
-expectTypeOf<ExclusifyUnion<MapsSetsOrArrays>>().toBe<MapsSetsOrArrays>();
+expectTypeOf<ExclusifyUnion<UnknownCollection>>().toBe<UnknownCollection>();
 
 // Mix of non-recursive and recursive types
 expectTypeOf<ExclusifyUnion<{a: string} | {a: number; b: true} | undefined>>().toBe<{a: string; b?: never} | {a: number; b: true} | undefined>();
@@ -242,3 +243,8 @@ declare const undefinedExclusiveChoice: UndefinedExclusiveChoice;
 expectTypeOf(undefinedExclusiveChoice.name).toBe<string | undefined>();
 // @ts-expect-error The declared readonly field remains readonly after exclusifying its member.
 undefinedExclusiveChoice.name = 'changed';
+
+// Collection metadata belongs to the collection and must not enter the object transformation.
+type CollectionBranch = WeakMap<symbol, number> & {collectionLabel: string | undefined; readonly metadata?: boolean};
+expectTypeOf<ExclusifyUnion<CollectionBranch | {collectionLabel: 1; left: true} | {collectionLabel: 2; right: true}>>()
+	.toBe<CollectionBranch | {collectionLabel: 1; left: true; right?: never} | {collectionLabel: 2; right: true; left?: never}>();

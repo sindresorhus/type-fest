@@ -1,4 +1,5 @@
-import type {MapsSetsOrArrays, NonRecursiveType, KeyToString} from './internal/index.d.ts';
+import type {UnknownCollection} from './unknown-collection.d.ts';
+import type {NonRecursiveType, KeyToString} from './internal/index.d.ts';
 import type {ApplyDefaultOptions} from './apply-default-options.d.ts';
 import type {GreaterThan} from './greater-than.d.ts';
 import type {IsAny} from './is-any.d.ts';
@@ -127,7 +128,7 @@ export type JsonPointer<Type, Options extends JsonPointerOptions = {}> =
 The pointer suffixes for the given type, without the leading `/`. A value that is not walked, like a primitive, gives `never`.
 */
 type _JsonPointer<Type, Options extends Required<JsonPointerOptions>, CurrentDepth extends number = 0> =
-	Type extends NonRecursiveType | Exclude<MapsSetsOrArrays, UnknownArray>
+	Type extends NonRecursiveType | Exclude<UnknownCollection, UnknownArray>
 		? never
 		: IsAny<Type> extends true
 			? never

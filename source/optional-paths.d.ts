@@ -1,4 +1,5 @@
-import type {MapsSetsOrArrays, NonRecursiveType} from './internal/type.d.ts';
+import type {UnknownCollection} from './unknown-collection.d.ts';
+import type {NonRecursiveType} from './internal/type.d.ts';
 import type {ApplyDefaultOptions} from './apply-default-options.d.ts';
 import type {IsAny} from './is-any.d.ts';
 import type {IsOptionalKeyOf} from './is-optional-key-of.d.ts';
@@ -99,7 +100,7 @@ export type OptionalPaths<BaseType extends object, Options extends OptionalPaths
 	_OptionalPaths<BaseType, ApplyDefaultOptions<OptionalPathsOptions, DefaultOptionalPathsOptions, Options>> & string;
 
 type _OptionalPaths<BaseType, Options extends Required<OptionalPathsOptions>, Accumulator extends string = '', CurrentDepth extends number = 0> =
-	BaseType extends Exclude<NonRecursiveType, Function> | Exclude<MapsSetsOrArrays, UnknownArray> // Also, distributes `BaseType`
+	BaseType extends Exclude<NonRecursiveType, Function> | Exclude<UnknownCollection, UnknownArray> // Also, distributes `BaseType`
 		? never
 		: IsAny<BaseType> extends true
 			? never

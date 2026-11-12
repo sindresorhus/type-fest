@@ -323,3 +323,8 @@ expectTypeOf<LeafKind<Date | {a: 1}>>().toBe<'leaf'>();
 // Existing recursive consumers continue to inspect class fields and preserve opaque values.
 expectTypeOf<ConditionalPickDeep<{account: Account; date: Date; items: Settings[]}, string>>().toBe<{account: {name: string}}>();
 expectTypeOf<ConditionalPickDeep<{callback: CallbackWithOwnBind; enabled: boolean}, boolean>>().toBe<{enabled: boolean}>();
+
+// Extra fields do not turn a collection into a record, and incomplete collection interfaces remain records.
+type AnnotatedWeakMap = WeakMap<symbol, number> & {metadata?: {hidden: string}};
+expectTypeOf<IsRecordLike<AnnotatedWeakMap>>().toBe<false>();
+expectTypeOf<IsRecordLike<Pick<WeakMap<symbol, number>, 'get' | 'has'>>>().toBe<true>();

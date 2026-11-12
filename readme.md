@@ -110,6 +110,7 @@ Click the type names for complete docs.
 - [`UnknownArray`](source/unknown-array.d.ts) - Represents an array with `unknown` value.
 - [`UnknownMap`](source/unknown-map.d.ts) - Represents a map with `unknown` key and value.
 - [`UnknownSet`](source/unknown-set.d.ts) - Represents a set with `unknown` value.
+- [`UnknownCollection`](source/unknown-collection.d.ts) - Matches an array, map, or set, including readonly and weak variants.
 - [`Except`](source/except.d.ts) - Create a type from an object type without certain keys.
 - [`Writable`](source/writable.d.ts) - Create a type that strips `readonly` from the given type. Inverse of `Readonly<T>`.
 - [`WritableDeep`](source/writable-deep.d.ts) - Create a deeply mutable version of an `object`/`ReadonlyMap`/`ReadonlySet`/`ReadonlyArray` type. The inverse of `ReadonlyDeep<T>`. Use `Writable<T>` if you only need one level deep.
@@ -199,7 +200,7 @@ Click the type names for complete docs.
 - [`PropertyValue`](source/property-value.d.ts) - Get the type of a property, or `never` if the key does not exist.
 - [`ExactKey`](source/exact-key.d.ts) - Resolve a property key to the matching key type in an object, converting between numeric and string forms when needed.
 - [`KeyAsString`](source/key-as-string.d.ts) - Get keys of the given type as strings.
-- [`Schema`](source/schema.d.ts) - Create a deep version of another object type where property values are recursively replaced into a given value type.
+- [`Schema`](source/schema.d.ts) - Create a deep version of another object type where property values are recursively replaced with a given value type.
 - [`Exact`](source/exact.d.ts) - Create a type that does not allow extra properties, meaning it only allows properties that are explicitly declared.
 - [`KeysOfUnion`](source/keys-of-union.d.ts) - Create a union of all keys from a given type, even those exclusive to specific union members.
 - [`OptionalKeysOf`](source/optional-keys-of.d.ts) - Extract all optional keys from the given type.

@@ -1,7 +1,8 @@
+import type {UnknownCollection} from './unknown-collection.d.ts';
 import type {SimplifyObject} from './internal/index.d.ts';
 import type {If} from './if.d.ts';
 import type {KeyAliases, NormalizedKeys} from './internal/object.d.ts';
-import type {IfNotAnyOrNever, MapsSetsOrArrays} from './internal/type.d.ts';
+import type {IfNotAnyOrNever} from './internal/type.d.ts';
 import type {IsNever} from './is-never.d.ts';
 import type {IsOptionalKeyOf} from './is-optional-key-of.d.ts';
 import type {OmitIndexSignature} from './omit-index-signature.d.ts';
@@ -95,9 +96,9 @@ export type ObjectMerge<First extends object, Second extends object> =
 		ifNot: IfNotAnyOrNever<Second, {
 			ifNot: First extends unknown // For distributing `First`
 				? Second extends unknown // For distributing `Second`
-					? First extends MapsSetsOrArrays
+					? First extends UnknownCollection
 						? unknown
-						: Second extends MapsSetsOrArrays
+						: Second extends UnknownCollection
 							? unknown
 							: _ObjectMerge<
 								First,

@@ -447,3 +447,8 @@ delete writable.value;
 expectTypeOf<UndefinedToOptional<Record<string, void>>>().toBe<Record<string, void | undefined>>();
 expectTypeOf<Record<string, void>>().toBeAssignableTo<UndefinedToOptional<Record<string, void>>>();
 expectTypeOf<UndefinedToOptional<Record<string, void>>>().toBeAssignableTo<Record<string, void>>();
+
+// Collection metadata belongs to the collection and must not enter the object transformation.
+type AnnotatedWeakMap = WeakMap<symbol, number> & {readonly label: string | undefined};
+expectTypeOf<UndefinedToOptional<AnnotatedWeakMap>>().toBe<AnnotatedWeakMap>();
+expectTypeOf<UndefinedToOptional<AnnotatedWeakMap | {value: string | undefined}>>().toBe<AnnotatedWeakMap | {value?: string}>();

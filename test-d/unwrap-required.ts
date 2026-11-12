@@ -75,3 +75,7 @@ expectTypeOf<UnwrapRequired<() => string>>().toBe<() => string>();
 // Known limitation: a numeric or symbol index signature cannot be reversed through `Required<infer T>`, so the inferred object type is `unknown` and the index signature is lost. See the note in the docs.
 declare const numericIndex: UnwrapRequired<{[index: number]: string}>;
 expectTypeOf(numericIndex).toBe<unknown>();
+
+// Collection metadata belongs to the collection and must not enter the object transformation.
+type RequiredCollection = Required<ReadonlySet<string> & {readonly label?: string}>;
+expectTypeOf<UnwrapRequired<RequiredCollection>>().toBe<RequiredCollection>();

@@ -17,6 +17,7 @@ export type {UnknownRecord} from './source/unknown-record.d.ts';
 export type {UnknownArray} from './source/unknown-array.d.ts';
 export type {UnknownSet} from './source/unknown-set.d.ts';
 export type {UnknownMap} from './source/unknown-map.d.ts';
+export type {UnknownCollection} from './source/unknown-collection.d.ts';
 export type {Except, ExceptOptions} from './source/except.d.ts';
 export type {TaggedUnion} from './source/tagged-union.d.ts';
 export type {Writable} from './source/writable.d.ts';

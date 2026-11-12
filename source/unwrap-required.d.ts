@@ -1,4 +1,5 @@
-import type {MapsSetsOrArrays, NonRecursiveType} from './internal/type.d.ts';
+import type {UnknownCollection} from './unknown-collection.d.ts';
+import type {NonRecursiveType} from './internal/type.d.ts';
 
 /**
 Revert the `Required` modifier on an object type.
@@ -26,7 +27,7 @@ Note:
 @category Object
 */
 export type UnwrapRequired<RequiredObjectType> =
-	RequiredObjectType extends NonRecursiveType | MapsSetsOrArrays
+	RequiredObjectType extends NonRecursiveType | UnknownCollection
 		? RequiredObjectType
 		: _UnwrapRequired<RequiredObjectType>;
 

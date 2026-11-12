@@ -166,3 +166,9 @@ expectTypeOf<ValueOfDeep<Wrapper<string>>>().toBe<string>();
 declare function valueOfDeep<ObjectType>(value: ObjectType): ValueOfDeep<ObjectType>;
 const inferred = valueOfDeep(config);
 expectTypeOf(inferred).toBe<'red' | 12 | 24 | 'dark'>();
+
+// Maps and sets remain leaves, including their added metadata.
+type MapWithMetadata = ReadonlyMap<string, {value: number}> & {metadata?: {hidden: string}};
+expectTypeOf<ValueOfDeep<MapWithMetadata>>().toBe<MapWithMetadata>();
+expectTypeOf<ValueOfDeep<{readonly collection?: WeakSet<symbol>}>>().toBe<WeakSet<symbol> | undefined>();
+expectTypeOf<ValueOfDeep<ReadonlyArray<MapWithMetadata | {value: 42}>>>().toBe<MapWithMetadata | 42>();

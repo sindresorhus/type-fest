@@ -1,5 +1,6 @@
+import type {UnknownCollection} from './unknown-collection.d.ts';
 import type {AnyFunction} from './basic.d.ts';
-import type {IsAnyOrNever, MapsSetsOrArrays, NonRecursiveType} from './internal/type.d.ts';
+import type {IsAnyOrNever, NonRecursiveType} from './internal/type.d.ts';
 import type {UnknownRecord} from './unknown-record.d.ts'; // For `@link`
 
 /**
@@ -56,7 +57,7 @@ export type IsRecordLike<Value> =
 	IsAnyOrNever<Value> extends true
 		? false
 		// An own property can make a callable incompatible with `Function`, so exclude `AnyFunction` as well.
-		: Value extends NonRecursiveType | MapsSetsOrArrays | AnyFunction
+		: Value extends NonRecursiveType | UnknownCollection | AnyFunction
 			? false
 			: Value extends object
 				? true

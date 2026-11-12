@@ -1,3 +1,4 @@
+import type {UnknownCollection} from './unknown-collection.d.ts';
 import type {ApplyDefaultOptions} from './apply-default-options.d.ts';
 import type {IsAny} from './is-any.d.ts';
 import type {IsEqual} from './is-equal.d.ts';
@@ -13,7 +14,6 @@ import type {
 	UndefinedToOptionalObject,
 	KeyAliases,
 	NonRecursiveType,
-	MapsSetsOrArrays,
 } from './internal/index.d.ts';
 import type {ArrayTail as _ArrayTail} from './array-tail.d.ts';
 import type {UnknownRecord} from './unknown-record.d.ts';
@@ -51,7 +51,7 @@ Seal only the current record shell, so interfaces can participate without eagerl
 */
 type SealRecord<Value> = Value extends UnknownRecord | UnknownArray
 	? Value
-	: Value extends NonRecursiveType | MapsSetsOrArrays
+	: Value extends NonRecursiveType | UnknownCollection
 		? Value
 		: Value extends object
 			? SimplifyObject<Value>
@@ -87,7 +87,7 @@ Remove `never` keys from copied plain objects, leaving array and tuple payloads 
 */
 type RemoveCopiedNever<Value> = IsAny<Value> extends true
 	? Value
-	: Value extends Exclude<NonRecursiveType, PromiseLike<unknown>> | MapsSetsOrArrays
+	: Value extends Exclude<NonRecursiveType, PromiseLike<unknown>> | UnknownCollection
 		// Copied arrays and tuples are terminal: this preserves recursive tuple payloads, additional properties, and brands.
 		? Value
 		: Value extends object

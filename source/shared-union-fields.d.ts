@@ -1,5 +1,6 @@
+import type {UnknownCollection} from './unknown-collection.d.ts';
 import type {OmitIndexSignature} from './omit-index-signature.d.ts';
-import type {MapsSetsOrArrays, NonRecursiveType, SimplifyObject} from './internal/index.d.ts';
+import type {NonRecursiveType, SimplifyObject} from './internal/index.d.ts';
 import type {IsNever} from './is-never.d.ts';
 import type {SharedUnionFieldsDeep} from './shared-union-fields-deep.d.ts'; // For `@link`
 import type {AllUnionFields} from './all-union-fields.d.ts'; // For `@link`
@@ -42,7 +43,7 @@ function displayPetInfo(petInfo: Cat | Dog) {
 	// 	dogType: string; // Needn't care about this field, because it's not a common pet info field.
 	// }
 
-	// petInfo type is complex and have some needless fields
+	// The `petInfo` type is complex and has some unnecessary fields.
 
 	console.log('name:', petInfo.name);
 	console.log('type:', petInfo.type);
@@ -55,7 +56,7 @@ function displayPetInfoWithSharedUnionFields(petInfo: SharedUnionFields<Cat | Do
 	// 	type: 'cat' | 'dog';
 	// }
 
-	// petInfo type is simple and clear
+	// The `petInfo` type is simple and clear.
 
 	console.log('name:', petInfo.name);
 	console.log('type:', petInfo.type);
@@ -69,7 +70,7 @@ function displayPetInfoWithSharedUnionFields(petInfo: SharedUnionFields<Cat | Do
 @category Union
 */
 export type SharedUnionFields<Union> =
-	Extract<Union, NonRecursiveType | MapsSetsOrArrays> extends infer SkippedMembers
+	Extract<Union, NonRecursiveType | UnknownCollection> extends infer SkippedMembers
 		? Exclude<Union, SkippedMembers> extends infer RelevantMembers
 			? // eslint-disable-line @stylistic/operator-linebreak
 			| SkippedMembers

@@ -1,4 +1,5 @@
-import type {UndefinedToOptionalObject, MapsSetsOrArrays, NonRecursiveType} from './internal/index.d.ts';
+import type {UnknownCollection} from './unknown-collection.d.ts';
+import type {UndefinedToOptionalObject, NonRecursiveType} from './internal/index.d.ts';
 import type {PartialOnUndefined} from './partial-on-undefined.d.ts'; // For `@link`
 
 /**
@@ -37,7 +38,7 @@ const invalidSettings: StrictSettings = {id: 'editor', theme: undefined};
 */
 export type UndefinedToOptional<ObjectType> =
 	// Distribute before mapping so discriminated union members keep their own keys and values.
-	ObjectType extends NonRecursiveType | MapsSetsOrArrays
+	ObjectType extends NonRecursiveType | UnknownCollection
 		? ObjectType
 		: ObjectType extends object
 			? UndefinedToOptionalObject<ObjectType>

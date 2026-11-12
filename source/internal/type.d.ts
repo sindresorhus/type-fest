@@ -36,12 +36,7 @@ Matches non-recursive types: {@link NonRecursiveLeaf} plus thenables (`PromiseLi
 export type NonRecursiveType = NonRecursiveLeaf | PromiseLike<unknown> | Function;
 
 /**
-Matches maps, sets, or arrays.
-*/
-export type MapsSetsOrArrays = ReadonlyMap<unknown, unknown> | WeakMap<WeakKey, unknown> | ReadonlySet<unknown> | WeakSet<WeakKey> | UnknownArray;
-
-/**
-Returns a boolean for whether the two given types extends the base type.
+Returns a boolean for whether the two given types extend the base type.
 */
 export type IsBothExtends<BaseType, FirstType, SecondType> = FirstType extends BaseType
 	? SecondType extends BaseType

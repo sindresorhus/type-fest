@@ -551,3 +551,9 @@ function readStringSchema<Input extends string, Value>(schema: Schema<{value: In
 
 expectTypeOf(readStringSchema<any, 'rule'>({value: 'rule'})).toBe<'rule'>();
 expectTypeOf<{value: 'source'}>().not.toBeAssignableTo<Schema<{value: any}, 'rule'>>();
+
+// Collection contents and metadata are replaced as one leaf, while arrays keep their shape.
+type AnnotatedWeakMap = WeakMap<symbol, number> & {metadata?: {hidden: string}};
+expectTypeOf<Schema<AnnotatedWeakMap, {readonly valid?: boolean}>>().toBe<{readonly valid?: boolean}>();
+expectTypeOf<Schema<readonly AnnotatedWeakMap[], 'rule'>>().toBe<ReadonlyArray<'rule'>>();
+expectTypeOf<Schema<AnnotatedWeakMap | {value: number}, 'rule'>>().toBe<'rule' | {value: 'rule'}>();

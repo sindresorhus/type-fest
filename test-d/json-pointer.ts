@@ -342,3 +342,8 @@ expectTypeOf<JsonPointer<{items: Record<BrandedNumberKey, {value: string}>}>>()
 	.toBe<'' | '/items' | `/items/${BrandedNumberKey}` | `/items/${BrandedNumberKey}/value`>();
 expectTypeOf<'/anything'>().not.toBeAssignableTo<JsonPointer<Record<BrandedStringKey, number>>>();
 expectTypeOf<'/0'>().not.toBeAssignableTo<JsonPointer<Record<BrandedNumberKey, number>>>();
+
+// Collection entries and added metadata do not produce pointers.
+type AnnotatedReadonlySet = ReadonlySet<number> & {metadata?: {hidden: string}};
+expectTypeOf<JsonPointer<readonly [AnnotatedReadonlySet, WeakMap<symbol, number>?]>>().toBe<'' | '/0' | '/1'>();
+expectTypeOf<JsonPointer<{cache: AnnotatedReadonlySet | {value: number}}>>().toBe<'' | '/cache' | '/cache/value'>();

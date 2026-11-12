@@ -1,6 +1,6 @@
 import {expectTypeOf} from 'nz';
-import type {OmitDeep, OptionalPaths, Paths, PickDeep} from '../index.d.ts';
-import type {MapsSetsOrArrays, NonRecursiveType} from '../source/internal/type.d.ts';
+import type {OmitDeep, OptionalPaths, Paths, PickDeep, UnknownCollection} from '../index.d.ts';
+import type {NonRecursiveType} from '../source/internal/type.d.ts';
 import type {UnknownArray} from '../source/unknown-array.d.ts';
 
 expectTypeOf<OptionalPaths<{}>>().toBe<never>();
@@ -87,7 +87,7 @@ expectTypeOf<OptionalPaths<Date>>().toBe<never>();
 expectTypeOf<OptionalPaths<() => string>>().toBe<never>();
 expectTypeOf<OptionalPaths<Set<string>>>().toBe<never>();
 expectTypeOf<OptionalPaths<{a?: {b: Function | {c?: Date}}}>>().toBe<'a' | 'a.b.c'>();
-expectTypeOf<OptionalPaths<{a: Exclude<NonRecursiveType, Function>; b: Exclude<MapsSetsOrArrays, UnknownArray>}>>().toBe<never>();
+expectTypeOf<OptionalPaths<{a: Exclude<NonRecursiveType, Function>; b: Exclude<UnknownCollection, UnknownArray>}>>().toBe<never>();
 expectTypeOf<OptionalPaths<{a?: Date; b?: Set<string>}>>().toBe<'a' | 'b'>();
 
 // Functions with properties
@@ -225,3 +225,8 @@ expectTypeOf<NonOptionalPaths<MixedOptional>>().toBe<'a' | `a.${number}` | `a.${
 // `requiredOnly` also leaves out the number form of an optional numeric key, which `Exclude` misses because `OptionalPaths` only gives the string form
 expectTypeOf<NonOptionalPaths<NumericKeys>>().toBe<0 | 1 | '1'>();
 expectTypeOf<RequiredOnlyPaths<NumericKeys>>().toBe<1 | '1'>();
+
+// Optional collection metadata is opaque, but optional fields containing collections are included.
+type AnnotatedWeakMap = WeakMap<symbol, number> & {metadata?: {hidden?: string}};
+expectTypeOf<OptionalPaths<{cache?: AnnotatedWeakMap}>>().toBe<'cache'>();
+expectTypeOf<OptionalPaths<{cache: AnnotatedWeakMap | {value?: number}}>>().toBe<'cache.value'>();

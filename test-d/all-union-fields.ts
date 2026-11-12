@@ -441,3 +441,8 @@ expectTypeOf<{label: 'indexed'}>().not.toBeAssignableTo<ReadonlyNamedIndexFields
 declare const readonlyNamedIndexFields: ReadonlyNamedIndexFields;
 // @ts-expect-error A readonly index contributor keeps the shared numeric field readonly.
 readonlyNamedIndexFields[0] = 'changed';
+
+// Collection metadata belongs to the collection and must not enter the object transformation.
+type CollectionBranch = ReadonlyMap<string, number> & {collectionLabel: string | undefined; readonly metadata?: boolean};
+expectTypeOf<AllUnionFields<CollectionBranch | {collectionLabel: 1; left: true} | {collectionLabel: 2; right: true}>>()
+	.toBe<CollectionBranch | {collectionLabel: 1 | 2; left?: true; right?: true}>();

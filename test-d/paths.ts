@@ -1,6 +1,6 @@
 import {expectTypeOf} from 'nz';
-import type {Get, NonNullableDeep, Paths, PathsOptions, Subtract, Tagged, UnknownArray} from '../index.d.ts';
-import type {MapsSetsOrArrays, NonRecursiveType} from '../source/internal/type.d.ts';
+import type {Get, NonNullableDeep, Paths, PathsOptions, Subtract, Tagged, UnknownArray, UnknownCollection} from '../index.d.ts';
+import type {NonRecursiveType} from '../source/internal/type.d.ts';
 
 declare const normal: Paths<{foo: string}>;
 expectTypeOf(normal).toBe<'foo'>();
@@ -104,7 +104,7 @@ expectTypeOf(weakSet).toBe<'foo' | 'foo.bar'>();
 declare const weakSet2: Paths<WeakSet<{a: string}>>;
 expectTypeOf(weakSet2).toBe<never>();
 
-declare const nonRecursives: Paths<{a: NonRecursiveType | Exclude<MapsSetsOrArrays, UnknownArray>}>;
+declare const nonRecursives: Paths<{a: NonRecursiveType | Exclude<UnknownCollection, UnknownArray>}>;
 expectTypeOf(nonRecursives).toBe<'a'>();
 
 // Test for unknown length array
@@ -1411,3 +1411,9 @@ expectTypeOf<Paths<{items: NumberKeyedRecord}, {bracketNotation: true; leavesOnl
 	.toBe<`items[${BrandedNumberKey}].value`>();
 expectTypeOf<'items.anything.value'>().not.toBeAssignableTo<Paths<{items: StringKeyedRecord}>>();
 expectTypeOf<'items.0.value'>().not.toBeAssignableTo<Paths<{items: NumberKeyedRecord}>>();
+
+// Collections stay terminal even when they have properties that would otherwise produce paths.
+type AnnotatedReadonlyMap = ReadonlyMap<string, number> & {metadata?: {hidden: string}};
+expectTypeOf<Paths<{cache: AnnotatedReadonlyMap}, {leavesOnly: true}>>().toBe<'cache'>();
+expectTypeOf<Paths<{items: readonly AnnotatedReadonlyMap[]}>>().toBe<'items' | `items.${number}`>();
+expectTypeOf<Paths<{cache: AnnotatedReadonlyMap | {value: number}}>>().toBe<'cache' | 'cache.value'>();

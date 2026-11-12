@@ -1,4 +1,5 @@
-import type {MapsSetsOrArrays, NonRecursiveType} from './internal/index.d.ts';
+import type {UnknownCollection} from './unknown-collection.d.ts';
+import type {NonRecursiveType} from './internal/index.d.ts';
 import type {UndefinedOnPartialDeep} from './undefined-on-partial-deep.d.ts'; // For `@link`
 
 /**
@@ -47,7 +48,7 @@ const nestedSettings: UndefinedOnPartial<Settings> = {
 @category Object
 */
 export type UndefinedOnPartial<Type> =
-	Type extends NonRecursiveType | MapsSetsOrArrays
+	Type extends NonRecursiveType | UnknownCollection
 		? Type
 		: Type extends object
 			? UndefinedOnPartialObject<Type>

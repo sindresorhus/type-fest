@@ -53,3 +53,11 @@ expectTypeOf<SimplifyDeep<IntersectionItem[], IntersectionItem>>().toBe<Intersec
 expectTypeOf<SimplifyDeep<any>>().toBe<any>();
 expectTypeOf<SimplifyDeep<never>>().toBe<never>();
 expectTypeOf<SimplifyDeep<unknown>>().toBe<unknown>();
+
+// Collections keep the original intersection types in their keys and values.
+type CollectionPayload = {id: string} & {label?: string};
+type CollectionWithMetadata = ReadonlySet<CollectionPayload> & {readonly metadata?: CollectionPayload};
+expectTypeOf<SimplifyDeep<CollectionWithMetadata>>().toBe<CollectionWithMetadata>();
+expectTypeOf<SimplifyDeep<{collection: CollectionWithMetadata; plain: CollectionPayload}>>()
+	.toBe<{collection: CollectionWithMetadata; plain: {id: string; label?: string}}>();
+expectTypeOf<SimplifyDeep<Array<{collection: CollectionWithMetadata} & {id: string}>>>().toBe<Array<{collection: CollectionWithMetadata; id: string}>>();

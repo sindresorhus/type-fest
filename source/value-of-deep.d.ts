@@ -1,6 +1,7 @@
+import type {UnknownCollection} from './unknown-collection.d.ts';
 import type {IsAny} from './is-any.d.ts';
 import type {IsEqual} from './is-equal.d.ts';
-import type {MapsSetsOrArrays, NonRecursiveType} from './internal/type.d.ts';
+import type {NonRecursiveType} from './internal/type.d.ts';
 import type {UnknownArray} from './unknown-array.d.ts';
 import type {ValueOf} from './value-of.d.ts'; // For `@link`
 import type {Get} from './get.d.ts'; // For `@link`
@@ -67,9 +68,9 @@ For the value at one deep property, use {@link Get} with a key path. For the pat
 export type ValueOfDeep<ObjectType> = ValueOfDeepRecursive<ObjectType, []>;
 
 /**
-The types that `ValueOfDeep` does not walk into. Arrays are removed from {@link MapsSetsOrArrays} because their element values are read.
+The types that `ValueOfDeep` does not walk into. Arrays are removed from {@link UnknownCollection} because their element values are read.
 */
-type NonRecursiveValue = NonRecursiveType | Exclude<MapsSetsOrArrays, UnknownArray>;
+type NonRecursiveValue = NonRecursiveType | Exclude<UnknownCollection, UnknownArray>;
 
 /**
 Walk the object and collect its leaf values. `Seen` holds the ancestor types, so a circular reference stops instead of recursing forever. It also counts the depth, so a type that grows on every level stops at 50 levels instead of reaching the TypeScript instantiation limit.

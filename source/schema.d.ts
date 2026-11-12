@@ -1,6 +1,7 @@
+import type {UnknownCollection} from './unknown-collection.d.ts';
 import type {IsArrayOfUnknownLength} from './internal/index.d.ts';
 import type {ApplyDefaultOptions} from './apply-default-options.d.ts';
-import type {MapsSetsOrArrays, NonRecursiveType} from './internal/type.d.ts';
+import type {NonRecursiveType} from './internal/type.d.ts';
 import type {IsNever} from './is-never.d.ts';
 import type {UnknownArray} from './unknown-array.d.ts';
 
@@ -50,7 +51,7 @@ type DefaultSchemaOptions = {
 };
 
 /**
-Create a deep version of another object type where property values are recursively replaced into a given value type.
+Create a deep version of another object type where property values are recursively replaced with a given value type.
 
 Use-cases:
 - Form validation: Define how each field should be validated.
@@ -100,7 +101,7 @@ export type Schema<Type, Value, Options extends SchemaOptions = {}> =
 type _Schema<Type, Value, Options extends Required<SchemaOptions>> =
 	unknown extends Type
 		? Value
-		: Type extends NonRecursiveType | Exclude<MapsSetsOrArrays, UnknownArray>
+		: Type extends NonRecursiveType | Exclude<UnknownCollection, UnknownArray>
 			? Value
 			: Type extends UnknownArray
 				? Options['recurseIntoArrays'] extends false

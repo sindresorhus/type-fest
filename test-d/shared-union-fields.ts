@@ -177,3 +177,8 @@ expectTypeOf(patternIndexedFields['data-id']).toBe<string | number>();
 function _readIndexedValue<Value>(value: SharedUnionFields<{[key: string]: unknown; value: Value} | {[key: string]: unknown; value: Value; extra: true}>): Value {
 	return value.value;
 }
+
+// Collection metadata belongs to the collection and must not enter the object transformation.
+type CollectionBranch = WeakSet<symbol> & {collectionLabel: string | undefined; readonly metadata?: boolean};
+expectTypeOf<SharedUnionFields<CollectionBranch | {collectionLabel: 1; left: true} | {collectionLabel: 2; right: true}>>()
+	.toBe<CollectionBranch | {collectionLabel: 1 | 2}>();

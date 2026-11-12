@@ -356,3 +356,12 @@ function _readNamedDestination<Value>(value: ObjectMerge<{name?: Value}, Record<
 // A destination `number` index signature absorbs a required canonical numeric key, but not a noncanonical one.
 expectTypeOf<ObjectMerge<Record<number, number>, {'0': string; '01': boolean}>>()
 	.toBe<{[key: number]: number | string; '0': string; '01': boolean}>();
+
+// Collections cannot be modeled as plain object spreads, even when they have their own properties.
+type AnnotatedMap = ReadonlyMap<string, number> & {readonly label?: string};
+type AnnotatedWeakMap = WeakMap<symbol, number> & {readonly label?: string};
+expectTypeOf<ObjectMerge<AnnotatedWeakMap, {value: number}>>().toBe<unknown>();
+expectTypeOf<ObjectMerge<{value: number}, AnnotatedMap | {name: string}>>().toBe<unknown>();
+
+// Collection-valued fields remain intact when the outer records are merged.
+expectTypeOf<ObjectMerge<{cache: AnnotatedMap}, {cache?: AnnotatedWeakMap}>>().toBe<{cache: AnnotatedMap | AnnotatedWeakMap}>();

@@ -298,3 +298,11 @@ expectTypeOf<ModifyDeep<[{id: string; obsolete: boolean}], [{obsolete: never; en
 function readNullableGenericPayload<Value>(value: ModifyDeep<{value: {id: string; payload: Value}}, {value: {enabled: true} | null}>): string | undefined {
 	return value.value?.id;
 }
+
+// Removing `never` fields from records must not inspect collection payloads.
+type CollectionPayload = {id: string; obsolete: never};
+type CollectionWithMetadata = WeakMap<symbol, CollectionPayload> & {readonly metadata?: CollectionPayload; obsolete: never};
+expectTypeOf<ModifyDeep<{value: CollectionWithMetadata}, {}>>().toBe<{value: CollectionWithMetadata}>();
+expectTypeOf<ModifyDeep<{}, {value: CollectionWithMetadata}>>().toBe<{value: CollectionWithMetadata}>();
+expectTypeOf<ModifyDeep<{value: Map<string, number>}, {value: CollectionWithMetadata}>>().toBe<{value: CollectionWithMetadata}>();
+expectTypeOf<ModifyDeep<{collection: CollectionWithMetadata; plain: CollectionPayload}, {}>>().toBe<{collection: CollectionWithMetadata; plain: {id: string}}>();

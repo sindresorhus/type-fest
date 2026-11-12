@@ -1,8 +1,9 @@
+import type {UnknownCollection} from './unknown-collection.d.ts';
 import type {ExactKey} from './exact-key.d.ts';
 import type {DeduplicatedKeys, NormalizedKeys, SimplifyObject, KeyToString} from './internal/index.d.ts';
 import type {RequireNone} from './require-none.d.ts';
 import type {If} from './if.d.ts';
-import type {IfNotAnyOrNever, MapsSetsOrArrays, NonRecursiveType} from './internal/type.d.ts';
+import type {IfNotAnyOrNever, NonRecursiveType} from './internal/type.d.ts';
 import type {IsUnknown} from './is-unknown.d.ts';
 import type {KeysOfUnion} from './keys-of-union.d.ts';
 import type {OmitIndexSignature} from './omit-index-signature.d.ts';
@@ -160,7 +161,7 @@ type D = ExclusifyUnion<{a?: 1; readonly b: 2} | {d: 4}>;
 */
 export type ExclusifyUnion<Union> = IfNotAnyOrNever<Union, {
 	ifNot: If<IsUnknown<Union>, Union,
-		Extract<Union, NonRecursiveType | MapsSetsOrArrays> extends infer SkippedMembers
+		Extract<Union, NonRecursiveType | UnknownCollection> extends infer SkippedMembers
 			? SkippedMembers | _ExclusifyUnion<Exclude<Union, SkippedMembers>>
 			: never
 	>;
