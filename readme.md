@@ -175,6 +175,7 @@ Click the type names for complete docs.
 - [`ValuesOfUnion`](source/values-of-union.d.ts) - Extract all possible values for the given keys from a union of types.
 - [`ValueOfDeep`](source/value-of-deep.d.ts) - Create a union of all leaf values in the given object, including values in nested objects and arrays.
 - [`ConditionalKeys`](source/conditional-keys.d.ts) - Extract the keys from a type where the value type of the key extends the given `Condition`.
+- [`IncompatibleKeys`](source/incompatible-keys.d.ts) - Get the keys that both types have, where the property in `Source` is not assignable to the property in `Target`.
 - [`ConditionalPick`](source/conditional-pick.d.ts) - Pick keys from the shape that matches the given `Condition`.
 - [`ConditionalPickDeep`](source/conditional-pick-deep.d.ts) - Pick keys recursively from the shape that matches the given condition.
 - [`ConditionalExcept`](source/conditional-except.d.ts) - Exclude keys from a shape that matches the given `Condition`.
@@ -512,6 +513,7 @@ Click the type names for complete docs.
 - `KeyOfMap` - See [`MapKey`](source/map-key.d.ts)
 - `PickByTypes` - See [`ConditionalPick`](source/conditional-pick.d.ts)
 - `KeysOfType`, `KeysWithType`, `KeysMatching` - See [`ConditionalKeys`](source/conditional-keys.d.ts)
+- `KeysWithDiffType` - See [`IncompatibleKeys`](source/incompatible-keys.d.ts)
 - `OmitValues` - See [`ExcludeValues`](source/exclude-values.d.ts)
 - `OmitNever` - See [`PickNonNever`](source/pick-non-never.d.ts)
 - `HomomorphicOmit` - See [`Except`](source/except.d.ts)
