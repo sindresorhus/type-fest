@@ -370,6 +370,7 @@ Click the type names for complete docs.
 - [`UnionToEnum`](source/union-to-enum.d.ts) - Create an enum-like object type from a union of property keys, where each key maps to itself.
 - [`LiteralList`](source/literal-list.d.ts) - Enforces that a tuple contains exactly the members of a union type, with no duplicates or omissions.
 - [`TupleToObject`](source/tuple-to-object.d.ts) - Transforms a tuple into an object, mapping each tuple index to its corresponding type as a key-value pair.
+- [`ObjectToTuple`](source/object-to-tuple.d.ts) - Convert an object with consecutive numeric keys starting at zero into a tuple.
 - [`ArrayToRecord`](source/array-to-record.d.ts) - Transforms an array of objects into a record keyed by one of their properties.
 - [`ArrayGroupBy`](source/array-group-by.d.ts) - Group an array of objects by a property, preserving the order within each group.
 - [`TupleToEnum`](source/tuple-to-enum.d.ts) - Create an enum-like object type from a tuple of property keys, where each key maps to itself, or to its index with the `numeric` option.
