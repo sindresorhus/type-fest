@@ -107,6 +107,7 @@ export type {FromEntries} from './source/from-entries.d.ts';
 export type {InvertRecord} from './source/invert-record.d.ts';
 export type {Curry} from './source/curry.d.ts';
 export type {Pipe} from './source/pipe.d.ts';
+export type {PartialApply} from './source/partial-apply.d.ts';
 export type {SetReturnType} from './source/set-return-type.d.ts';
 export type {SetParameterType} from './source/set-parameter-type.d.ts';
 export type {FunctionParameters} from './source/function-parameters.d.ts';

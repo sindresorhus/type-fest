@@ -321,6 +321,7 @@ Click the type names for complete docs.
 - [`Thunkable`](source/thunkable.d.ts) - Create a type that represents either the value or a function that returns the value.
 - [`Curry`](source/curry.d.ts) - Convert a function into a chain of functions that each accept one argument.
 - [`Pipe`](source/pipe.d.ts) - Create the signature of a function pipeline, checking that adjacent stages are compatible.
+- [`PartialApply`](source/partial-apply.d.ts) - Create the type of a function with the given leading arguments already applied.
 
 ### Async
 
@@ -549,6 +550,7 @@ Click the type names for complete docs.
 - `GroupBy` - See [`ArrayGroupBy`](source/array-group-by.d.ts)
 - `Uniq`, `Unique` - See [`ArrayUnique`](source/array-unique.d.ts)
 - `Flow` - See [`Pipe`](source/pipe.d.ts)
+- `PartialBind` - See [`PartialApply`](source/partial-apply.d.ts)
 - `ObjectFromEntries` - See [`FromEntries`](source/from-entries.d.ts)
 - `Invert` - See [`InvertRecord`](source/invert-record.d.ts)
 

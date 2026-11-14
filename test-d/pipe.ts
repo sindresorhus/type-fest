@@ -15,9 +15,34 @@ expectTypeOf<Pipe<[(...values: never[]) => number, (value: string) => boolean]>>
 expectTypeOf<Pipe<[(...values: readonly never[]) => number, (value: string) => boolean]>>().toBe<never>();
 expectTypeOf<Pipe<[() => number, (value: number) => string]>>().toBe<() => string>();
 expectTypeOf<Pipe<[(value: string) => number]>>().toBe<(value: string) => number>();
+
+// Each overload of the first stage starts a separate pipeline, keeping the valid ones in order.
 expectTypeOf<Pipe<[{(value: number): string; (value: string): number}, (value: number) => boolean]>>().toBe<(value: string) => boolean>();
-expectTypeOf<Pipe<[{(value: number): string; (value: string): number}, (value: string) => boolean]>>().toBe<never>();
+expectTypeOf<Pipe<[{(value: number): string; (value: string): number}, (value: string) => boolean]>>().toBe<(value: number) => boolean>();
+expectTypeOf<Pipe<[{(value: number): string; (value: string): string}, (value: string) => boolean]>>().toBe<((value: number) => boolean) & ((value: string) => boolean)>();
+expectTypeOf<Pipe<[{(value: number): string; (value: string): number}, (value: Date) => boolean]>>().toBe<never>();
+expectTypeOf<Pipe<[{(value: number): string; (value: string): number}]>>().toBe<((value: number) => string) & ((value: string) => number)>();
+
+// Calls use the first overload of the first stage, so a later overload it accepts is unreachable.
+declare const firstWins: Pipe<[{(value: string | number): 1; (value: number): 2}]>;
+expectTypeOf(firstWins(1)).toBe<1>();
+
+// A later stage uses its first overload that accepts the whole preceding return type.
 expectTypeOf<Pipe<[() => number, {(value: string): Date; (value: number): boolean}]>>().toBe<() => boolean>();
+// The first accepting overload is used without backtracking.
+expectTypeOf<Pipe<[() => string, {(value: string): number; (value: string): Date}, (value: Date) => boolean]>>().toBe<never>();
+expectTypeOf<Pipe<[() => number, {(value: number): boolean; (value: string): Date}]>>().toBe<() => boolean>();
+expectTypeOf<Pipe<[() => number, {(value: number): boolean; (value: number | string): Date}]>>().toBe<() => boolean>();
+expectTypeOf<Pipe<[() => string | number, {(value: string): Date; (value: number): boolean}]>>().toBe<never>();
+expectTypeOf<Pipe<[() => string | number, {(value: string): Date; (value: string | number): boolean}]>>().toBe<() => boolean>();
+expectTypeOf<Pipe<[() => number, {(value: number, extra: string): Date; (value: number): boolean}]>>().toBe<() => boolean>();
+expectTypeOf<Pipe<[() => number, {(value: number): never; (value: string): Date}]>>().toBe<() => never>();
+expectTypeOf<Pipe<[() => number, {(value: number): string; (value: string): Date}, (value: string) => boolean]>>().toBe<() => boolean>();
+expectTypeOf<Pipe<[() => number, never]>>().toBe<never>();
+expectTypeOf<Pipe<[() => number, any]>>().toBe<never>();
+// A `never` or `any` stage kills the pipeline, even with stages after it.
+expectTypeOf<Pipe<[() => number, never, (value: string) => number]>>().toBe<never>();
+expectTypeOf<Pipe<[() => number, any, (value: string) => number]>>().toBe<never>();
 
 type TupleUnionStage = (...values: [string] | [number, number]) => number;
 type ReadonlyTupleUnionStage = (...values: readonly [string] | readonly [number, number]) => number;
@@ -30,6 +55,14 @@ expectTypeOf<Pipe<[ReadonlyTupleUnionStage, (value: string) => boolean]>>().toBe
 expectTypeOf<Pipe<[() => number, UnaryTupleUnionStage]>>().toBe<() => boolean>();
 expectTypeOf<Pipe<[() => number, UnaryTupleUnionStage, (value: Date) => string]>>().toBe<never>();
 
+// A union of functions as a stage is handled through its members' overloads.
+expectTypeOf<Pipe<[() => number, ((value: number) => boolean) | ((value: string) => Date)]>>().toBe<() => boolean>();
+expectTypeOf<Pipe<[() => 'x', ((value: 'x') => 1) | ((value: 'x') => 2)]>>().toBe<(() => 1) | (() => 2)>();
+expectTypeOf<Pipe<[() => number, ((value: number) => 'a') | {(value: string): 'b'; (value: number): 'c'}]>>().toBe<(() => 'a') | (() => 'c')>();
+expectTypeOf<Pipe<[() => string | number, ((value: string) => 'a') | ((value: number) => 'b')]>>().toBe<never>();
+expectTypeOf<Pipe<[((value: number) => string) | ((value: string) => number), (value: string) => boolean]>>().toBe<(value: number) => boolean>();
+expectTypeOf<Pipe<[() => number, ((value: number) => 'x') | ((value: string) => boolean), (value: 'x') => string]>>().toBe<() => string>();
+
 expectTypeOf<Pipe<[]>>().toBe<never>();
 expectTypeOf<Pipe<Array<(value: string) => string>>>().toBe<never>();
 expectTypeOf<Pipe<[(value: string) => number, ...Array<(value: number) => number>]>>().toBe<never>();
@@ -40,6 +73,8 @@ expectTypeOf<Pipe<[() => string, (value: string | number) => boolean]>>().toBe<(
 expectTypeOf<Pipe<[() => unknown, (value: string) => boolean]>>().toBe<never>();
 expectTypeOf<Pipe<[() => string, (value: never) => boolean]>>().toBe<never>();
 expectTypeOf<Pipe<[() => number, (...arguments_: never) => boolean]>>().toBe<never>();
+// A stage with a `never` parameter list is skipped, even for a `never` value.
+expectTypeOf<Pipe<[() => never, (...arguments_: never) => boolean]>>().toBe<never>();
 expectTypeOf<Pipe<[() => string, (value: string) => number, (...arguments_: never) => boolean]>>().toBe<never>();
 expectTypeOf<Pipe<[() => never, (value: string) => boolean]>>().toBe<() => boolean>();
 expectTypeOf<Pipe<[() => never, (value: never) => boolean]>>().toBe<() => boolean>();

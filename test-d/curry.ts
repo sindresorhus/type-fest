@@ -19,7 +19,26 @@ expectTypeOf<Curry<(...arguments_: [text: string, count: number] | [flag: boolea
 expectTypeOf<Curry<(...arguments_: [text: string, count: number]) => boolean>>().toBe<(argument: string) => (argument: number) => boolean>();
 expectTypeOf<Curry<(value: string | number) => boolean>>().toBe<(argument: string | number) => boolean>();
 expectTypeOf<Curry<((value: string) => number) | ((value: number) => string)>>().toBe<((argument: string) => number) | ((argument: number) => string)>();
-expectTypeOf<Curry<{(value: string): number; (value: number, count: number): string}>>().toBe<(argument: number) => (argument: number) => string>();
+
+// Each overload is curried, keeping the supported ones in order.
+expectTypeOf<Curry<{(value: string): number; (value: number, count: number): string}>>().toBe<((value: string) => number) & ((value: number) => (count: number) => string)>();
+expectTypeOf<Curry<{(value: string, count?: number): number; (value: number, count: number): string}>>().toBe<(value: number) => (count: number) => string>();
+expectTypeOf<Curry<{(value: string, count?: number): number; (...values: number[]): string}>>().toBe<never>();
+expectTypeOf<Curry<{(): number; (value: string): string}>>().toBe<(() => number) & ((value: string) => string)>();
+expectTypeOf<Curry<{<T>(value: T): T; (value: number, count: number): string}>>().toBe<((value: unknown) => unknown) & ((value: number) => (count: number) => string)>();
+expectTypeOf<Curry<{(...values: number[]): string; (value: string): number}>>().toBe<(value: string) => number>();
+expectTypeOf<Curry<{(value?: string): 1; (value: string, count: number): 2; (...values: number[]): 3}>>().toBe<(value: string) => (count: number) => 2>();
+
+// Calls use the first overload that accepts the argument, so a later overload with the same first parameter is unreachable.
+declare const sharedFirstParameter: Curry<{(value: string): number; (value: string, count: number): string}>;
+expectTypeOf(sharedFirstParameter('a')).toBe<number>();
+
+declare const overloaded: Curry<{(value: string): number; (value: number, count: number): string}>;
+expectTypeOf(overloaded('a')).toBe<number>();
+expectTypeOf(overloaded(1)(2)).toBe<string>();
+// @ts-expect-error No overload accepts a boolean.
+overloaded(true);
+
 expectTypeOf<Curry<any>>().toBe<any>();
 expectTypeOf<Curry<never>>().toBe<never>();
 

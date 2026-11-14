@@ -51,4 +51,19 @@ export type HasExplicitThis<
 	? IsEqual<ThisParameterType<FunctionType & ((this: Unique, ...arguments_: Parameters_) => Return)>, Unique>
 	: true;
 
+/**
+Join the given function types, in order, into one overloaded function type. `never` elements are skipped, and the result is `never` when no element remains.
+
+The order matters, because overload resolution uses the first matching signature.
+
+@example
+```ts
+type A = JoinOverloads<[(value: string) => 1, never, (value: number) => 2]>;
+//=> ((value: string) => 1) & ((value: number) => 2)
+```
+*/
+export type JoinOverloads<Functions extends UnknownArray, Result = unknown> = Functions extends readonly [infer First, ...infer Rest]
+	? JoinOverloads<Rest, [First] extends [never] ? Result : Result & First>
+	: unknown extends Result ? never : Result;
+
 export {};
