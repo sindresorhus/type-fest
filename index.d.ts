@@ -205,6 +205,7 @@ export type {IsPrimitive} from './source/is-primitive.d.ts';
 export type {IsRecordLike} from './source/is-record-like.d.ts';
 export type {IsLiteral} from './source/is-literal.d.ts';
 export type {IsStringLiteral} from './source/is-string-literal.d.ts';
+export type {IsTemplateLiteral} from './source/is-template-literal.d.ts';
 export type {IsNumericLiteral} from './source/is-numeric-literal.d.ts';
 export type {IsBooleanLiteral} from './source/is-boolean-literal.d.ts';
 export type {IsSymbolLiteral} from './source/is-symbol-literal.d.ts';

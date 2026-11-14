@@ -267,6 +267,7 @@ Click the type names for complete docs.
 - [`IsRecordLike`](source/is-record-like.d.ts) - Returns a boolean for whether the given type is a record-like object.
 - [`IsLiteral`](source/is-literal.d.ts) - Returns a boolean for whether the given type is a [literal type](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#literal-types).
 - [`IsStringLiteral`](source/is-string-literal.d.ts) - Returns a boolean for whether the given type is a `string` [literal type](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#literal-types).
+- [`IsTemplateLiteral`](source/is-template-literal.d.ts) - Returns a boolean for whether the given type is a [template literal type](https://www.typescriptlang.org/docs/handbook/2/template-literal-types.html): a `string` type with infinitely many possible values, other than plain `string`.
 - [`IsNumericLiteral`](source/is-numeric-literal.d.ts) - Returns a boolean for whether the given type is a `number` or `bigint` [literal type](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#literal-types).
 - [`IsNumberLike`](source/is-number-like.d.ts) - Returns a boolean for whether the given type is a `number` or a numeric string.
 - [`IsNumericString`](source/is-numeric-string.d.ts) - Returns a boolean for whether the given type is a numeric string without surrounding whitespace.

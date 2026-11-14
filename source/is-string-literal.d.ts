@@ -1,11 +1,12 @@
 import type {CollapseLiterals} from './collapse-literals.d.ts';
 import type {UnwrapBrandedPrimitive} from './unwrap-branded-primitive.d.ts';
 import type {IsNever} from './is-never.d.ts';
+import type {IsTemplateLiteral} from './is-template-literal.d.ts'; // For `@link`
 
 /**
 Returns a boolean for whether the given type is a `string` [literal type](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#literal-types).
 
-Returns `false` for `any`, `never`, and `unknown`. Unions are normalized before classification; mixed results return `boolean`.
+Returns `false` for `any`, `never`, and `unknown`. Unions are normalized before classification; mixed results return `boolean`. Use {@link IsTemplateLiteral} to classify the open-ended string patterns, like `` `on${string}` ``.
 
 The implementation of this type is inspired by the trick mentioned in this [StackOverflow answer](https://stackoverflow.com/a/68261113/420747).
 
