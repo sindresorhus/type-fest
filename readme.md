@@ -322,6 +322,7 @@ Click the type names for complete docs.
 - [`Curry`](source/curry.d.ts) - Convert a function into a chain of functions that each accept one argument.
 - [`Pipe`](source/pipe.d.ts) - Create the signature of a function pipeline, checking that adjacent stages are compatible.
 - [`PartialApply`](source/partial-apply.d.ts) - Create the type of a function with the given leading arguments already applied.
+- [`Uncurry`](source/uncurry.d.ts) - Convert a chain of functions into a function that accepts all arguments at once.
 
 ### Async
 
@@ -551,6 +552,7 @@ Click the type names for complete docs.
 - `Uniq`, `Unique` - See [`ArrayUnique`](source/array-unique.d.ts)
 - `Flow` - See [`Pipe`](source/pipe.d.ts)
 - `PartialBind` - See [`PartialApply`](source/partial-apply.d.ts)
+- `UnCurry`, `UncurryN` - See [`Uncurry`](source/uncurry.d.ts)
 - `ObjectFromEntries` - See [`FromEntries`](source/from-entries.d.ts)
 - `Invert` - See [`InvertRecord`](source/invert-record.d.ts)
 
