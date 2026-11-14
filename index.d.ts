@@ -186,6 +186,7 @@ export type {IsNumberLike} from './source/is-number-like.d.ts';
 export type {IsNumericString} from './source/is-numeric-string.d.ts';
 export type {TupleToObject} from './source/tuple-to-object.d.ts';
 export type {ObjectToTuple} from './source/object-to-tuple.d.ts';
+export type {ObjectToUnion} from './source/object-to-union.d.ts';
 export type {ArrayToRecord} from './source/array-to-record.d.ts';
 export type {ArrayZip} from './source/array-zip.d.ts';
 export type {ArrayChunk} from './source/array-chunk.d.ts';
