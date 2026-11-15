@@ -5,25 +5,25 @@ expectTypeOf<TupleMin<[1, 2, 5, 3, 7, -9, -5, 0]>>().toBe<-9>();
 expectTypeOf<TupleMin<[1, 2, 5, 3, 7, -9, -5, 0, PositiveInfinity, NegativeInfinity]>>().toBe<NegativeInfinity>();
 expectTypeOf<TupleMin<[1, 1, 1, 1, 1, 1]>>().toBe<1>();
 expectTypeOf<TupleMin<[-1, -2, -5]>>().toBe<-5>();
-expectTypeOf<TupleMin<[-1, -2, number, -5]>>().toBe<never>();
+expectTypeOf<TupleMin<[-1, -2, number, -5]>>().toBe<number>();
 
 // Every possible integer choice contributes its own minimum, independent of tuple position.
 expectTypeOf<TupleMin<[1 | 4, 3]>>().toBe<1 | 3>();
 expectTypeOf<TupleMin<[3, 1 | 4]>>().toBe<1 | 3>();
 expectTypeOf<TupleMin<[1 | 4, 2 | 3]>>().toBe<1 | 2 | 3>();
 expectTypeOf<TupleMin<[1 | 4]>>().toBe<1 | 4>();
-expectTypeOf<TupleMin<[Tagged<1 | 4, 'Bound'>, 3]>>().toBe<Tagged<1, 'Bound'> | 3>();
+expectTypeOf<TupleMin<[Tagged<1 | 4, 'Bound'>, 3]>>().toBe<1 | 3>();
 expectTypeOf<TupleMin<[]>>().toBe<PositiveInfinity>();
-expectTypeOf<TupleMin<any>>().toBe<never>();
+expectTypeOf<TupleMin<any>>().toBe<any>();
 expectTypeOf<TupleMin<never>>().toBe<never>();
-expectTypeOf<TupleMin<[1] | [number]>>().toBe<1>();
-expectTypeOf<TupleMin<[number]>>().toBe<never>();
+expectTypeOf<TupleMin<[1] | [number]>>().toBe<number>();
+expectTypeOf<TupleMin<[number]>>().toBe<number>();
 
-// Unknown-length arrays cannot determine an exact minimum.
-expectTypeOf<TupleMin<Array<1>>>().toBe<never>();
-expectTypeOf<TupleMin<[1, ...Array<2>]>>().toBe<never>();
-expectTypeOf<TupleMin<[...Array<1>, 2]>>().toBe<never>();
-expectTypeOf<TupleMin<[Tagged<number, 'Bound'>, 3]>>().toBe<never>();
+// Unknown-length arrays cannot determine an exact minimum, so they give `number`, like `UnionMin`.
+expectTypeOf<TupleMin<Array<1>>>().toBe<number>();
+expectTypeOf<TupleMin<[1, ...Array<2>]>>().toBe<number>();
+expectTypeOf<TupleMin<[...Array<1>, 2]>>().toBe<number>();
+expectTypeOf<TupleMin<[Tagged<number, 'Bound'>, 3]>>().toBe<number>();
 // @ts-expect-error Candidates must be numbers.
 type UnknownMinimumCandidate = TupleMin<[unknown]>;
 
@@ -78,37 +78,37 @@ expectTypeOf<TupleMin<[1, 4] | readonly [8, 2]>>().toBe<1 | 2>();
 expectTypeOf<TupleMin<[1, 4] | [4, 1]>>().toBe<1>();
 expectTypeOf<TupleMin<[] | [2, 5]>>().toBe<PositiveInfinity | 2>();
 expectTypeOf<TupleMin<[1, 2] | [never, 3]>>().toBe<1>();
-expectTypeOf<TupleMin<[1, 2] | number[]>>().toBe<1>();
-expectTypeOf<TupleMin<[1, 2] | [3, ...Array<4>]>>().toBe<1>();
+expectTypeOf<TupleMin<[1, 2] | number[]>>().toBe<number>();
+expectTypeOf<TupleMin<[1, 2] | [3, ...Array<4>]>>().toBe<number>();
 expectTypeOf<TupleMin<[1 | 4, 2 | 5, 3 | 6]>>().toBe<1 | 2 | 3 | 4>();
 expectTypeOf<TupleMin<[1 | 2, 3 | 4]>>().toBe<1 | 2>();
 expectTypeOf<TupleMin<[-4 | -1, -3 | -2]>>().toBe<-4 | -3 | -2>();
 
-// Unknown and impossible numeric elements cannot produce an exact result.
-expectTypeOf<TupleMin<[any]>>().toBe<never>();
-expectTypeOf<TupleMin<[1, any, 3]>>().toBe<never>();
+// Unknown numeric elements give `number` or `any`, and impossible elements give `never`.
+expectTypeOf<TupleMin<[any]>>().toBe<any>();
+expectTypeOf<TupleMin<[1, any, 3]>>().toBe<any>();
 expectTypeOf<TupleMin<[never]>>().toBe<never>();
 expectTypeOf<TupleMin<[never, 3]>>().toBe<never>();
 expectTypeOf<TupleMin<[3, never]>>().toBe<never>();
-expectTypeOf<TupleMin<[NegativeInfinity, number]>>().toBe<never>();
-expectTypeOf<TupleMin<readonly number[]>>().toBe<never>();
-expectTypeOf<TupleMin<any[]>>().toBe<never>();
-expectTypeOf<TupleMin<never[]>>().toBe<never>();
-expectTypeOf<TupleMin<[1, ...Array<2>, 3]>>().toBe<never>();
+expectTypeOf<TupleMin<[NegativeInfinity, number]>>().toBe<number>();
+expectTypeOf<TupleMin<readonly number[]>>().toBe<number>();
+expectTypeOf<TupleMin<any[]>>().toBe<number>();
+expectTypeOf<TupleMin<never[]>>().toBe<number>();
+expectTypeOf<TupleMin<[1, ...Array<2>, 3]>>().toBe<number>();
 
-// Literal brands are retained, and broad brands must not hide unknown values.
-expectTypeOf<TupleMin<[Tagged<1, 'Count'>, 3]>>().toBe<Tagged<1, 'Count'>>();
-expectTypeOf<TupleMin<[3, Tagged<1, 'Count'>]>>().toBe<Tagged<1, 'Count'>>();
-expectTypeOf<TupleMin<[Tagged<3, 'First'>, Tagged<3, 'Second'>]>>().toBe<Tagged<3, 'First'>>();
+// Brands are removed from the result, and broad brands give `number`.
+expectTypeOf<TupleMin<[Tagged<1, 'Count'>, 3]>>().toBe<1>();
+expectTypeOf<TupleMin<[3, Tagged<1, 'Count'>]>>().toBe<1>();
+expectTypeOf<TupleMin<[Tagged<3, 'First'>, Tagged<3, 'Second'>]>>().toBe<3>();
 expectTypeOf<TupleMin<[3, Tagged<3, 'Count'>]>>().toBe<3>();
-expectTypeOf<TupleMin<[Tagged<PositiveInfinity, 'Bound'>]>>().toBe<Tagged<PositiveInfinity, 'Bound'>>();
-expectTypeOf<TupleMin<[Tagged<PositiveInfinity, 'Bound'>, PositiveInfinity]>>().toBe<Tagged<PositiveInfinity, 'Bound'>>();
-expectTypeOf<TupleMin<[Tagged<1.5, 'Scale'>, 2]>>().toBe<Tagged<1.5, 'Scale'>>();
-expectTypeOf<TupleMin<[Opaque<1, 'Count'>, 3]>>().toBe<Opaque<1, 'Count'>>();
-expectTypeOf<TupleMin<[Tagged<Tagged<1, 'Count'>, 'Checked'>, 3]>>().toBe<Tagged<Tagged<1, 'Count'>, 'Checked'>>();
-expectTypeOf<TupleMin<[Opaque<number, 'Count'>, 3]>>().toBe<never>();
-expectTypeOf<TupleMin<[3, Tagged<number, 'Count'>]>>().toBe<never>();
-expectTypeOf<TupleMin<[(number & {}), 3]>>().toBe<never>();
+expectTypeOf<TupleMin<[Tagged<PositiveInfinity, 'Bound'>]>>().toBe<PositiveInfinity>();
+expectTypeOf<TupleMin<[Tagged<PositiveInfinity, 'Bound'>, PositiveInfinity]>>().toBe<PositiveInfinity>();
+expectTypeOf<TupleMin<[Tagged<1.5, 'Scale'>, 2]>>().toBe<1.5>();
+expectTypeOf<TupleMin<[Opaque<1, 'Count'>, 3]>>().toBe<1>();
+expectTypeOf<TupleMin<[Tagged<Tagged<1, 'Count'>, 'Checked'>, 3]>>().toBe<1>();
+expectTypeOf<TupleMin<[Opaque<number, 'Count'>, 3]>>().toBe<number>();
+expectTypeOf<TupleMin<[3, Tagged<number, 'Count'>]>>().toBe<number>();
+expectTypeOf<TupleMin<[(number & {}), 3]>>().toBe<number>();
 
 // Known enum values are comparable, while runtime enum values are unknown.
 enum Limit {
@@ -124,7 +124,7 @@ expectTypeOf<TupleMin<[Limit.Low, 1]>>().toBe<Limit.Low>();
 declare enum RuntimeLimit {
 	Value,
 }
-expectTypeOf<TupleMin<[RuntimeLimit.Value, 3]>>().toBe<never>();
+expectTypeOf<TupleMin<[RuntimeLimit.Value, 3]>>().toBe<number>();
 
 // Composition, negative assignability, and generic inference through the public exports.
 expectTypeOf<TupleMin<[TupleMax<[2, 5]>, TupleMin<[3, 8]>]>>().toBe<3>();
@@ -153,41 +153,41 @@ type UndefinedMinimum = TupleMin<[1, undefined]>;
 // @ts-expect-error Scalar numbers are not tuples.
 type ScalarMinimum = TupleMin<1>;
 
-// Equal values retain the earliest winner, even after it replaces an earlier candidate.
-expectTypeOf<TupleMin<[Tagged<3, 'Second'>, Tagged<3, 'First'>]>>().toBe<Tagged<3, 'Second'>>();
-expectTypeOf<TupleMin<[Tagged<3, 'Count'>, 3]>>().toBe<Tagged<3, 'Count'>>();
-expectTypeOf<TupleMin<[9, Tagged<1, 'First'>, 8, Tagged<1, 'Last'>]>>().toBe<Tagged<1, 'First'>>();
-expectTypeOf<TupleMin<[Tagged<5, 'First'>, Tagged<1, 'Second'>, 3]>>().toBe<Tagged<1, 'Second'>>();
+// Equal branded values give the unbranded value, even after one replaces an earlier candidate.
+expectTypeOf<TupleMin<[Tagged<3, 'Second'>, Tagged<3, 'First'>]>>().toBe<3>();
+expectTypeOf<TupleMin<[Tagged<3, 'Count'>, 3]>>().toBe<3>();
+expectTypeOf<TupleMin<[9, Tagged<1, 'First'>, 8, Tagged<1, 'Last'>]>>().toBe<1>();
+expectTypeOf<TupleMin<[Tagged<5, 'First'>, Tagged<1, 'Second'>, 3]>>().toBe<1>();
 expectTypeOf<TupleMin<[Tagged<5, 'First'>, 4, Tagged<5, 'Last'>]>>().toBe<4>();
-expectTypeOf<TupleMin<[Tagged<3, 'Count', 'first'>, Tagged<3, 'Count', 'last'>]>>().toBe<Tagged<3, 'Count', 'first'>>();
-expectTypeOf<TupleMin<[Opaque<3, 'First'>, Opaque<3, 'Last'>]>>().toBe<Opaque<3, 'First'>>();
-expectTypeOf<TupleMin<[Tagged<0, 'Zero'>, -0]>>().toBe<Tagged<0, 'Zero'>>();
-expectTypeOf<TupleMin<[Tagged<-1.5, 'Scale'>, -1.5, -1]>>().toBe<Tagged<-1.5, 'Scale'>>();
+expectTypeOf<TupleMin<[Tagged<3, 'Count', 'first'>, Tagged<3, 'Count', 'last'>]>>().toBe<3>();
+expectTypeOf<TupleMin<[Opaque<3, 'First'>, Opaque<3, 'Last'>]>>().toBe<3>();
+expectTypeOf<TupleMin<[Tagged<0, 'Zero'>, -0]>>().toBe<0>();
+expectTypeOf<TupleMin<[Tagged<-1.5, 'Scale'>, -1.5, -1]>>().toBe<-1.5>();
 
-// Independent branded choices preserve both the winning value and its identity.
-expectTypeOf<TupleMin<[Tagged<1, 'Low'> | Tagged<4, 'High'>, Tagged<3, 'Middle'>]>>().toBe<Tagged<1, 'Low'> | Tagged<3, 'Middle'>>();
-expectTypeOf<TupleMin<[Tagged<1 | 5, 'First'>, Tagged<1, 'Second'>]>>().toBe<Tagged<1, 'First'> | Tagged<1, 'Second'>>();
-expectTypeOf<TupleMin<[Tagged<1, 'First'> | Tagged<1, 'Second'>, Tagged<1, 'Last'>]>>().toBe<Tagged<1, 'First'> | Tagged<1, 'Second'>>();
-expectTypeOf<TupleMin<[Tagged<1 | 4, 'First'>, Tagged<1 | 3, 'Second'>]>>().toBe<Tagged<1, 'First'> | Tagged<1 | 3, 'Second'>>();
-expectTypeOf<TupleMin<[5, Tagged<1 | 4, 'First'>, Tagged<1 | 3, 'Second'>, 2]>>().toBe<2 | Tagged<1, 'First'> | Tagged<1, 'Second'>>();
-expectTypeOf<TupleMin<[Tagged<1 | 4, 'First'>, Tagged<1 | 3, 'Second'>, Tagged<1, 'Last'>]>>().toBe<Tagged<1, 'First'> | Tagged<1, 'Second'> | Tagged<1, 'Last'>>();
-expectTypeOf<TupleMin<[Tagged<3, 'Count'> | 2]>>().toBe<Tagged<3, 'Count'> | 2>();
+// Independent branded choices keep every possible winning value, without its brand.
+expectTypeOf<TupleMin<[Tagged<1, 'Low'> | Tagged<4, 'High'>, Tagged<3, 'Middle'>]>>().toBe<1 | 3>();
+expectTypeOf<TupleMin<[Tagged<1 | 5, 'First'>, Tagged<1, 'Second'>]>>().toBe<1>();
+expectTypeOf<TupleMin<[Tagged<1, 'First'> | Tagged<1, 'Second'>, Tagged<1, 'Last'>]>>().toBe<1>();
+expectTypeOf<TupleMin<[Tagged<1 | 4, 'First'>, Tagged<1 | 3, 'Second'>]>>().toBe<1 | 3>();
+expectTypeOf<TupleMin<[5, Tagged<1 | 4, 'First'>, Tagged<1 | 3, 'Second'>, 2]>>().toBe<1 | 2>();
+expectTypeOf<TupleMin<[Tagged<1 | 4, 'First'>, Tagged<1 | 3, 'Second'>, Tagged<1, 'Last'>]>>().toBe<1>();
+expectTypeOf<TupleMin<[Tagged<3, 'Count'> | 2]>>().toBe<2 | 3>();
 
 // Single-object custom brands and optional flavors use the same comparison contract.
 type Count = 1 & {readonly __brand: 'Count'};
 type OptionalCount = 1 & {readonly __brand?: 'Count'};
-expectTypeOf<TupleMin<[Count, 3]>>().toBe<Count>();
-expectTypeOf<TupleMin<[3, Count]>>().toBe<Count>();
-expectTypeOf<TupleMin<[Count, 1]>>().toBe<Count>();
+expectTypeOf<TupleMin<[Count, 3]>>().toBe<1>();
+expectTypeOf<TupleMin<[3, Count]>>().toBe<1>();
+expectTypeOf<TupleMin<[Count, 1]>>().toBe<1>();
 expectTypeOf<TupleMin<[1, Count]>>().toBe<1>();
-expectTypeOf<TupleMin<[OptionalCount, 3]>>().toBe<OptionalCount>();
-expectTypeOf<TupleMin<[Flavor<1, 'Count'>, 3]>>().toBe<Flavor<1, 'Count'>>();
-expectTypeOf<TupleMin<[5, Flavor<1, 'Count'>]>>().toBe<Flavor<1, 'Count'>>();
-expectTypeOf<TupleMin<[Flavor<1, 'Count'>, Flavor<1, 'Other'>]>>().toBe<Flavor<1, 'Count'>>();
-expectTypeOf<TupleMin<[Flavor<1 | 5, 'Count'>, 3]>>().toBe<3 | Flavor<1, 'Count'>>();
-expectTypeOf<TupleMin<[number & {readonly __brand: 'Count'}, 3]>>().toBe<never>();
-expectTypeOf<TupleMin<[number & {readonly __brand?: 'Count'}, 3]>>().toBe<never>();
-expectTypeOf<TupleMin<[Flavor<number, 'Count'>, 3]>>().toBe<never>();
+expectTypeOf<TupleMin<[OptionalCount, 3]>>().toBe<1>();
+expectTypeOf<TupleMin<[Flavor<1, 'Count'>, 3]>>().toBe<1>();
+expectTypeOf<TupleMin<[5, Flavor<1, 'Count'>]>>().toBe<1>();
+expectTypeOf<TupleMin<[Flavor<1, 'Count'>, Flavor<1, 'Other'>]>>().toBe<1>();
+expectTypeOf<TupleMin<[Flavor<1 | 5, 'Count'>, 3]>>().toBe<1 | 3>();
+expectTypeOf<TupleMin<[number & {readonly __brand: 'Count'}, 3]>>().toBe<number>();
+expectTypeOf<TupleMin<[number & {readonly __brand?: 'Count'}, 3]>>().toBe<number>();
+expectTypeOf<TupleMin<[Flavor<number, 'Count'>, 3]>>().toBe<number>();
 
 // Enums with equal, negative, decimal, and automatically assigned values keep their member types.
 enum Offset {
@@ -219,48 +219,48 @@ expectTypeOf<TupleMin<[OtherLimit.Low, Limit.Low]>>().toBe<OtherLimit.Low>();
 expectTypeOf<TupleMin<[1, Limit.Low]>>().toBe<1>();
 expectTypeOf<TupleMin<[FixedLimit.Low, -7]>>().toBe<FixedLimit.Low>();
 expectTypeOf<TupleMin<[MixedLimit.Numeric, 3]>>().toBe<MixedLimit.Numeric>();
-expectTypeOf<TupleMin<[Tagged<Limit.Low, 'Count'>, 3]>>().toBe<Tagged<Limit.Low, 'Count'>>();
+expectTypeOf<TupleMin<[Tagged<Limit.Low, 'Count'>, 3]>>().toBe<Limit.Low>();
 
-// Infinity does not short-circuit validation or discard a first winner's brand.
-expectTypeOf<TupleMin<[1, Tagged<NegativeInfinity, 'Limit'>, NegativeInfinity]>>().toBe<Tagged<NegativeInfinity, 'Limit'>>();
+// Infinity does not short-circuit validation.
+expectTypeOf<TupleMin<[1, Tagged<NegativeInfinity, 'Limit'>, NegativeInfinity]>>().toBe<NegativeInfinity>();
 expectTypeOf<TupleMin<[NegativeInfinity, Tagged<NegativeInfinity, 'Limit'>]>>().toBe<NegativeInfinity>();
-expectTypeOf<TupleMin<[PositiveInfinity, Tagged<1, 'Count'>]>>().toBe<Tagged<1, 'Count'>>();
+expectTypeOf<TupleMin<[PositiveInfinity, Tagged<1, 'Count'>]>>().toBe<1>();
 expectTypeOf<TupleMin<[NegativeInfinity | 2, PositiveInfinity | 1]>>().toBe<NegativeInfinity | 1 | 2>();
 expectTypeOf<TupleMin<[NegativeInfinity | PositiveInfinity, NegativeInfinity | PositiveInfinity]>>().toBe<NegativeInfinity | PositiveInfinity>();
 expectTypeOf<TupleMin<[NegativeInfinity, never]>>().toBe<never>();
-expectTypeOf<TupleMin<[NegativeInfinity, any]>>().toBe<never>();
-expectTypeOf<TupleMin<[NegativeInfinity, Tagged<number, 'Count'>]>>().toBe<never>();
+expectTypeOf<TupleMin<[NegativeInfinity, any]>>().toBe<any>();
+expectTypeOf<TupleMin<[NegativeInfinity, Tagged<number, 'Count'>]>>().toBe<number>();
 
-// A changing accumulator must still reject an impossible or unknown later element.
+// A changing accumulator must still notice an impossible or unknown later element.
 expectTypeOf<TupleMin<[5, 1, never, 2]>>().toBe<never>();
 expectTypeOf<TupleMin<[5, 1, 2, never]>>().toBe<never>();
-expectTypeOf<TupleMin<[5, 1, any]>>().toBe<never>();
-expectTypeOf<TupleMin<[any, 1, 2]>>().toBe<never>();
-expectTypeOf<TupleMin<[5, 1, number]>>().toBe<never>();
-expectTypeOf<TupleMin<[1 | Tagged<number, 'Count'>, 3]>>().toBe<never>();
-expectTypeOf<TupleMin<[1, Opaque<number, 'Count'>]>>().toBe<never>();
-expectTypeOf<TupleMin<[Tagged<Tagged<number, 'Count'>, 'Checked'>]>>().toBe<never>();
-expectTypeOf<TupleMin<readonly [any, ...Array<1>]>>().toBe<never>();
-expectTypeOf<TupleMin<readonly [...Array<1>, 2]>>().toBe<never>();
-expectTypeOf<TupleMin<[...never[], 2]>>().toBe<never>();
+expectTypeOf<TupleMin<[5, 1, any]>>().toBe<any>();
+expectTypeOf<TupleMin<[any, 1, 2]>>().toBe<any>();
+expectTypeOf<TupleMin<[5, 1, number]>>().toBe<number>();
+expectTypeOf<TupleMin<[1 | Tagged<number, 'Count'>, 3]>>().toBe<number>();
+expectTypeOf<TupleMin<[1, Opaque<number, 'Count'>]>>().toBe<number>();
+expectTypeOf<TupleMin<[Tagged<Tagged<number, 'Count'>, 'Checked'>]>>().toBe<number>();
+expectTypeOf<TupleMin<readonly [any, ...Array<1>]>>().toBe<number>();
+expectTypeOf<TupleMin<readonly [...Array<1>, 2]>>().toBe<number>();
+expectTypeOf<TupleMin<[...never[], 2]>>().toBe<number>();
 
 // Validation applies independently to each tuple alternative, including different lengths.
 expectTypeOf<TupleMin<readonly [2] | [1, 4, 3] | readonly [8, 5]>>().toBe<1 | 2 | 5>();
 expectTypeOf<TupleMin<readonly [] | [2] | readonly [1, 4, 3]>>().toBe<PositiveInfinity | 1 | 2>();
-expectTypeOf<TupleMin<[2, 4] | [Tagged<number, 'Count'>]>>().toBe<2>();
-expectTypeOf<TupleMin<[2, 4] | [RuntimeLimit.Value]>>().toBe<2>();
-expectTypeOf<TupleMin<[2, 4] | [any]>>().toBe<2>();
+expectTypeOf<TupleMin<[2, 4] | [Tagged<number, 'Count'>]>>().toBe<number>();
+expectTypeOf<TupleMin<[2, 4] | [RuntimeLimit.Value]>>().toBe<number>();
+expectTypeOf<TupleMin<[2, 4] | [any]>>().toBe<any>();
 expectTypeOf<TupleMin<[2, 4] | [1, never]>>().toBe<2>();
-expectTypeOf<TupleMin<readonly [] | readonly [number]>>().toBe<PositiveInfinity>();
-expectTypeOf<TupleMin<[Tagged<number, 'Count'>] | readonly [any]>>().toBe<never>();
-expectTypeOf<TupleMin<[Tagged<1, 'First'>, 4] | readonly [4, Tagged<1, 'Second'>]>>().toBe<Tagged<1, 'First'> | Tagged<1, 'Second'>>();
+expectTypeOf<TupleMin<readonly [] | readonly [number]>>().toBe<number>();
+expectTypeOf<TupleMin<[Tagged<number, 'Count'>] | readonly [any]>>().toBe<any>();
+expectTypeOf<TupleMin<[Tagged<1, 'First'>, 4] | readonly [4, Tagged<1, 'Second'>]>>().toBe<1>();
 
 // Finite spreads retain their exact length, even when the spread itself is a union.
 expectTypeOf<TupleMin<[...[2, 5], ...readonly [3, 4]]>>().toBe<2>();
 expectTypeOf<TupleMin<readonly [5, ...([2] | [3, 4])]>>().toBe<2 | 3>();
 expectTypeOf<TupleMin<[...([] | [2, 5]), 3]>>().toBe<2 | 3>();
 expectTypeOf<TupleMin<[...TupleOf<3, 1 | 2>, 3]>>().toBe<1 | 2>();
-expectTypeOf<TupleMin<[...TupleOf<40, 5>, Tagged<1, 'Count'>, ...TupleOf<40, 2>]>>().toBe<Tagged<1, 'Count'>>();
+expectTypeOf<TupleMin<[...TupleOf<40, 5>, Tagged<1, 'Count'>, ...TupleOf<40, 2>]>>().toBe<1>();
 
 // Later choices can replace, tie, or lose against each possible accumulated result.
 expectTypeOf<TupleMin<[1 | 5, 2 | 4, 3]>>().toBe<1 | 2 | 3>();
@@ -272,17 +272,17 @@ expectTypeOf<TupleMin<[-10, -2, -5]>>().toBe<-10>();
 expectTypeOf<TupleMin<[10.001, 10.01, 10.0001]>>().toBe<10.0001>();
 expectTypeOf<TupleMin<[-10.001, -10.01, -10.0001]>>().toBe<-10.01>();
 
-// Public wrappers preserve inferred const tuples and return never for widened numeric values.
+// Public wrappers preserve inferred const tuples and return `number` for widened numeric values.
 expectTypeOf(minimumFromTuple([])).toBe<PositiveInfinity>();
 expectTypeOf(minimumFromTuple([7])).toBe<7>();
 expectTypeOf(minimumFromTuple([1, 7, 3])).toBe<1>();
-expectTypeOf(minimumFromTuple([1, 7, 3] satisfies [number, number, number])).toBe<never>();
-expectTypeOf(minimumFromTuple([1, 7, 3] as number[])).toBe<never>();
-expectTypeOf(minimumFromTuple([1, 7, 3] as readonly number[])).toBe<never>();
+expectTypeOf(minimumFromTuple([1, 7, 3] satisfies [number, number, number])).toBe<number>();
+expectTypeOf(minimumFromTuple([1, 7, 3] as number[])).toBe<number>();
+expectTypeOf(minimumFromTuple([1, 7, 3] as readonly number[])).toBe<number>();
 expectTypeOf(minimum(2, Limit.Low, 3 as Tagged<3, 'Count'>)).toBe<Limit.Low>();
-expectTypeOf(minimum(3, -1 as Tagged<-1, 'Count'>, Limit.Low)).toBe<Tagged<-1, 'Count'>>();
-expectTypeOf(minimum(1, 7 as number)).toBe<never>();
-expectTypeOf(minimum(1, 7 as any)).toBe<never>();
+expectTypeOf(minimum(3, -1 as Tagged<-1, 'Count'>, Limit.Low)).toBe<-1>();
+expectTypeOf(minimum(1, 7 as number)).toBe<number>();
+expectTypeOf(minimum(1, 7 as any)).toBe<any>();
 
 // The consumers moved to the public TupleMin retain their clamping and step behavior.
 expectTypeOf<ArraySlice<readonly ['a', 'b', 'c', 'd'], TupleMin<[1, 2]>, 20>>().toBe<readonly ['b', 'c', 'd']>();

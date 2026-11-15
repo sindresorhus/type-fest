@@ -1,18 +1,20 @@
 import type {LessThan} from './less-than.d.ts';
 import type {PositiveInfinity} from './numeric.d.ts';
 import type {UnwrapBrandedPrimitive} from './unwrap-branded-primitive.d.ts';
+import type {IsAny} from './is-any.d.ts';
 import type {TupleMax} from './tuple-max.d.ts'; // For `@link`
+import type {UnionMin} from './union-min.d.ts'; // For `@link`
 
 /**
 Returns the minimum number in a tuple of numbers.
 
 Use this to infer the smallest configured limit or the return type of a function that wraps `Math.min()`.
 
-Supports readonly tuples, negative numbers, decimals, and infinities. Numeric enum members and brands are preserved; equal values keep the first element's type. Brands follow the limitations of {@link UnwrapBrandedPrimitive}. Comparisons between numbers printed in exponential notation are unsupported when {@link LessThan} cannot decide the result.
+Supports readonly tuples, negative numbers, decimals, and infinities. Brands are removed from the result, like {@link UnionMin} does. Numeric enum members are preserved; equal values keep the first element's type. Brands follow the limitations of {@link UnwrapBrandedPrimitive}. Comparisons between numbers printed in exponential notation are unsupported when {@link LessThan} cannot decide the result.
 
-Distributes over tuple unions and unions within elements, returning all possible minima. Tuple union members that return `never` do not contribute to the result.
+Distributes over tuple unions and unions within elements, returning all possible minima.
 
-Returns {@link PositiveInfinity} for an empty tuple, like `Math.min()`. Returns `never` for `any`, `never`, arrays with unknown length (including unbounded rest elements), or a tuple containing `any`, `never`, or a non-literal `number`. Optional elements and non-number elements, including `bigint` and `unknown`, are not accepted.
+Returns {@link PositiveInfinity} for an empty tuple, like `Math.min()`. Returns `number` for arrays with unknown length (including unbounded rest elements) and for a tuple containing a non-literal `number`, like {@link UnionMin}. Returns `any` for `any` or a tuple containing `any`, and `never` for `never` or a tuple containing `never`. Optional elements and non-number elements, including `bigint` and `unknown`, are not accepted.
 
 @example
 ```
@@ -38,16 +40,20 @@ The implementation compares each element with the current minimum, without count
 @category Array
 @category Numeric
 */
-export type TupleMin<Tuple extends readonly number[]> = Tuple extends unknown
-	? number extends Tuple['length']
-		? never
-		: `${number}` extends `${UnwrapBrandedPrimitive<Tuple[number]>}`
-			? never
-			: Tuple extends readonly [infer First extends number, ...infer Rest extends number[]]
-				? TupleMinImplementation<Rest, First>
-				// The empty tuple returns the identity element of the minimum, not `never`. `Math.min()` returns `Infinity` at runtime, so `never` would mark reachable code as unreachable. `never` would also disappear from a union, so `TupleMin<[] | [2, 5]>` would be `2` and hide the empty case, and it would look like the invalid inputs above. The identity keeps `TupleMin<[...A, ...B]>` equal in value to `TupleMin<[TupleMin<A>, TupleMin<B>]>` when `A` or `B` is empty, in the same way that `AndAll<[]>` is `true`.
-				: PositiveInfinity
-	: never;
+export type TupleMin<Tuple extends readonly number[]> = IsAny<Tuple> extends true
+	? any
+	: Tuple extends unknown
+		? number extends Tuple['length']
+			? number
+			: `${number}` extends `${UnwrapBrandedPrimitive<Tuple[number]>}`
+				// `any` is printed as `${string}`, so it reaches this branch too.
+				? IsAny<Tuple[number]> extends true ? any : number
+				: Tuple extends readonly [infer First extends number, ...infer Rest extends number[]]
+					// The comparisons accept branded values, so the brands are removed only from the result.
+					? UnwrapBrandedPrimitive<TupleMinImplementation<Rest, First>>
+					// The empty tuple returns the identity element of the minimum, not `never`. `Math.min()` returns `Infinity` at runtime, so `never` would mark reachable code as unreachable. `never` would also disappear from a union, so `TupleMin<[] | [2, 5]>` would be `2` and hide the empty case, and it would look like a `never` input. The identity keeps `TupleMin<[...A, ...B]>` equal in value to `TupleMin<[TupleMin<A>, TupleMin<B>]>` when `A` or `B` is empty, in the same way that `AndAll<[]>` is `true`.
+					: PositiveInfinity
+		: never;
 
 type TupleMinImplementation<Tuple extends readonly number[], Result extends number> = Tuple extends readonly [infer First extends number, ...infer Rest extends number[]]
 	// Compare each candidate and accumulated value separately so a possible win does not disappear into `boolean`.

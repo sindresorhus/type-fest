@@ -14,25 +14,25 @@ enum Limit {
 }
 expectTypeOf<TupleMax<[Limit.Low, 2]>>().toBe<2>();
 expectTypeOf<TupleMax<[Limit.High, 2]>>().toBe<Limit.High>();
-expectTypeOf<TupleMax<[1, number]>>().toBe<never>();
+expectTypeOf<TupleMax<[1, number]>>().toBe<number>();
 
 // Every possible integer choice contributes its own maximum, independent of tuple position.
 expectTypeOf<TupleMax<[1 | 4, 3]>>().toBe<3 | 4>();
 expectTypeOf<TupleMax<[3, 1 | 4]>>().toBe<3 | 4>();
 expectTypeOf<TupleMax<[1 | 4, 2 | 3]>>().toBe<2 | 3 | 4>();
 expectTypeOf<TupleMax<[1 | 4]>>().toBe<1 | 4>();
-expectTypeOf<TupleMax<[Tagged<1 | 4, 'Bound'>, 3]>>().toBe<Tagged<4, 'Bound'> | 3>();
+expectTypeOf<TupleMax<[Tagged<1 | 4, 'Bound'>, 3]>>().toBe<3 | 4>();
 expectTypeOf<TupleMax<[]>>().toBe<NegativeInfinity>();
-expectTypeOf<TupleMax<any>>().toBe<never>();
+expectTypeOf<TupleMax<any>>().toBe<any>();
 expectTypeOf<TupleMax<never>>().toBe<never>();
-expectTypeOf<TupleMax<[1] | [number]>>().toBe<1>();
-expectTypeOf<TupleMax<[number]>>().toBe<never>();
+expectTypeOf<TupleMax<[1] | [number]>>().toBe<number>();
+expectTypeOf<TupleMax<[number]>>().toBe<number>();
 
-// Unknown-length arrays cannot determine an exact maximum.
-expectTypeOf<TupleMax<Array<1>>>().toBe<never>();
-expectTypeOf<TupleMax<[1, ...Array<2>]>>().toBe<never>();
-expectTypeOf<TupleMax<[...Array<1>, 2]>>().toBe<never>();
-expectTypeOf<TupleMax<[Tagged<number, 'Bound'>, 3]>>().toBe<never>();
+// Unknown-length arrays cannot determine an exact maximum, so they give `number`, like `UnionMax`.
+expectTypeOf<TupleMax<Array<1>>>().toBe<number>();
+expectTypeOf<TupleMax<[1, ...Array<2>]>>().toBe<number>();
+expectTypeOf<TupleMax<[...Array<1>, 2]>>().toBe<number>();
+expectTypeOf<TupleMax<[Tagged<number, 'Bound'>, 3]>>().toBe<number>();
 // @ts-expect-error Candidates must be numbers.
 type UnknownMaximumCandidate = TupleMax<[unknown]>;
 
@@ -87,37 +87,37 @@ expectTypeOf<TupleMax<[1, 4] | readonly [8, 2]>>().toBe<4 | 8>();
 expectTypeOf<TupleMax<[1, 4] | [4, 1]>>().toBe<4>();
 expectTypeOf<TupleMax<[] | [2, 5]>>().toBe<NegativeInfinity | 5>();
 expectTypeOf<TupleMax<[1, 2] | [never, 3]>>().toBe<2>();
-expectTypeOf<TupleMax<[1, 2] | number[]>>().toBe<2>();
-expectTypeOf<TupleMax<[1, 2] | [3, ...Array<4>]>>().toBe<2>();
+expectTypeOf<TupleMax<[1, 2] | number[]>>().toBe<number>();
+expectTypeOf<TupleMax<[1, 2] | [3, ...Array<4>]>>().toBe<number>();
 expectTypeOf<TupleMax<[1 | 4, 2 | 5, 3 | 6]>>().toBe<3 | 4 | 5 | 6>();
 expectTypeOf<TupleMax<[1 | 2, 3 | 4]>>().toBe<3 | 4>();
 expectTypeOf<TupleMax<[-4 | -1, -3 | -2]>>().toBe<-3 | -2 | -1>();
 
-// Unknown and impossible numeric elements cannot produce an exact result.
-expectTypeOf<TupleMax<[any]>>().toBe<never>();
-expectTypeOf<TupleMax<[1, any, 3]>>().toBe<never>();
+// Unknown numeric elements give `number` or `any`, and impossible elements give `never`.
+expectTypeOf<TupleMax<[any]>>().toBe<any>();
+expectTypeOf<TupleMax<[1, any, 3]>>().toBe<any>();
 expectTypeOf<TupleMax<[never]>>().toBe<never>();
 expectTypeOf<TupleMax<[never, 3]>>().toBe<never>();
 expectTypeOf<TupleMax<[3, never]>>().toBe<never>();
-expectTypeOf<TupleMax<[PositiveInfinity, number]>>().toBe<never>();
-expectTypeOf<TupleMax<readonly number[]>>().toBe<never>();
-expectTypeOf<TupleMax<any[]>>().toBe<never>();
-expectTypeOf<TupleMax<never[]>>().toBe<never>();
-expectTypeOf<TupleMax<[1, ...Array<2>, 3]>>().toBe<never>();
+expectTypeOf<TupleMax<[PositiveInfinity, number]>>().toBe<number>();
+expectTypeOf<TupleMax<readonly number[]>>().toBe<number>();
+expectTypeOf<TupleMax<any[]>>().toBe<number>();
+expectTypeOf<TupleMax<never[]>>().toBe<number>();
+expectTypeOf<TupleMax<[1, ...Array<2>, 3]>>().toBe<number>();
 
-// Literal brands are retained, and broad brands must not hide unknown values.
-expectTypeOf<TupleMax<[Tagged<5, 'Count'>, 3]>>().toBe<Tagged<5, 'Count'>>();
-expectTypeOf<TupleMax<[1, Tagged<5, 'Count'>]>>().toBe<Tagged<5, 'Count'>>();
-expectTypeOf<TupleMax<[Tagged<3, 'First'>, Tagged<3, 'Second'>]>>().toBe<Tagged<3, 'First'>>();
+// Brands are removed from the result, and broad brands give `number`.
+expectTypeOf<TupleMax<[Tagged<5, 'Count'>, 3]>>().toBe<5>();
+expectTypeOf<TupleMax<[1, Tagged<5, 'Count'>]>>().toBe<5>();
+expectTypeOf<TupleMax<[Tagged<3, 'First'>, Tagged<3, 'Second'>]>>().toBe<3>();
 expectTypeOf<TupleMax<[3, Tagged<3, 'Count'>]>>().toBe<3>();
-expectTypeOf<TupleMax<[Tagged<NegativeInfinity, 'Bound'>]>>().toBe<Tagged<NegativeInfinity, 'Bound'>>();
-expectTypeOf<TupleMax<[Tagged<NegativeInfinity, 'Bound'>, NegativeInfinity]>>().toBe<Tagged<NegativeInfinity, 'Bound'>>();
-expectTypeOf<TupleMax<[Tagged<1.5, 'Scale'>, 1]>>().toBe<Tagged<1.5, 'Scale'>>();
-expectTypeOf<TupleMax<[Opaque<5, 'Count'>, 3]>>().toBe<Opaque<5, 'Count'>>();
-expectTypeOf<TupleMax<[Tagged<Tagged<5, 'Count'>, 'Checked'>, 3]>>().toBe<Tagged<Tagged<5, 'Count'>, 'Checked'>>();
-expectTypeOf<TupleMax<[Opaque<number, 'Count'>, 3]>>().toBe<never>();
-expectTypeOf<TupleMax<[3, Tagged<number, 'Count'>]>>().toBe<never>();
-expectTypeOf<TupleMax<[(number & {}), 3]>>().toBe<never>();
+expectTypeOf<TupleMax<[Tagged<NegativeInfinity, 'Bound'>]>>().toBe<NegativeInfinity>();
+expectTypeOf<TupleMax<[Tagged<NegativeInfinity, 'Bound'>, NegativeInfinity]>>().toBe<NegativeInfinity>();
+expectTypeOf<TupleMax<[Tagged<1.5, 'Scale'>, 1]>>().toBe<1.5>();
+expectTypeOf<TupleMax<[Opaque<5, 'Count'>, 3]>>().toBe<5>();
+expectTypeOf<TupleMax<[Tagged<Tagged<5, 'Count'>, 'Checked'>, 3]>>().toBe<5>();
+expectTypeOf<TupleMax<[Opaque<number, 'Count'>, 3]>>().toBe<number>();
+expectTypeOf<TupleMax<[3, Tagged<number, 'Count'>]>>().toBe<number>();
+expectTypeOf<TupleMax<[(number & {}), 3]>>().toBe<number>();
 
 // Known enum values are comparable, while runtime enum values are unknown.
 expectTypeOf<TupleMax<[Limit.Low, Limit.High]>>().toBe<Limit.High>();
@@ -127,7 +127,7 @@ expectTypeOf<TupleMax<[Limit.High, 5]>>().toBe<Limit.High>();
 declare enum RuntimeLimit {
 	Value,
 }
-expectTypeOf<TupleMax<[RuntimeLimit.Value, 3]>>().toBe<never>();
+expectTypeOf<TupleMax<[RuntimeLimit.Value, 3]>>().toBe<number>();
 
 // Composition, negative assignability, and generic inference through the public exports.
 expectTypeOf<TupleMax<[TupleMax<[2, 5]>, TupleMin<[3, 8]>]>>().toBe<5>();
@@ -156,41 +156,41 @@ type UndefinedMaximum = TupleMax<[1, undefined]>;
 // @ts-expect-error Scalar numbers are not tuples.
 type ScalarMaximum = TupleMax<1>;
 
-// Equal values retain the earliest winner, even after it replaces an earlier candidate.
-expectTypeOf<TupleMax<[Tagged<3, 'Second'>, Tagged<3, 'First'>]>>().toBe<Tagged<3, 'Second'>>();
-expectTypeOf<TupleMax<[Tagged<3, 'Count'>, 3]>>().toBe<Tagged<3, 'Count'>>();
-expectTypeOf<TupleMax<[1, Tagged<5, 'First'>, 2, Tagged<5, 'Last'>]>>().toBe<Tagged<5, 'First'>>();
-expectTypeOf<TupleMax<[Tagged<1, 'First'>, Tagged<5, 'Second'>, 3]>>().toBe<Tagged<5, 'Second'>>();
+// Equal branded values give the unbranded value, even after one replaces an earlier candidate.
+expectTypeOf<TupleMax<[Tagged<3, 'Second'>, Tagged<3, 'First'>]>>().toBe<3>();
+expectTypeOf<TupleMax<[Tagged<3, 'Count'>, 3]>>().toBe<3>();
+expectTypeOf<TupleMax<[1, Tagged<5, 'First'>, 2, Tagged<5, 'Last'>]>>().toBe<5>();
+expectTypeOf<TupleMax<[Tagged<1, 'First'>, Tagged<5, 'Second'>, 3]>>().toBe<5>();
 expectTypeOf<TupleMax<[Tagged<5, 'First'>, 6, Tagged<5, 'Last'>]>>().toBe<6>();
-expectTypeOf<TupleMax<[Tagged<3, 'Count', 'first'>, Tagged<3, 'Count', 'last'>]>>().toBe<Tagged<3, 'Count', 'first'>>();
-expectTypeOf<TupleMax<[Opaque<3, 'First'>, Opaque<3, 'Last'>]>>().toBe<Opaque<3, 'First'>>();
-expectTypeOf<TupleMax<[Tagged<0, 'Zero'>, -0]>>().toBe<Tagged<0, 'Zero'>>();
-expectTypeOf<TupleMax<[Tagged<-1.5, 'Scale'>, -1.5, -2]>>().toBe<Tagged<-1.5, 'Scale'>>();
+expectTypeOf<TupleMax<[Tagged<3, 'Count', 'first'>, Tagged<3, 'Count', 'last'>]>>().toBe<3>();
+expectTypeOf<TupleMax<[Opaque<3, 'First'>, Opaque<3, 'Last'>]>>().toBe<3>();
+expectTypeOf<TupleMax<[Tagged<0, 'Zero'>, -0]>>().toBe<0>();
+expectTypeOf<TupleMax<[Tagged<-1.5, 'Scale'>, -1.5, -2]>>().toBe<-1.5>();
 
-// Independent branded choices preserve both the winning value and its identity.
-expectTypeOf<TupleMax<[Tagged<1, 'Low'> | Tagged<4, 'High'>, Tagged<3, 'Middle'>]>>().toBe<Tagged<4, 'High'> | Tagged<3, 'Middle'>>();
-expectTypeOf<TupleMax<[Tagged<1 | 5, 'First'>, Tagged<5, 'Second'>]>>().toBe<Tagged<5, 'First'> | Tagged<5, 'Second'>>();
-expectTypeOf<TupleMax<[Tagged<5, 'First'> | Tagged<5, 'Second'>, Tagged<5, 'Last'>]>>().toBe<Tagged<5, 'First'> | Tagged<5, 'Second'>>();
-expectTypeOf<TupleMax<[Tagged<1 | 4, 'First'>, Tagged<2 | 4, 'Second'>]>>().toBe<Tagged<4, 'First'> | Tagged<2 | 4, 'Second'>>();
-expectTypeOf<TupleMax<[0, Tagged<1 | 4, 'First'>, Tagged<2 | 4, 'Second'>, 3]>>().toBe<3 | Tagged<4, 'First'> | Tagged<4, 'Second'>>();
-expectTypeOf<TupleMax<[Tagged<1 | 4, 'First'>, Tagged<2 | 4, 'Second'>, Tagged<4, 'Last'>]>>().toBe<Tagged<4, 'First'> | Tagged<4, 'Second'> | Tagged<4, 'Last'>>();
-expectTypeOf<TupleMax<[Tagged<3, 'Count'> | 2]>>().toBe<Tagged<3, 'Count'> | 2>();
+// Independent branded choices keep every possible winning value, without its brand.
+expectTypeOf<TupleMax<[Tagged<1, 'Low'> | Tagged<4, 'High'>, Tagged<3, 'Middle'>]>>().toBe<3 | 4>();
+expectTypeOf<TupleMax<[Tagged<1 | 5, 'First'>, Tagged<5, 'Second'>]>>().toBe<5>();
+expectTypeOf<TupleMax<[Tagged<5, 'First'> | Tagged<5, 'Second'>, Tagged<5, 'Last'>]>>().toBe<5>();
+expectTypeOf<TupleMax<[Tagged<1 | 4, 'First'>, Tagged<2 | 4, 'Second'>]>>().toBe<2 | 4>();
+expectTypeOf<TupleMax<[0, Tagged<1 | 4, 'First'>, Tagged<2 | 4, 'Second'>, 3]>>().toBe<3 | 4>();
+expectTypeOf<TupleMax<[Tagged<1 | 4, 'First'>, Tagged<2 | 4, 'Second'>, Tagged<4, 'Last'>]>>().toBe<4>();
+expectTypeOf<TupleMax<[Tagged<3, 'Count'> | 2]>>().toBe<2 | 3>();
 
 // Single-object custom brands and optional flavors use the same comparison contract.
 type Count = 5 & {readonly __brand: 'Count'};
 type OptionalCount = 5 & {readonly __brand?: 'Count'};
-expectTypeOf<TupleMax<[Count, 3]>>().toBe<Count>();
-expectTypeOf<TupleMax<[3, Count]>>().toBe<Count>();
-expectTypeOf<TupleMax<[Count, 5]>>().toBe<Count>();
+expectTypeOf<TupleMax<[Count, 3]>>().toBe<5>();
+expectTypeOf<TupleMax<[3, Count]>>().toBe<5>();
+expectTypeOf<TupleMax<[Count, 5]>>().toBe<5>();
 expectTypeOf<TupleMax<[5, Count]>>().toBe<5>();
-expectTypeOf<TupleMax<[OptionalCount, 3]>>().toBe<OptionalCount>();
-expectTypeOf<TupleMax<[Flavor<5, 'Count'>, 3]>>().toBe<Flavor<5, 'Count'>>();
-expectTypeOf<TupleMax<[1, Flavor<5, 'Count'>]>>().toBe<Flavor<5, 'Count'>>();
-expectTypeOf<TupleMax<[Flavor<5, 'Count'>, Flavor<5, 'Other'>]>>().toBe<Flavor<5, 'Count'>>();
-expectTypeOf<TupleMax<[Flavor<1 | 5, 'Count'>, 3]>>().toBe<3 | Flavor<5, 'Count'>>();
-expectTypeOf<TupleMax<[number & {readonly __brand: 'Count'}, 3]>>().toBe<never>();
-expectTypeOf<TupleMax<[number & {readonly __brand?: 'Count'}, 3]>>().toBe<never>();
-expectTypeOf<TupleMax<[Flavor<number, 'Count'>, 3]>>().toBe<never>();
+expectTypeOf<TupleMax<[OptionalCount, 3]>>().toBe<5>();
+expectTypeOf<TupleMax<[Flavor<5, 'Count'>, 3]>>().toBe<5>();
+expectTypeOf<TupleMax<[1, Flavor<5, 'Count'>]>>().toBe<5>();
+expectTypeOf<TupleMax<[Flavor<5, 'Count'>, Flavor<5, 'Other'>]>>().toBe<5>();
+expectTypeOf<TupleMax<[Flavor<1 | 5, 'Count'>, 3]>>().toBe<3 | 5>();
+expectTypeOf<TupleMax<[number & {readonly __brand: 'Count'}, 3]>>().toBe<number>();
+expectTypeOf<TupleMax<[number & {readonly __brand?: 'Count'}, 3]>>().toBe<number>();
+expectTypeOf<TupleMax<[Flavor<number, 'Count'>, 3]>>().toBe<number>();
 
 // Enums with equal, negative, decimal, and automatically assigned values keep their member types.
 enum Offset {
@@ -222,48 +222,48 @@ expectTypeOf<TupleMax<[OtherLimit.High, Limit.High]>>().toBe<OtherLimit.High>();
 expectTypeOf<TupleMax<[5, Limit.High]>>().toBe<5>();
 expectTypeOf<TupleMax<[FixedLimit.High, 7]>>().toBe<FixedLimit.High>();
 expectTypeOf<TupleMax<[MixedLimit.Numeric, 3]>>().toBe<MixedLimit.Numeric>();
-expectTypeOf<TupleMax<[Tagged<Limit.High, 'Count'>, 3]>>().toBe<Tagged<Limit.High, 'Count'>>();
+expectTypeOf<TupleMax<[Tagged<Limit.High, 'Count'>, 3]>>().toBe<Limit.High>();
 
-// Infinity does not short-circuit validation or discard a first winner's brand.
-expectTypeOf<TupleMax<[1, Tagged<PositiveInfinity, 'Limit'>, PositiveInfinity]>>().toBe<Tagged<PositiveInfinity, 'Limit'>>();
+// Infinity does not short-circuit validation.
+expectTypeOf<TupleMax<[1, Tagged<PositiveInfinity, 'Limit'>, PositiveInfinity]>>().toBe<PositiveInfinity>();
 expectTypeOf<TupleMax<[PositiveInfinity, Tagged<PositiveInfinity, 'Limit'>]>>().toBe<PositiveInfinity>();
-expectTypeOf<TupleMax<[NegativeInfinity, Tagged<-1, 'Count'>]>>().toBe<Tagged<-1, 'Count'>>();
+expectTypeOf<TupleMax<[NegativeInfinity, Tagged<-1, 'Count'>]>>().toBe<-1>();
 expectTypeOf<TupleMax<[NegativeInfinity | 2, PositiveInfinity | 1]>>().toBe<1 | 2 | PositiveInfinity>();
 expectTypeOf<TupleMax<[NegativeInfinity | PositiveInfinity, NegativeInfinity | PositiveInfinity]>>().toBe<NegativeInfinity | PositiveInfinity>();
 expectTypeOf<TupleMax<[PositiveInfinity, never]>>().toBe<never>();
-expectTypeOf<TupleMax<[PositiveInfinity, any]>>().toBe<never>();
-expectTypeOf<TupleMax<[PositiveInfinity, Tagged<number, 'Count'>]>>().toBe<never>();
+expectTypeOf<TupleMax<[PositiveInfinity, any]>>().toBe<any>();
+expectTypeOf<TupleMax<[PositiveInfinity, Tagged<number, 'Count'>]>>().toBe<number>();
 
-// A changing accumulator must still reject an impossible or unknown later element.
+// A changing accumulator must still notice an impossible or unknown later element.
 expectTypeOf<TupleMax<[1, 5, never, 2]>>().toBe<never>();
 expectTypeOf<TupleMax<[1, 5, 2, never]>>().toBe<never>();
-expectTypeOf<TupleMax<[1, 5, any]>>().toBe<never>();
-expectTypeOf<TupleMax<[any, 5, 2]>>().toBe<never>();
-expectTypeOf<TupleMax<[1, 5, number]>>().toBe<never>();
-expectTypeOf<TupleMax<[1 | Tagged<number, 'Count'>, 3]>>().toBe<never>();
-expectTypeOf<TupleMax<[1, Opaque<number, 'Count'>]>>().toBe<never>();
-expectTypeOf<TupleMax<[Tagged<Tagged<number, 'Count'>, 'Checked'>]>>().toBe<never>();
-expectTypeOf<TupleMax<readonly [any, ...Array<1>]>>().toBe<never>();
-expectTypeOf<TupleMax<readonly [...Array<1>, 2]>>().toBe<never>();
-expectTypeOf<TupleMax<[...never[], 2]>>().toBe<never>();
+expectTypeOf<TupleMax<[1, 5, any]>>().toBe<any>();
+expectTypeOf<TupleMax<[any, 5, 2]>>().toBe<any>();
+expectTypeOf<TupleMax<[1, 5, number]>>().toBe<number>();
+expectTypeOf<TupleMax<[1 | Tagged<number, 'Count'>, 3]>>().toBe<number>();
+expectTypeOf<TupleMax<[1, Opaque<number, 'Count'>]>>().toBe<number>();
+expectTypeOf<TupleMax<[Tagged<Tagged<number, 'Count'>, 'Checked'>]>>().toBe<number>();
+expectTypeOf<TupleMax<readonly [any, ...Array<1>]>>().toBe<number>();
+expectTypeOf<TupleMax<readonly [...Array<1>, 2]>>().toBe<number>();
+expectTypeOf<TupleMax<[...never[], 2]>>().toBe<number>();
 
 // Validation applies independently to each tuple alternative, including different lengths.
 expectTypeOf<TupleMax<readonly [2] | [1, 4, 3] | readonly [8, 5]>>().toBe<2 | 4 | 8>();
 expectTypeOf<TupleMax<readonly [] | [2] | readonly [1, 4, 3]>>().toBe<NegativeInfinity | 2 | 4>();
-expectTypeOf<TupleMax<[2, 4] | [Tagged<number, 'Count'>]>>().toBe<4>();
-expectTypeOf<TupleMax<[2, 4] | [RuntimeLimit.Value]>>().toBe<4>();
-expectTypeOf<TupleMax<[2, 4] | [any]>>().toBe<4>();
+expectTypeOf<TupleMax<[2, 4] | [Tagged<number, 'Count'>]>>().toBe<number>();
+expectTypeOf<TupleMax<[2, 4] | [RuntimeLimit.Value]>>().toBe<number>();
+expectTypeOf<TupleMax<[2, 4] | [any]>>().toBe<any>();
 expectTypeOf<TupleMax<[2, 4] | [1, never]>>().toBe<4>();
-expectTypeOf<TupleMax<readonly [] | readonly [number]>>().toBe<NegativeInfinity>();
-expectTypeOf<TupleMax<[Tagged<number, 'Count'>] | readonly [any]>>().toBe<never>();
-expectTypeOf<TupleMax<[Tagged<4, 'First'>, 1] | readonly [1, Tagged<4, 'Second'>]>>().toBe<Tagged<4, 'First'> | Tagged<4, 'Second'>>();
+expectTypeOf<TupleMax<readonly [] | readonly [number]>>().toBe<number>();
+expectTypeOf<TupleMax<[Tagged<number, 'Count'>] | readonly [any]>>().toBe<any>();
+expectTypeOf<TupleMax<[Tagged<4, 'First'>, 1] | readonly [1, Tagged<4, 'Second'>]>>().toBe<4>();
 
 // Finite spreads retain their exact length, even when the spread itself is a union.
 expectTypeOf<TupleMax<[...[2, 5], ...readonly [3, 4]]>>().toBe<5>();
 expectTypeOf<TupleMax<readonly [1, ...([2] | [3, 4])]>>().toBe<2 | 4>();
 expectTypeOf<TupleMax<[...([] | [2, 5]), 3]>>().toBe<3 | 5>();
 expectTypeOf<TupleMax<[...TupleOf<3, 1 | 2>, 0]>>().toBe<1 | 2>();
-expectTypeOf<TupleMax<[...TupleOf<40, 1>, Tagged<5, 'Count'>, ...TupleOf<40, 2>]>>().toBe<Tagged<5, 'Count'>>();
+expectTypeOf<TupleMax<[...TupleOf<40, 1>, Tagged<5, 'Count'>, ...TupleOf<40, 2>]>>().toBe<5>();
 
 // Later choices can replace, tie, or lose against each possible accumulated result.
 expectTypeOf<TupleMax<[1 | 5, 2 | 4, 3]>>().toBe<3 | 4 | 5>();
@@ -275,17 +275,17 @@ expectTypeOf<TupleMax<[-10, -2, -5]>>().toBe<-2>();
 expectTypeOf<TupleMax<[10.001, 10.01, 10.0001]>>().toBe<10.01>();
 expectTypeOf<TupleMax<[-10.001, -10.01, -10.0001]>>().toBe<-10.0001>();
 
-// Public wrappers preserve inferred const tuples and return never for widened numeric values.
+// Public wrappers preserve inferred const tuples and return `number` for widened numeric values.
 expectTypeOf(maximumFromTuple([])).toBe<NegativeInfinity>();
 expectTypeOf(maximumFromTuple([7])).toBe<7>();
 expectTypeOf(maximumFromTuple([1, 7, 3])).toBe<7>();
-expectTypeOf(maximumFromTuple([1, 7, 3] satisfies [number, number, number])).toBe<never>();
-expectTypeOf(maximumFromTuple([1, 7, 3] as number[])).toBe<never>();
-expectTypeOf(maximumFromTuple([1, 7, 3] as readonly number[])).toBe<never>();
+expectTypeOf(maximumFromTuple([1, 7, 3] satisfies [number, number, number])).toBe<number>();
+expectTypeOf(maximumFromTuple([1, 7, 3] as number[])).toBe<number>();
+expectTypeOf(maximumFromTuple([1, 7, 3] as readonly number[])).toBe<number>();
 expectTypeOf(maximum(1, Limit.High, 3 as Tagged<3, 'Count'>)).toBe<Limit.High>();
-expectTypeOf(maximum(1, 7 as Tagged<7, 'Count'>, Limit.High)).toBe<Tagged<7, 'Count'>>();
-expectTypeOf(maximum(1, 7 as number)).toBe<never>();
-expectTypeOf(maximum(1, 7 as any)).toBe<never>();
+expectTypeOf(maximum(1, 7 as Tagged<7, 'Count'>, Limit.High)).toBe<7>();
+expectTypeOf(maximum(1, 7 as number)).toBe<number>();
+expectTypeOf(maximum(1, 7 as any)).toBe<any>();
 
 // The consumers moved to the public TupleMin retain their clamping and step behavior.
 expectTypeOf<ArraySlice<readonly ['a', 'b', 'c', 'd'], TupleMax<[0, 1]>, TupleMax<[2, 10]>>>().toBe<readonly ['b', 'c', 'd']>();
