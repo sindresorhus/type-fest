@@ -507,3 +507,6 @@ if ('displayName' in partialCallableUnion) {
 
 // `keep: any` keeps everything, including the input itself.
 expectTypeOf<PartialDeep<{nested: {value: string}; primitive: string}, {keep: any}>>().toBe<{nested: {value: string}; primitive: string}>();
+
+// A non-literal flag resolves like the default
+expectTypeOf<PartialDeep<{a: string[]}, {allowUndefinedInNonTupleArrays: boolean}>>().toBe<PartialDeep<{a: string[]}>>();
