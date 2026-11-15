@@ -55,17 +55,17 @@ type B = RouteHandler<`/users/${string}`>;
 @category Utilities
 */
 // The plain-`string` check also rejects `any`; only `never` needs a separate guard.
-export type IsTemplateLiteral<S> = IsNever<S> extends true
+export type IsTemplateLiteral<Value> = IsNever<Value> extends true
 	? false
-	: _IsTemplateLiteral<CollapseLiterals<S extends object ? UnwrapBrandedPrimitive<S> : S>>;
+	: _IsTemplateLiteral<CollapseLiterals<Value extends object ? UnwrapBrandedPrimitive<Value> : Value>>;
 
-type _IsTemplateLiteral<S> =
-	S extends string
+type _IsTemplateLiteral<Value> =
+	Value extends string
 		// Plain `string`, including collapsed spellings like `` `${string}` ``.
-		? string extends S
+		? string extends Value
 			? false
 			// Finite literals and unions of literals are not patterns.
-			: _IsStringLiteral<S> extends true
+			: _IsStringLiteral<Value> extends true
 				? false
 				// Every remaining string type has infinitely many values.
 				: true
