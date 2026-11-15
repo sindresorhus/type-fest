@@ -1,16 +1,15 @@
-import type {ArrayExclude} from './array-exclude.d.ts';
 import type {ConditionalExcept} from './conditional-except.d.ts'; // For `@link`
 import type {NonNullableDeep} from './non-nullable-deep.d.ts'; // For `@link`
 import type {RequiredNonNullable} from './required-non-nullable.d.ts'; // For `@link`
 import type {SubstituteDeep} from './substitute-deep.d.ts'; // For `@link`
-import type {IsNever} from './is-never.d.ts';
-import type {RequireAll} from './internal/index.d.ts';
-import type {UnknownArray} from './unknown-array.d.ts';
+import type {FilterValues} from './internal/index.d.ts';
+import type {ExtractValues} from './extract-values.d.ts'; // For `@link`
+import type {Falsy} from './falsy.d.ts'; // For `@link`
 
 /**
-Exclude the given type from the value of every property in an object type.
+Exclude the given type from the value of every property in an object type, or every element in an array type.
 
-It works like `Exclude` on each value. A property whose value type is fully excluded is removed.
+It works like `Exclude` on each value. A property or element whose value type is fully excluded is removed. Use {@link ExtractValues} to keep only the given type instead.
 
 Use-cases:
 - Normalizing types from external sources, like removing `undefined` from a `Partial` after defaults are applied.
@@ -65,7 +64,17 @@ type TupleExample = ExcludeValues<[string, number | undefined, undefined?], unde
 //=> [string, number]
 ```
 
-Arrays and tuples delegate to {@link ArrayExclude}.
+Use {@link Falsy} to remove the falsy values, like `.filter(Boolean)`:
+
+@example
+```
+import type {ExcludeValues, Falsy} from 'type-fest';
+
+type Truthy = ExcludeValues<[0, 'a', '', null, 1, boolean], Falsy>;
+//=> ['a', 1, true]
+```
+
+Note: This works on types, not values. An element that is a union keeps its remaining members, so `ExcludeValues<[1 | 'a'], string>` is `[1]`, even though filtering `['a']` at runtime gives `[]`.
 
 @see {@link ConditionalExcept} to remove keys matching a condition without touching the remaining values.
 @see {@link NonNullableDeep} or {@link RequiredNonNullable} to strip only `null` and `undefined`, deeply or while removing the optional modifier.
@@ -83,9 +92,6 @@ Known limitations:
 @category Object
 @category Array
 */
-// The conditional distributes `Base`, so each member of a union is checked by itself. The mapped type is homomorphic, so the optional and `readonly` modifiers are preserved. The removal check reads one required property via `RequireAll`, so an optional property is removed when its declared value is fully excluded, while an explicitly declared `undefined` still keeps the property.
-export type ExcludeValues<Base extends object, ExcludedType> = Base extends UnknownArray
-	? ArrayExclude<Base, ExcludedType>
-	: {[Key in keyof Base as IsNever<Exclude<RequireAll<Base, Key>[Key], ExcludedType>> extends true ? never : Key]: Exclude<Base[Key], ExcludedType>};
+export type ExcludeValues<Base extends object, ExcludedType> = FilterValues<Base, ExcludedType, 'exclude'>;
 
 export {};

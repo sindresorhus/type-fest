@@ -7,5 +7,6 @@ export type * from './string.d.ts';
 export type * from './type.d.ts';
 export type * from './undefined-to-optional-object.d.ts';
 export type * from './function.d.ts';
+export type * from './values.d.ts';
 
 export {};

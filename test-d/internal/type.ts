@@ -1,7 +1,7 @@
 import {expectTypeOf} from 'nz';
-import type {Falsy, IsEqual, Merge, MergeAll, PartialDeep, ReadonlyDeep, RequiredDeep, SetOptional, SetReadonly, SetRequired, WritableDeep} from '../../index.d.ts';
+import type {IsEqual, Merge, MergeAll, PartialDeep, ReadonlyDeep, RequiredDeep, SetOptional, SetReadonly, SetRequired, WritableDeep} from '../../index.d.ts';
 import type {FunctionParameters} from '../../source/function-parameters.d.ts';
-import type {CallSignatureOf, IsAnyOrNever, IsBothExtends, IsTruthy} from '../../source/internal/index.d.ts';
+import type {CallSignatureOf, IsAnyOrNever, IsBothExtends} from '../../source/internal/index.d.ts';
 
 expectTypeOf<IsEqual<IsAnyOrNever<any>, true>>().toBe<true>();
 expectTypeOf<IsEqual<IsAnyOrNever<never>, true>>().toBe<true>();
@@ -34,26 +34,6 @@ expectTypeOf<IsEqual<CallSignatureOf<Function>, unknown>>().toBe<true>();
 // An overloaded function keeps only its last signature, and a generic one loses its type parameters.
 expectTypeOf<IsEqual<CallSignatureOf<{(a: string): 1; (a: number): 2}>, (a: number) => 2>>().toBe<true>();
 expectTypeOf<IsEqual<CallSignatureOf<<Value>(value: Value) => Value>, (value: unknown) => unknown>>().toBe<true>();
-
-// `IsTruthy`
-expectTypeOf<IsEqual<IsTruthy<0>, false>>().toBe<true>();
-expectTypeOf<IsEqual<IsTruthy<''>, false>>().toBe<true>();
-expectTypeOf<IsEqual<IsTruthy<null>, false>>().toBe<true>();
-expectTypeOf<IsEqual<IsTruthy<Falsy>, false>>().toBe<true>();
-expectTypeOf<IsEqual<IsTruthy<never>, false>>().toBe<true>();
-expectTypeOf<IsEqual<IsTruthy<void>, false>>().toBe<true>();
-expectTypeOf<IsEqual<IsTruthy<1>, true>>().toBe<true>();
-expectTypeOf<IsEqual<IsTruthy<{}>, true>>().toBe<true>();
-// Wide types cannot be checked, so they give `true`, the same as `Truthy<number>` is `number`.
-expectTypeOf<IsEqual<IsTruthy<number>, true>>().toBe<true>();
-expectTypeOf<IsEqual<IsTruthy<string>, true>>().toBe<true>();
-expectTypeOf<IsEqual<IsTruthy<unknown>, true>>().toBe<true>();
-// A union with both falsy and truthy members gives `boolean`.
-expectTypeOf<IsEqual<IsTruthy<boolean>, boolean>>().toBe<true>();
-expectTypeOf<IsEqual<IsTruthy<0 | 1>, boolean>>().toBe<true>();
-expectTypeOf<IsEqual<IsTruthy<string | void>, boolean>>().toBe<true>();
-// `any` matches both branches of the conditional type.
-expectTypeOf<IsEqual<IsTruthy<any>, boolean>>().toBe<true>();
 
 // A readonly rest parameter remains callable when an object transformation preserves its call signature.
 type ReadonlyRestHandler = ((...values: readonly number[]) => string) & {config: {label: string}};

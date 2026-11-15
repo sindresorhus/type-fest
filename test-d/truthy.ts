@@ -1,5 +1,5 @@
 import {expectTypeOf} from 'nz';
-import type {Falsy, Filter, LiteralUnion, Tagged, Truthy} from '../index.d.ts';
+import type {ExcludeValues, Falsy, LiteralUnion, Tagged, Truthy} from '../index.d.ts';
 
 // Falsy literal types are removed
 expectTypeOf<Truthy<'a' | '' | 0 | 1 | null | undefined>>().toBe<'a' | 1>();
@@ -167,7 +167,7 @@ const tuple = ['a', '', 0, 1, null, undefined, false] as const;
 expectTypeOf<Truthy<typeof tuple[number]>>().toBe<'a' | 1>();
 
 // Same result as `Filter` with `Boolean`, for elements that are not unions
-expectTypeOf<Filter<[0, 'a', null, 1n, false, {}], Boolean>[number]>().toBe<Truthy<0 | 'a' | null | 1n | false | {}>>();
+expectTypeOf<ExcludeValues<[0, 'a', null, 1n, false, {}], Falsy>[number]>().toBe<Truthy<0 | 'a' | null | 1n | false | {}>>();
 
 // A `compact` function
 declare function compact<Value>(array: readonly Value[]): Array<Truthy<Value>>;

@@ -180,7 +180,8 @@ Click the type names for complete docs.
 - [`ConditionalPick`](source/conditional-pick.d.ts) - Pick keys from the shape that matches the given `Condition`.
 - [`ConditionalPickDeep`](source/conditional-pick-deep.d.ts) - Pick keys recursively from the shape that matches the given condition.
 - [`ConditionalExcept`](source/conditional-except.d.ts) - Exclude keys from a shape that matches the given `Condition`.
-- [`ExcludeValues`](source/exclude-values.d.ts) - Exclude the given type from the value of every property in an object type.
+- [`ExcludeValues`](source/exclude-values.d.ts) - Exclude the given type from the value of every property in an object type, or every element in an array type.
+- [`ExtractValues`](source/extract-values.d.ts) - Extract the given type from the value of every property in an object type, or every element in an array type.
 - [`UnionToIntersection`](source/union-to-intersection.d.ts) - Convert a union type to an intersection type.
 - [`LiteralToPrimitive`](source/literal-to-primitive.d.ts) - Given a [literal type](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#literal-types) return the [primitive type](https://developer.mozilla.org/en-US/docs/Glossary/Primitive) it belongs to, or `never` if it's not a primitive.
 - [`LiteralToPrimitiveDeep`](source/literal-to-primitive-deep.d.ts) - Like `LiteralToPrimitive` except it converts literal types inside an object or array deeply.
@@ -228,7 +229,6 @@ Click the type names for complete docs.
 - [`ArrayValues`](source/array-values.d.ts) - Provides all values for a constant array or tuple.
 - [`ArraySplice`](source/array-splice.d.ts) - Create a new array type by adding or removing elements at a specified index range in the original array.
 - [`ArrayTail`](source/array-tail.d.ts) - Extract the type of an array or tuple minus the first element.
-- [`Filter`](source/filter.d.ts) - Keep only the elements of an array, or the properties of an object, whose type extends the given condition, like `Array#filter()`.
 - [`SetFieldType`](source/set-field-type.d.ts) - Create a type that changes the type of the given keys.
 - [`Paths`](source/paths.d.ts) - Generate a union of all possible paths to properties in the given object.
 - [`OptionalPaths`](source/optional-paths.d.ts) - Get a union of all paths to optional properties in the given object.
@@ -388,7 +388,6 @@ Click the type names for complete docs.
 - [`ExtractRestElement`](source/extract-rest-element.d.ts) - Extract the [`rest`](https://www.typescriptlang.org/docs/handbook/2/objects.html#tuple-types) element type from an array.
 - [`ExcludeRestElement`](source/exclude-rest-element.d.ts) - Create a tuple with the [`rest`](https://www.typescriptlang.org/docs/handbook/2/objects.html#tuple-types) element removed.
 - [`ArrayReverse`](source/array-reverse.d.ts) - Reverse the order of elements in a tuple type.
-- [`ArrayExclude`](source/array-exclude.d.ts) - Remove the elements of the given type from an array type.
 - [`ArrayTrimStart`](source/array-trim.d.ts) - Remove the elements of the given type from the start of an array.
 - [`ArrayTrimEnd`](source/array-trim.d.ts) - Remove the elements of the given type from the end of an array.
 - [`ArrayTrim`](source/array-trim.d.ts) - Remove the elements of the given type from both ends of an array.
@@ -519,7 +518,8 @@ Click the type names for complete docs.
 - `PickByTypes` - See [`ConditionalPick`](source/conditional-pick.d.ts)
 - `KeysOfType`, `KeysWithType`, `KeysMatching` - See [`ConditionalKeys`](source/conditional-keys.d.ts)
 - `KeysWithDiffType` - See [`IncompatibleKeys`](source/incompatible-keys.d.ts)
-- `OmitValues` - See [`ExcludeValues`](source/exclude-values.d.ts)
+- `OmitValues`, `ArrayExclude` - See [`ExcludeValues`](source/exclude-values.d.ts)
+- `Filter`, `ArrayFilter`, `PickValues` - See [`ExtractValues`](source/extract-values.d.ts)
 - `OmitNever` - See [`PickNonNever`](source/pick-non-never.d.ts)
 - `HomomorphicOmit` - See [`Except`](source/except.d.ts)
 - `Maybe`, `Option` - See [`Optional`](source/optional.d.ts)

@@ -1,5 +1,5 @@
 import {expectTypeOf} from 'nz';
-import type {ExcludeValues} from '../index.d.ts';
+import type {ExcludeValues, Falsy, IndexTuple, TupleOf} from '../index.d.ts';
 
 // The examples from the docs
 type Foo = {
@@ -96,7 +96,7 @@ expectTypeOf<ExcludeValues<Foo, never>>().toBe<Foo>();
 expectTypeOf<ExcludeValues<{a: string; b: number}, any>>().toBe<{}>();
 expectTypeOf<ExcludeValues<{a: string; b: number}, unknown>>().toBe<{}>();
 
-// Arrays and tuples delegate to `ArrayExclude`
+// Arrays and tuples
 expectTypeOf<ExcludeValues<ReadonlyArray<string | undefined>, undefined>>().toBe<readonly string[]>();
 expectTypeOf<ExcludeValues<[string, ...undefined[]], undefined>>().toBe<[string]>();
 expectTypeOf<ExcludeValues<[number | null, ...Array<string | null>], null>>().toBe<[number, ...string[]]>();
@@ -106,7 +106,7 @@ expectTypeOf<ExcludeValues<[string | undefined, ...Array<string | undefined>, nu
 expectTypeOf<ExcludeValues<[...Array<string | undefined>, string], undefined>>().toBe<[...string[], string]>();
 expectTypeOf<ExcludeValues<readonly [string?, number?], undefined>>().toBe<readonly [string?, number?]>();
 
-// Tuple labels are dropped by the delegation, like `ArrayExclude`
+// Tuple labels are dropped
 expectTypeOf<ExcludeValues<[length: string | undefined], undefined>>().toBe<[string]>();
 
 // An optional tuple element whose declared value is fully excluded is removed too
@@ -230,3 +230,222 @@ type DoesNotAllowUnknown = ExcludeValues<unknown, undefined>;
 type DoesNotAllowPrimitives = ExcludeValues<string, undefined>;
 // @ts-expect-error
 type DoesNotAllowUndefined = ExcludeValues<undefined, undefined>;
+
+// Falsy values are removed with `Falsy`, like `.filter(Boolean)`
+expectTypeOf<ExcludeValues<[0, 'a', '', null, 1, boolean], Falsy>>().toBe<['a', 1, true]>();
+expectTypeOf<ExcludeValues<Array<string | 0 | undefined>, Falsy>>().toBe<string[]>();
+
+// More arrays and tuples
+// Removing values does not change whether the remaining tuple positions are optional.
+expectTypeOf<ExcludeValues<readonly ['remove', 1, 'remove'?, (2 | undefined)?], string>>().toBe<readonly [1, (2 | undefined)?]>();
+expectTypeOf<ExcludeValues<['remove', ...Array<string | boolean>, 'remove', 2], string>>().toBe<[...boolean[], 2]>();
+expectTypeOf<ExcludeValues<readonly ['remove', 1?] | ['remove', 2], string>>().toBe<readonly [1?] | [2]>();
+
+// All required elements
+expectTypeOf<ExcludeValues<[1, 2, 3, 4], 2>>().toBe<[1, 3, 4]>();
+
+// All optional elements
+expectTypeOf<ExcludeValues<[1?, 2?, 3?, 4?], 2>>().toBe<[1?, 3?, 4?]>();
+
+// Mixed required and optional elements
+expectTypeOf<ExcludeValues<[1, 2, 3?, 4?], 2>>().toBe<[1, 3?, 4?]>();
+expectTypeOf<ExcludeValues<[1, 2?, 3?, 4?], 2>>().toBe<[1, 3?, 4?]>();
+
+// Explicit undefined in optional elements
+expectTypeOf<ExcludeValues<[1, (2 | undefined)?, 3?], 2>>().toBe<[1, undefined?, 3?]>();
+
+// Union elements
+expectTypeOf<ExcludeValues<[1, 2 | 3, 4 | 5], 2>>().toBe<[1, 3, 4 | 5]>();
+
+// Excluding unions
+expectTypeOf<ExcludeValues<[1, 2 | 3, 4 | 5], 2 | 4>>().toBe<[1, 3, 5]>();
+
+// Required and rest element
+// Trailing rest element
+expectTypeOf<ExcludeValues<[1, 2, ...string[]], 1>>().toBe<[2, ...string[]]>();
+expectTypeOf<ExcludeValues<[1, 2, ...string[]], 1 | 2>>().toBe<string[]>();
+// Leading rest element
+expectTypeOf<ExcludeValues<[...string[], 1, 2], 1>>().toBe<[...string[], 2]>();
+expectTypeOf<ExcludeValues<[...string[], 1, 2], 1 | 2>>().toBe<string[]>();
+// Rest element in the middle
+expectTypeOf<ExcludeValues<[1, 2, ...string[], 3, 4], 2 | 4>>().toBe<[1, ...string[], 3]>();
+expectTypeOf<ExcludeValues<[1, 2, ...string[], 3, 4], 1 | 2 | 3 | 4>>().toBe<string[]>();
+
+// Optional and rest element
+expectTypeOf<ExcludeValues<[1?, 2?, ...string[]], 2>>().toBe<[1?, ...string[]]>();
+expectTypeOf<ExcludeValues<[1?, 2?, ...string[]], 1 | 2>>().toBe<string[]>();
+
+// Required, optional, and rest element
+expectTypeOf<ExcludeValues<[1, 2, 3?, 4?, ...string[]], 2 | 3>>().toBe<[1, 4?, ...string[]]>();
+
+// Excluding rest element
+// Trailing rest element
+expectTypeOf<ExcludeValues<[1, 2, ...string[]], string>>().toBe<[1, 2]>();
+expectTypeOf<ExcludeValues<[1?, 2?, ...string[]], string>>().toBe<[1?, 2?]>();
+expectTypeOf<ExcludeValues<[1, 2, 3?, 4?, ...string[]], string>>().toBe<[1, 2, 3?, 4?]>();
+expectTypeOf<ExcludeValues<[1, 2, ...Array<string | number>], string>>().toBe<[1, 2, ...number[]]>();
+expectTypeOf<ExcludeValues<[1?, 2?, ...Array<string | number>], string>>().toBe<[1?, 2?, ...number[]]>();
+expectTypeOf<ExcludeValues<[1, 2, 3?, 4?, ...Array<string | number>], string>>().toBe<[1, 2, 3?, 4?, ...number[]]>();
+// Leading rest element
+expectTypeOf<ExcludeValues<[...string[], 1, 2], string>>().toBe<[1, 2]>();
+expectTypeOf<ExcludeValues<[...Array<string | number>, 1, 2], string>>().toBe<[...number[], 1, 2]>();
+// Rest element in the middle
+expectTypeOf<ExcludeValues<[1, ...string[], 2, 3], string>>().toBe<[1, 2, 3]>();
+expectTypeOf<ExcludeValues<[1, ...Array<string | number>, 2, 3], string>>().toBe<[1, ...number[], 2, 3]>();
+
+// Excluding both rest element and non-rest elements
+expectTypeOf<ExcludeValues<[1, 2, 3?, (4 | 5)?, ...Array<string | number>], 2 | 4 | string>>().toBe<[1, 3?, 5?, ...number[]]>();
+
+// All elements excluded
+expectTypeOf<ExcludeValues<[1, 2, 3], 1 | 2 | 3>>().toBe<[]>();
+expectTypeOf<ExcludeValues<[string, number], string | number>>().toBe<[]>();
+expectTypeOf<ExcludeValues<[1, 2?, 3?, ...string[]], any>>().toBe<[]>();
+expectTypeOf<ExcludeValues<[1, 2?, 3?, ...string[]], unknown>>().toBe<[]>();
+
+// No elements excluded
+expectTypeOf<ExcludeValues<[1, 2, 3], 4>>().toBe<[1, 2, 3]>();
+expectTypeOf<ExcludeValues<[1, 2?, 3?, ...string[]], never>>().toBe<[1, 2?, 3?, ...string[]]>();
+
+// Non-tuple arrays
+expectTypeOf<ExcludeValues<Array<string | number>, number>>().toBe<string[]>();
+// An array of unknown length whose element type is fully excluded is empty, like a tuple whose rest element is fully excluded.
+expectTypeOf<ExcludeValues<Array<string | number>, string | number>>().toBe<[]>();
+expectTypeOf<ExcludeValues<boolean[], true>>().toBe<Array<false>>();
+
+// Readonly arrays
+expectTypeOf<ExcludeValues<readonly [1, 2, 3], 2>>().toBe<readonly [1, 3]>();
+expectTypeOf<ExcludeValues<readonly [1, 2?, ...string[]], 1 | string>>().toBe<readonly [2?]>();
+expectTypeOf<ExcludeValues<readonly [...string[], 1], string>>().toBe<readonly [1]>();
+expectTypeOf<ExcludeValues<ReadonlyArray<string | number>, number>>().toBe<readonly string[]>();
+expectTypeOf<ExcludeValues<readonly string[], string>>().toBe<readonly []>();
+
+// Empty arrays
+expectTypeOf<ExcludeValues<[], 1>>().toBe<[]>();
+expectTypeOf<ExcludeValues<readonly [], 1>>().toBe<readonly []>();
+
+// Unions of arrays are handled separately
+expectTypeOf<ExcludeValues<[1, 2] | readonly ['a', 'b'], 2 | 'a'>>().toBe<[1] | readonly ['b']>();
+expectTypeOf<ExcludeValues<[1, 'a'] | string[], string>>().toBe<[1] | []>();
+
+// A union element keeps its remaining members
+expectTypeOf<ExcludeValues<[boolean, 1], true>>().toBe<[false, 1]>();
+expectTypeOf<ExcludeValues<[1 | 'a', ...Array<2 | 'b'>, 3 | 'c'], string>>().toBe<[1, ...Array<2>, 3]>();
+
+// Labels are dropped, since the positions change
+expectTypeOf<ExcludeValues<[a: 1, b: 2, c: 3], 2>>().toBe<[1, 3]>();
+
+// `any`, `unknown`, and `never` elements
+expectTypeOf<ExcludeValues<[1, any, 2], 1>>().toBe<[any, 2]>();
+expectTypeOf<ExcludeValues<[1, unknown, 2], 1>>().toBe<[unknown, 2]>();
+expectTypeOf<ExcludeValues<[1, never, 2], 1>>().toBe<[2]>();
+expectTypeOf<ExcludeValues<any[], 1>>().toBe<any[]>();
+expectTypeOf<ExcludeValues<unknown[], 1>>().toBe<unknown[]>();
+
+// Excluding `undefined` keeps the optional modifier
+expectTypeOf<ExcludeValues<[1, (2 | undefined)?], undefined>>().toBe<[1, 2?]>();
+
+// Edge cases
+expectTypeOf<ExcludeValues<any, 1>>().toBe<any>();
+expectTypeOf<ExcludeValues<never, 1>>().toBe<never>();
+expectTypeOf<ExcludeValues<string[], unknown>>().toBe<[]>();
+
+// Long tuples
+expectTypeOf<ExcludeValues<IndexTuple<TupleOf<500>>, 0 | 1>['length']>().toBe<498>();
+
+// Required batches retain order and narrow each element independently.
+expectTypeOf<ExcludeValues<[any, unknown, never, 1 | string, 2], string>>().toBe<[any, unknown, 1, 2]>();
+expectTypeOf<ExcludeValues<readonly [0, 0, 0, 0, 0, 6], 0>>().toBe<readonly [6]>();
+expectTypeOf<ExcludeValues<readonly [0, 1, 0, 2, 0, (3 | undefined)?, ...Array<0 | string>], 0 | undefined>>().toBe<readonly [1, 2, 3?, ...string[]]>();
+expectTypeOf<ExcludeValues<[...Array<0 | string>, 0, 1, 0, 2, 0], 0>>().toBe<[...string[], 1, 2]>();
+
+function makeRetainedBatch<const Value>(value: Value): ExcludeValues<readonly [number, {value: Value}, number, {value: Value}, number], number> {
+	return [{value}, {value}];
+}
+
+const retainedBatch = makeRetainedBatch({id: 'kept'});
+expectTypeOf(retainedBatch[1].value).toBe<{readonly id: 'kept'}>();
+
+// Generic arrays
+function _generic<ArrayType extends unknown[], ExcludeType>(array: ExcludeValues<ArrayType, ExcludeType>) {
+	const arrayResult: readonly unknown[] = array;
+	return [arrayResult, array.length];
+}
+
+// @ts-expect-error
+type _NotArray = ExcludeValues<string, string>;
+
+// The removed-element test distinguishes `never` from `any` and `unknown` at every position.
+expectTypeOf<ExcludeValues<[any, unknown, never], never>>().toBe<[any, unknown]>();
+expectTypeOf<ExcludeValues<[any, unknown, never], unknown>>().toBe<[]>();
+expectTypeOf<ExcludeValues<[...any[], unknown, never], never>>().toBe<[...any[], unknown]>();
+expectTypeOf<ExcludeValues<[1, ...unknown[], never], 1>>().toBe<unknown[]>();
+expectTypeOf<ExcludeValues<readonly [...never[], 1, 2], 1>>().toBe<readonly [2]>();
+expectTypeOf<ExcludeValues<[(1 | undefined)?], 1>>().toBe<[undefined?]>();
+expectTypeOf<ExcludeValues<readonly [(1 | undefined)?, ...Array<2 | undefined>], undefined>>().toBe<readonly [1?, ...Array<2>]>();
+expectTypeOf<ExcludeValues<readonly [1?, ...any[]], any>>().toBe<readonly []>();
+
+// Excluded rest values and fixed values are tested independently.
+expectTypeOf<ExcludeValues<readonly [1 | 'a', ...Array<2 | 'b'>, 3 | 'c'], string>>().toBe<readonly [1, ...Array<2>, 3]>();
+expectTypeOf<ExcludeValues<[1 | 2, 3 | 4], 2 | 3>>().toBe<[1, 4]>();
+expectTypeOf<ExcludeValues<readonly [undefined, void, null], undefined>>().toBe<readonly [void, null]>();
+expectTypeOf<ExcludeValues<[] | readonly [1?, ...string[]] | [2, 3], number>>().toBe<[] | readonly string[]>();
+
+// A kept value retains its nested readonly shape, and generic readonly inputs still yield arrays.
+declare function excludeNumbers<const Array_ extends readonly unknown[]>(array: Array_): ExcludeValues<Array_, number>;
+const remainingValues = excludeNumbers([0, {id: 1}, ['nested']] as const);
+expectTypeOf(remainingValues).toBe<readonly [{readonly id: 1}, readonly ['nested']]>();
+expectTypeOf(remainingValues[0].id).toBe<1>();
+// @ts-expect-error A readonly input keeps its readonly result.
+remainingValues[0] = {id: 1};
+
+function _readonlyResult<Array_ extends readonly unknown[], Removed>(array: ExcludeValues<Array_, Removed>): readonly unknown[] {
+	return array;
+}
+
+// A fully excluded tuple has no retained positions, including a readonly input or one member of a union.
+type NumericPacket = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19];
+expectTypeOf<ExcludeValues<NumericPacket, number>>().toBe<[]>();
+expectTypeOf<ExcludeValues<Readonly<NumericPacket>, number>>().toBe<readonly []>();
+expectTypeOf<ExcludeValues<NumericPacket | readonly [1, 'kept'], number>>().toBe<[] | readonly ['kept']>();
+
+function makeRetained<const Value>(value: Value): ExcludeValues<[number, {value: Value}], number> {
+	return [{value}];
+}
+
+const retainedBox = makeRetained({id: 'kept'});
+expectTypeOf(retainedBox[0].value).toBe<{readonly id: 'kept'}>();
+const fullyExcluded = excludeNumbers([1, 2, 3] as const);
+expectTypeOf(fullyExcluded).toBe<readonly []>();
+// @ts-expect-error A fully excluded result has no first element.
+const _excludedFirst: unknown = fullyExcluded[0];
+
+// Structural exclusions can remove every descriptor without losing a retained descriptor's literal kind.
+expectTypeOf<ExcludeValues<readonly [{kind: 'internal'; name: 'id'}, {kind: 'internal'; name: 'cache'}], {kind: 'internal'}>>().toBe<readonly []>();
+
+function makePublicField<const Value>(value: Value): ExcludeValues<readonly [{kind: 'internal'}, {kind: 'public'; value: Value}], {kind: 'internal'}> {
+	return [{kind: 'public', value}];
+}
+
+const publicField = makePublicField({id: 'visible'});
+expectTypeOf(publicField[0]).toBe<{kind: 'public'; value: {readonly id: 'visible'}}>();
+// @ts-expect-error A readonly input still yields a readonly result with otherwise valid field values.
+publicField[0] = {kind: 'public', value: {id: 'visible'}};
+
+function _allRemoved<Values extends readonly number[]>(values: ExcludeValues<Values, number>): readonly [] {
+	return values;
+}
+
+// A fully removed member and a partially retained member each keep their own access.
+expectTypeOf<ExcludeValues<readonly number[] | [number, string], number>>().toBe<readonly [] | [string]>();
+expectTypeOf<ExcludeValues<number[] | readonly [number, string?], number>>().toBe<[] | readonly [string?]>();
+expectTypeOf<ExcludeValues<readonly [number?, ...string[]] | [boolean, ...number[]], number>>().toBe<readonly string[] | [boolean]>();
+expectTypeOf<ExcludeValues<readonly [number, ...string[], boolean] | [Date, ...RegExp[], number], number>>().toBe<readonly [...string[], boolean] | [Date, ...RegExp[]]>();
+
+// Excluding top-level elements does not recursively change the retained values.
+expectTypeOf<ExcludeValues<[readonly string[], number], number>>().toBe<[readonly string[]]>();
+expectTypeOf<ExcludeValues<readonly [number, {id: string}, string[]], number>>().toBe<readonly [{id: string}, string[]]>();
+declare const shallowReadonlyExclusion: ExcludeValues<readonly [number, {id: string}, string[]], number>;
+shallowReadonlyExclusion[0].id = 'updated';
+shallowReadonlyExclusion[1].push('updated');
+// @ts-expect-error A retained value cannot replace a readonly outer position.
+shallowReadonlyExclusion[0] = {id: 'replacement'};
