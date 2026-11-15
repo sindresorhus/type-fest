@@ -7,7 +7,7 @@ import type {UnknownArray} from './unknown-array.d.ts';
 /**
 Flatten an array type to the given depth, like [`Array#flat()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/flat).
 
-Unlike the built-in `FlatArray` type, which only gives the element type, this keeps the position of each element of a tuple. Elements that can repeat or be absent, which are those of a rest element or of an optional element, are merged into a single rest element. The result is mutable, like the array `Array#flat()` returns.
+Unlike the built-in `FlatArray` type, which only gives the element type, this keeps the position of each element of a tuple. Elements that can repeat or be absent, which are those of a rest element or of an optional element, are merged into a single rest element. A readonly input gives a readonly result, like `ArraySlice` and `ArrayTail` do.
 
 Use-case: Type the result of `array.flat()` on a tuple.
 
@@ -41,20 +41,25 @@ export type ArrayFlat<Array_ extends UnknownArray, Depth extends number = 1> = A
 
 type ArrayFlatImplementation<Array_ extends UnknownArray, Depth extends number> = IfNotAnyOrNever<Array_, {
 	ifNot: Array_ extends unknown // For distributing `Array_`
-		// Numeric enum members also accept `number`, so compare printed values to recognize known depths.
-		? `${number}` extends `${Depth}`
-			? Array<FlatArray<Array_, Depth>>
-			: Depth extends unknown // For distributing `Depth`
-				? LessThan<Depth, 1> extends true
-					? [...Array_]
-					// Copy when no element needs flattening and no optional position needs conversion to a rest element.
-					: [unknown extends Array_[number] ? true : false, Extract<Array_[number], UnknownArray>, [...Array_]] extends [false, never, Required<Array_>]
+		? (
+			// Numeric enum members also accept `number`, so compare printed values to recognize known depths.
+			`${number}` extends `${Depth}`
+				? Array<FlatArray<Array_, Depth>>
+				: Depth extends unknown // For distributing `Depth`
+					? LessThan<Depth, 1> extends true
 						? [...Array_]
-						// Inferring the result with an array constraint lets TypeScript use that constraint for a generic `Array_`, instead of expanding the recursion without end.
-						: SpreadElements<Array_, Subtract<Depth, 1>> extends infer Result extends unknown[]
-							? Result
-							: never // Should never happen
-				: never // Should never happen
+						// Copy when no element needs flattening and no optional position needs conversion to a rest element.
+						: [unknown extends Array_[number] ? true : false, Extract<Array_[number], UnknownArray>, [...Array_]] extends [false, never, Required<Array_>]
+							? [...Array_]
+							// Inferring the result with an array constraint lets TypeScript use that constraint for a generic `Array_`, instead of expanding the recursion without end.
+							: SpreadElements<Array_, Subtract<Depth, 1>> extends infer Result extends unknown[]
+								? Result
+								: never // Should never happen
+					: never // Should never happen
+		// Only the outer array keeps its `readonly` modifier. Nested readonly arrays are spread into it.
+		) extends infer Result extends unknown[]
+			? Array_ extends unknown[] ? Result : Readonly<Result>
+			: never // Should never happen
 		: never; // Should never happen
 }>;
 

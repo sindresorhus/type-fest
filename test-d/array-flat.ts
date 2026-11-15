@@ -57,22 +57,22 @@ expectTypeOf<ArrayFlat<[1 | [2, 3]]>>().toBe<[1] | [2, 3]>();
 // A union of non-array members stays one element.
 expectTypeOf<ArrayFlat<[boolean, [string]]>>().toBe<[boolean, string]>();
 
-// Readonly arrays give a mutable array, just like `Array#flat()`.
-expectTypeOf<ArrayFlat<readonly [readonly [1, 2], 3]>>().toBe<[1, 2, 3]>();
-expectTypeOf<ArrayFlat<ReadonlyArray<readonly string[]>>>().toBe<string[]>();
-expectTypeOf<ArrayFlat<readonly [1, [2]], 0>>().toBe<[1, [2]]>();
+// Readonly arrays give a readonly array, like `ArraySlice` and `ArrayTail`.
+expectTypeOf<ArrayFlat<readonly [readonly [1, 2], 3]>>().toBe<readonly [1, 2, 3]>();
+expectTypeOf<ArrayFlat<ReadonlyArray<readonly string[]>>>().toBe<readonly string[]>();
+expectTypeOf<ArrayFlat<readonly [1, [2]], 0>>().toBe<readonly [1, [2]]>();
 
 // Long tuples
 type LongTuple<Length extends number, Positions extends readonly unknown[] = IndexTuple<TupleOf<Length>>> = {[Index in keyof Positions]: [Positions[Index]]};
 expectTypeOf<ArrayFlat<LongTuple<300>>['length']>().toBe<300>();
 
-// Tuples that need no flattening preserve every position and only lose outer readonly.
+// Tuples that need no flattening preserve every position and the outer readonly.
 type FlatPositions = IndexTuple<TupleOf<500>>;
-expectTypeOf<ArrayFlat<Readonly<FlatPositions>>>().toBe<FlatPositions>();
-expectTypeOf<ArrayFlat<readonly [{values: readonly [1, 2]}, never, string | number]>>().toBe<[{values: readonly [1, 2]}, never, string | number]>();
-expectTypeOf<ArrayFlat<readonly [1, 2], number>>().toBe<Array<1 | 2>>();
-expectTypeOf<ArrayFlat<readonly [unknown, 1]>>().toBe<[...unknown[], 1]>();
-expectTypeOf<ArrayFlat<readonly [any, 1]>>().toBe<[...any[], 1]>();
+expectTypeOf<ArrayFlat<Readonly<FlatPositions>>>().toBe<Readonly<FlatPositions>>();
+expectTypeOf<ArrayFlat<readonly [{values: readonly [1, 2]}, never, string | number]>>().toBe<readonly [{values: readonly [1, 2]}, never, string | number]>();
+expectTypeOf<ArrayFlat<readonly [1, 2], number>>().toBe<ReadonlyArray<1 | 2>>();
+expectTypeOf<ArrayFlat<readonly [unknown, 1]>>().toBe<readonly [...unknown[], 1]>();
+expectTypeOf<ArrayFlat<readonly [any, 1]>>().toBe<readonly [...any[], 1]>();
 
 function flattenFlatRecord<const Value>(value: Value): ArrayFlat<readonly [{value: Value}, 0]> {
 	return [{value}, 0];
@@ -80,6 +80,7 @@ function flattenFlatRecord<const Value>(value: Value): ArrayFlat<readonly [{valu
 
 const flatRecord = flattenFlatRecord({id: 'row'});
 expectTypeOf(flatRecord[0].value).toBe<{readonly id: 'row'}>();
+// @ts-expect-error A readonly input gives a readonly result.
 flatRecord[1] = 0;
 
 // Deep nesting
@@ -93,7 +94,7 @@ function _generic<ArrayType extends unknown[]>(array: ArrayType): unknown[] {
 	return flat(array);
 }
 
-function _genericTuple<Element>(array: ArrayFlat<readonly [Element, ...Element[]]>): unknown[] {
+function _genericTuple<Element>(array: ArrayFlat<readonly [Element, ...Element[]]>): readonly unknown[] {
 	return array;
 }
 
@@ -129,16 +130,16 @@ expectTypeOf<ArrayFlat<[[1], [2]], FlatDepth.One>>().toBe<[1, 2]>();
 expectTypeOf<ArrayFlat<[[1, [2]]], FlatDepth.Two>>().toBe<[1, 2]>();
 expectTypeOf<ArrayFlat<[1, [2]], FlatDepth.Keep>>().toBe<[1, [2]]>();
 
-expectTypeOf<ArrayFlat<readonly [readonly [1, 2], 3], FlatDepth.One>>().toBe<[1, 2, 3]>();
-expectTypeOf<ArrayFlat<readonly [1, [2]], FlatDepth.Zero>>().toBe<[1, [2]]>();
-expectTypeOf<ArrayFlat<readonly [1, [2]], FlatDepth.Keep>>().toBe<[1, [2]]>();
+expectTypeOf<ArrayFlat<readonly [readonly [1, 2], 3], FlatDepth.One>>().toBe<readonly [1, 2, 3]>();
+expectTypeOf<ArrayFlat<readonly [1, [2]], FlatDepth.Zero>>().toBe<readonly [1, [2]]>();
+expectTypeOf<ArrayFlat<readonly [1, [2]], FlatDepth.Keep>>().toBe<readonly [1, [2]]>();
 expectTypeOf<ArrayFlat<[[1, [2, [3]]]], FlatDepth.Two>>().toBe<[1, 2, [3]]>();
 expectTypeOf<ArrayFlat<DeeplyNested<20>, FlatDepth.Deep>>().toBe<[1]>();
 expectTypeOf<ArrayFlat<[1, [2]], FlatDepth.Zero | FlatDepth.One>>().toBe<[1, [2]] | [1, 2]>();
 expectTypeOf<ArrayFlat<[[1, [2]]], FlatDepth.One | FlatDepth.Two>>().toBe<[1, [2]] | [1, 2]>();
 expectTypeOf<ArrayFlat<[1, ...Array<[2]>], FlatDepth.One>>().toBe<[1, ...Array<2>]>();
 expectTypeOf<ArrayFlat<[[1, 2?]], FlatDepth.One>>().toBe<[1, ...Array<2>]>();
-expectTypeOf<ArrayFlat<[[1], [2]] | readonly [[3]], FlatDepth.One>>().toBe<[1, 2] | [3]>();
+expectTypeOf<ArrayFlat<[[1], [2]] | readonly [[3]], FlatDepth.One>>().toBe<[1, 2] | readonly [3]>();
 expectTypeOf<ArrayFlat<[[1], [2]], Tagged<1, 'Depth'>>>().toBe<[1, 2]>();
 
 // An enum member whose value is unknown retains the built-in broad-depth fallback.
@@ -160,7 +161,7 @@ expectTypeOf<ArrayFlat<[[1]], unknown>>();
 expectTypeOf<ArrayFlat<[[1], [[2]]], Tagged<number, 'Depth'>>>().toBe<Array<FlatArray<[[1], [[2]]], number>>>();
 expectTypeOf<ArrayFlat<[[1], [[2]]], Opaque<number, 'Depth'>>>().toBe<Array<FlatArray<[[1], [[2]]], number>>>();
 
-expectTypeOf<ArrayFlat<readonly [[1], [[2]]], Tagged<Tagged<number, 'Depth'>, 'Validated'>>>().toBe<Array<FlatArray<readonly [[1], [[2]]], number>>>();
+expectTypeOf<ArrayFlat<readonly [[1], [[2]]], Tagged<Tagged<number, 'Depth'>, 'Validated'>>>().toBe<ReadonlyArray<FlatArray<readonly [[1], [[2]]], number>>>();
 expectTypeOf<ArrayFlat<[[1], [[2]]], number & {readonly __brand: unique symbol}>>().toBe<Array<FlatArray<[[1], [[2]]], number>>>();
 expectTypeOf<ArrayFlat<[[1], [[2]]], Tagged<number, 'Depth'> | 0>>().toBe<Array<FlatArray<[[1], [[2]]], number>>>();
 expectTypeOf<ArrayFlat<[[1]], Tagged<0, 'Depth'>>>().toBe<[[1]]>();
@@ -174,7 +175,7 @@ expectTypeOf<ArrayFlat<[[Tagged<1, 'Element'>]], Tagged<1, 'Depth'>>>().toBe<[Ta
 expectTypeOf<ArrayFlat<[...Array<readonly [1, 2]>, readonly [3, [4]], 5], 2>>()
 	.toBe<[...Array<1 | 2>, 3, 4, 5]>();
 expectTypeOf<ArrayFlat<readonly [readonly [1, 2], ...ReadonlyArray<readonly [3, 4]>, readonly [5, [6]]], 2>>()
-	.toBe<[1, 2, ...Array<3 | 4>, 5, 6]>();
+	.toBe<readonly [1, 2, ...Array<3 | 4>, 5, 6]>();
 expectTypeOf<ArrayFlat<[0, ...unknown[], [1, 2]]>>().toBe<[0, ...unknown[], 1, 2]>();
 expectTypeOf<ArrayFlat<[0, ...never[], [1]]>>().toBe<[0, ...never[], 1]>();
 
@@ -192,15 +193,16 @@ expectTypeOf<ArrayFlat<[[Tagged<string, 'Name'>], readonly [{readonly id: 1}]]>>
 expectTypeOf<ArrayFlat<LongTuple<300>>[0]>().toBe<0>();
 expectTypeOf<ArrayFlat<LongTuple<300>>[299]>().toBe<299>();
 
-function _genericFlattenDepth<Value extends readonly unknown[], Depth extends number>(value: ArrayFlat<Value, Depth>): unknown[] {
+function _genericFlattenDepth<Value extends readonly unknown[], Depth extends number>(value: ArrayFlat<Value, Depth>): readonly unknown[] {
 	return value;
 }
 
 declare function flattenTuple<const Value extends readonly unknown[], Depth extends number>(value: Value, depth: Depth): ArrayFlat<Value, Depth>;
 const flattenedObjects = flattenTuple([[{id: 1}], [{id: 2}, [{id: 3}]]], 2);
-expectTypeOf(flattenedObjects).toBe<[{readonly id: 1}, {readonly id: 2}, {readonly id: 3}]>();
+expectTypeOf(flattenedObjects).toBe<readonly [{readonly id: 1}, {readonly id: 2}, {readonly id: 3}]>();
+// @ts-expect-error A readonly input, which a `const` type parameter infers, gives a readonly result.
 flattenedObjects[0] = {id: 1};
-// @ts-expect-error Flattening makes the outer array mutable, while retaining the nested object value's readonly properties.
+// @ts-expect-error Flattening retains the nested object value's readonly properties.
 flattenedObjects[0].id = 1;
 // @ts-expect-error An unknown value is not necessarily an array.
 type UnknownFlattenInput = ArrayFlat<unknown>;
@@ -215,7 +217,7 @@ expectTypeOf<LongFlatSuffix extends [...unknown[], infer Previous, unknown] ? Pr
 
 // Reaching the requested depth spreads the nested array once and keeps deeper arrays and explicit values intact.
 expectTypeOf<ArrayFlat<readonly [readonly [1, readonly [2]], readonly [3, ...string[], 4]]>>()
-	.toBe<[1, readonly [2], 3, ...string[], 4]>();
+	.toBe<readonly [1, readonly [2], 3, ...string[], 4]>();
 expectTypeOf<ArrayFlat<[readonly [any, unknown, never, null, undefined]]>>().toBe<[any, unknown, never, null, undefined]>();
 expectTypeOf<ArrayFlat<[readonly [1, (2 | undefined)?], readonly [3, 4]]>>().toBe<[1, ...Array<2 | undefined>, 3, 4]>();
 
@@ -229,4 +231,5 @@ function _readRequiredRow<Value>(value: ArrayFlat<readonly [readonly [Value, Val
 
 const requiredRow = flattenRequiredRow({id: 'row'});
 expectTypeOf(requiredRow[0].id).toBe<string>();
+// @ts-expect-error A readonly input gives a readonly result.
 requiredRow[1] = {id: 'updated'};
