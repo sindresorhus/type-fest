@@ -21,24 +21,24 @@ export type SplitOptions = {
 	```ts
 	import type {Split} from 'type-fest';
 
-	type Example1 = Split<`foo.${string}.bar`, '.', {strictLiteralChecks: false}>;
+	type Example1 = Split<`foo.${string}.bar`, '.', {strict: false}>;
 	//=> ['foo', string, 'bar']
 
-	type Example2 = Split<`foo.${string}`, '.', {strictLiteralChecks: true}>;
+	type Example2 = Split<`foo.${string}`, '.', {strict: true}>;
 	//=> string[]
 
-	type Example3 = Split<'foobarbaz', `b${string}`, {strictLiteralChecks: false}>;
+	type Example3 = Split<'foobarbaz', `b${string}`, {strict: false}>;
 	//=> ['foo', 'r', 'z']
 
-	type Example4 = Split<'foobarbaz', `b${string}`, {strictLiteralChecks: true}>;
+	type Example4 = Split<'foobarbaz', `b${string}`, {strict: true}>;
 	//=> string[]
 	```
 	*/
-	strictLiteralChecks?: boolean;
+	strict?: boolean;
 };
 
 type DefaultSplitOptions = {
-	strictLiteralChecks: true;
+	strict: true;
 };
 
 /**
@@ -75,10 +75,10 @@ type _Split<
 	Options extends SplitOptions,
 > = S extends string // For distributing `S`
 	? Delimiter extends string // For distributing `Delimiter`
-		// If `S` and `Delimiter` both are string literals OR `strictLiteralChecks` is `false`, then perform the split. Known literals do not depend on resolving generic options.
+		// If `S` and `Delimiter` both are string literals OR `strict` is `false`, then perform the split. Known literals do not depend on resolving generic options.
 		? Or<
 			And<IsStringLiteral<S>, IsStringLiteral<Delimiter>>,
-			Not<ApplyDefaultOptions<SplitOptions, DefaultSplitOptions, Options>['strictLiteralChecks']>
+			Not<ApplyDefaultOptions<SplitOptions, DefaultSplitOptions, Options>['strict']>
 		> extends true
 			? (Delimiter extends '' ? IsStringLiteral<S> : false) extends true
 				// Reuse the chunked character conversion instead of rebuilding the tuple one character at a time.
