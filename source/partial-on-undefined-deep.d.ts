@@ -11,21 +11,21 @@ export type PartialOnUndefinedDeepOptions = {
 	/**
 	Whether to affect the individual elements of arrays and tuples.
 
-	A required `boolean` flag includes the recursively transformed form, since it may be `true`.
+	When `false`, arrays and tuples are kept as is.
 
-	@default false
+	@default true
 	*/
 	readonly recurseIntoArrays?: boolean;
 };
 
 type DefaultPartialOnUndefinedDeepOptions = {
-	recurseIntoArrays: false;
+	recurseIntoArrays: true;
 };
 
 /**
 Create a deep version of another type where all keys accepting `undefined` type are set to optional.
 
-This utility type is recursive, transforming at any level deep. By default, it does not affect the elements of arrays and tuples unless you explicitly pass `{recurseIntoArrays: true}` as the second type argument.
+This utility type is recursive, transforming at any level deep, including the elements of arrays and tuples. You can keep arrays and tuples as is by passing `{recurseIntoArrays: false}` as the second type argument.
 
 Use {@link PartialOnUndefined} if you only need one level deep.
 
@@ -55,6 +55,25 @@ const testSettings: PartialOnUndefinedDeep<Settings> = {
 };
 ```
 
+The elements of arrays and tuples are transformed too. Pass `{recurseIntoArrays: false}` to keep arrays and tuples as is:
+
+```
+import type {PartialOnUndefinedDeep} from 'type-fest';
+
+type Shape = {
+	layers: Array<{name: string; opacity: number | undefined}>;
+};
+
+const shape: PartialOnUndefinedDeep<Shape> = {
+	layers: [{name: 'Background'}], // OK
+};
+
+const exactShape: PartialOnUndefinedDeep<Shape, {recurseIntoArrays: false}> = {
+	// @ts-expect-error
+	layers: [{name: 'Background'}], // The array elements are kept as is
+};
+```
+
 @category Object
 */
 export type PartialOnUndefinedDeep<T, Options extends PartialOnUndefinedDeepOptions = {}> =
@@ -73,13 +92,13 @@ Utility type to get the value type by key and recursively call `PartialOnUndefin
 type PartialOnUndefinedDeepValue<T, Options extends Required<PartialOnUndefinedDeepOptions>> = T extends NonRecursiveType
 	? T
 	: T extends ReadonlyArray<infer U> // Test if type is array or tuple
-		? true extends Options['recurseIntoArrays'] // Recurse when the resolved flag can be true
-			? U[] extends T // Check if array not tuple
+		? Options['recurseIntoArrays'] extends false
+			? T // If they opt out of array recursion, just use the original type
+			: U[] extends T // Check if array not tuple
 				? readonly U[] extends T
 					? ReadonlyArray<PartialOnUndefinedDeepValue<U, Options>> // Readonly array treatment
 					: Array<PartialOnUndefinedDeepValue<U, Options>> // Mutable array treatment
 				: {[Key in keyof T]: PartialOnUndefinedDeepValue<T[Key], Options>} // Tuple treatment
-			: T
 		// A map or set is a container, so its value or item type is converted. Rebuilding it member by member instead would leave the value type untouched, defeating the point of the type.
 		: T extends Map<infer KeyType, infer ValueType>
 			? Map<KeyType, PartialOnUndefinedDeepValue<ValueType, Options>>

@@ -28,8 +28,8 @@ type TestingType = {
 declare const indexType: {[k: string]: string | undefined; propertyA: string; propertyB: string | undefined};
 declare const indexTypeUnknown: {[k: string]: unknown; propertyA: string; propertyB: number | undefined};
 
-// Default behavior, without recursion into arrays/tuples
-declare const foo: PartialOnUndefinedDeep<TestingType>;
+// Without recursion into arrays/tuples
+declare const foo: PartialOnUndefinedDeep<TestingType, {recurseIntoArrays: false}>;
 expectTypeOf(foo).toBeAssignableTo<{
 	function?: TestingType['function'];
 	object?: TestingType['object'];
@@ -55,12 +55,16 @@ expectTypeOf(foo).toBeAssignableTo<{
 	tuple?: TestingType['tuple'];
 }>();
 
-declare const indexTypeWithoutRecursion: PartialOnUndefinedDeep<typeof indexType>;
-declare const indexTypeUnknownWithoutRecursion: PartialOnUndefinedDeep<typeof indexTypeUnknown>;
+declare const indexTypeWithoutRecursion: PartialOnUndefinedDeep<typeof indexType, {recurseIntoArrays: false}>;
+declare const indexTypeUnknownWithoutRecursion: PartialOnUndefinedDeep<typeof indexTypeUnknown, {recurseIntoArrays: false}>;
 expectTypeOf(indexTypeWithoutRecursion).toBe<{[k: string]: string | undefined; propertyA: string; propertyB?: string | undefined}>();
 expectTypeOf(indexTypeUnknownWithoutRecursion).toBe<{[k: string]: unknown; propertyA: string; propertyB?: number | undefined}>();
 
-// With recursion into arrays/tuples activated
+// Recursion into arrays/tuples is the default
+expectTypeOf<PartialOnUndefinedDeep<TestingType>['array2']>().toBe<Array<{propertyA: string; propertyB?: number | undefined}> | undefined>();
+expectTypeOf<PartialOnUndefinedDeep<TestingType>['tuple']>().toBe<['test1', {propertyA: string; propertyB?: number | undefined}] | undefined>();
+
+// With recursion into arrays/tuples activated explicitly
 declare const bar: PartialOnUndefinedDeep<TestingType, {recurseIntoArrays: true}>;
 expectTypeOf(bar).toBeAssignableTo<{
 	function?: TestingType['function'];
@@ -166,9 +170,11 @@ expectTypeOf(recursiveChildren).toBeAssignableTo<OptionalRecursiveConfig>();
 expectTypeOf<boolean>().not.toBeAssignableTo<PartialOnUndefinedDeep<RecursiveConfig, {recurseIntoArrays: true}>>();
 expectTypeOf<{value: [boolean]}>().not.toBeAssignableTo<PartialOnUndefinedDeep<RecursiveConfig, {recurseIntoArrays: true}>>();
 
-// Array recursion is still opt-in, even when the array refers back to the input union.
-expectTypeOf<PartialOnUndefinedDeep<RecursiveConfig>>().toBe<string | RecursiveConfig[] | {value?: PartialOnUndefinedDeep<RecursiveConfig> | undefined}>();
-expectTypeOf<{value: [{}]}>().not.toBeAssignableTo<PartialOnUndefinedDeep<RecursiveConfig>>();
+// Array recursion is the default, and turning it off keeps the array as is, even when the array refers back to the input union.
+expectTypeOf<PartialOnUndefinedDeep<RecursiveConfig>>().toBe<OptionalRecursiveConfig>();
+type ShallowRecursiveConfig = PartialOnUndefinedDeep<RecursiveConfig, {recurseIntoArrays: false}>;
+expectTypeOf<ShallowRecursiveConfig>().toBe<string | RecursiveConfig[] | {value?: ShallowRecursiveConfig | undefined}>();
+expectTypeOf<{value: [{}]}>().not.toBeAssignableTo<ShallowRecursiveConfig>();
 
 // Discriminants and required fields survive while recursive optional branches are made optional.
 type ConfigNode = {kind: 'node'; child: ConfigNode | undefined} | {kind: 'leaf'; name: string};
@@ -253,9 +259,10 @@ expectTypeOf(optionalArraySettings({recurseIntoArrays: recurseIntoOptionalRows})
 expectTypeOf<{rows: Array<{note: string}>}>().not.toBeAssignableTo<UncertainOptionalRows>();
 expectTypeOf<{rows: Array<{id: number}>}>().not.toBeAssignableTo<UncertainOptionalRows>();
 expectTypeOf<PartialOnUndefinedDeep<OptionalRowsSettings, {recurseIntoArrays: true} | {recurseIntoArrays: false}>>().toBe<UncertainOptionalRows>();
-expectTypeOf<PartialOnUndefinedDeep<OptionalRowsSettings, {recurseIntoArrays?: boolean}>>().toBe<OptionalRowsSettings>();
-expectTypeOf<PartialOnUndefinedDeep<OptionalRowsSettings, any>>().toBe<OptionalRowsSettings>();
-expectTypeOf<PartialOnUndefinedDeep<OptionalRowsSettings, never>>().toBe<OptionalRowsSettings>();
+// Options that do not resolve to a literal flag resolve like the default, which recurses.
+expectTypeOf<PartialOnUndefinedDeep<OptionalRowsSettings, {recurseIntoArrays?: boolean}>>().toBe<{rows: OptionalRow[]}>();
+expectTypeOf<PartialOnUndefinedDeep<OptionalRowsSettings, any>>().toBe<{rows: OptionalRow[]}>();
+expectTypeOf<PartialOnUndefinedDeep<OptionalRowsSettings, never>>().toBe<{rows: OptionalRow[]}>();
 
 // The same strategy reaches readonly tuples and containers without changing their modifiers.
 type ReadonlyOptionalRow = {readonly id: string; note: string | undefined};
@@ -284,17 +291,17 @@ function _keepDisabledOptionalRows<Options extends {recurseIntoArrays: false}>(v
 	return value;
 }
 
-// Generic settings optionalize finite enum and symbol keys without changing array payloads.
+// Generic settings optionalize finite enum and symbol keys without changing array payloads when array recursion is turned off. With recursion, the elements of a generic array are deferred, so they are not assignable to `Value`.
 enum OptionalConfigField {
 	Name = 'name',
 }
 declare const optionalConfigValues: unique symbol;
 type OptionalConfig<Value> = {id: string; readonly [OptionalConfigField.Name]: string | undefined; [optionalConfigValues]: {values: Value[]; note: string | undefined} | undefined};
-function makeOptionalConfig<Value>(values: Value[]): PartialOnUndefinedDeep<OptionalConfig<Value>> {
+function makeOptionalConfig<Value>(values: Value[]): PartialOnUndefinedDeep<OptionalConfig<Value>, {recurseIntoArrays: false}> {
 	return {id: 'ready', [optionalConfigValues]: {values}};
 }
 
-function visitOptionalConfig<Value, Result>(config: PartialOnUndefinedDeep<OptionalConfig<Value>>, visit: (values: Value[]) => Result): Result | undefined {
+function visitOptionalConfig<Value, Result>(config: PartialOnUndefinedDeep<OptionalConfig<Value>, {recurseIntoArrays: false}>, visit: (values: Value[]) => Result): Result | undefined {
 	return config[optionalConfigValues] === undefined ? undefined : visit(config[optionalConfigValues].values);
 }
 
