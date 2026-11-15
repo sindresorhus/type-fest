@@ -169,3 +169,8 @@ expectTypeOf<IsStringLiteral<LiteralUnion<'click' | 'onClick', `on${string}`> | 
 expectTypeOf<IsStringLiteral<LiteralUnion<'auto', number> | Record<string, unknown>>>().toBe<boolean>();
 expectTypeOf<IsStringLiteral<Tagged<LiteralUnion<'auto', string>, 'Theme'> | {theme?: string}>>().toBe<false>();
 expectTypeOf<IsStringLiteral<LiteralUnion<'DARK', Uppercase<string>> | {theme?: string}>>().toBe<false>();
+
+// Generic code that wraps the result and infers from it sees both outcomes
+type WrappedIsStringLiteral<Value> = [IsStringLiteral<Value>] extends infer Result extends [boolean] ? ([true] extends Result ? 'yes' : 'no') : never;
+expectTypeOf<WrappedIsStringLiteral<'a'>>().toBe<'yes'>();
+expectTypeOf<WrappedIsStringLiteral<string>>().toBe<'no'>();

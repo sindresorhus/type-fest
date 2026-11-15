@@ -1,6 +1,7 @@
 import type {CollapseLiterals} from './collapse-literals.d.ts';
 import type {UnwrapBrandedPrimitive} from './unwrap-branded-primitive.d.ts';
 import type {IsNever} from './is-never.d.ts';
+import type {IsAny} from './is-any.d.ts';
 import type {IsTemplateLiteral} from './is-template-literal.d.ts'; // For `@link`
 
 /**
@@ -59,8 +60,9 @@ type L3 = StringLength<`${number}`>;
 @category Utilities
 */
 // The normalized predicate rejects `any`; only `never` needs a separate guard.
+// `any` is checked before `never`, so generic code that wraps the result and infers from it still sees both outcomes.
 // Plain primitives need no brand normalization.
-export type IsStringLiteral<S> = IsNever<S> extends true ? false : _IsStringLiteral<CollapseLiterals<S extends object ? UnwrapBrandedPrimitive<S> : S>>;
+export type IsStringLiteral<S> = IsAny<S> extends true ? false : IsNever<S> extends true ? false : _IsStringLiteral<CollapseLiterals<S extends object ? UnwrapBrandedPrimitive<S> : S>>;
 
 export type _IsStringLiteral<S> =
 	// If `S` is an infinite string type (e.g., `on${string}`), `Record<S, never>` produces an index signature,

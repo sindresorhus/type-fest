@@ -197,3 +197,8 @@ expectTypeOf<IsNumericLiteral<LiteralUnion<1, bigint> | Record<string, unknown>>
 expectTypeOf<IsNumericLiteral<Tagged<LiteralUnion<1, number>, 'Count'> | {count?: number}>>().toBe<false>();
 expectTypeOf<IsNumericLiteral<LiteralUnion<NumericEnum, number> | {count?: number}>>().toBe<false>();
 expectTypeOf<IsNumericLiteral<LiteralUnion<ExternalCode, number> | null | undefined>>().toBe<false>();
+
+// Generic code that wraps the result and infers from it sees both outcomes
+type WrappedIsNumericLiteral<Value> = [IsNumericLiteral<Value>] extends infer Result extends [boolean] ? ([true] extends Result ? 'yes' : 'no') : never;
+expectTypeOf<WrappedIsNumericLiteral<1>>().toBe<'yes'>();
+expectTypeOf<WrappedIsNumericLiteral<number>>().toBe<'no'>();

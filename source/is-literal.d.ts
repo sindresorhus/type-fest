@@ -3,6 +3,7 @@ import type {_IsNumericLiteral} from './is-numeric-literal.d.ts';
 import type {_IsBooleanLiteral} from './is-boolean-literal.d.ts';
 import type {_IsSymbolLiteral} from './is-symbol-literal.d.ts';
 import type {IsNever} from './is-never.d.ts';
+import type {IsAny} from './is-any.d.ts';
 import type {CollapseLiterals} from './collapse-literals.d.ts';
 import type {UnwrapBrandedPrimitive} from './unwrap-branded-primitive.d.ts';
 
@@ -66,8 +67,9 @@ type O = IsLiteral<1000n | string | true>;
 @category Utilities
 */
 // The normalized scalar predicates already reject `any`; only `never` needs a separate guard.
+// `any` is checked before `never`, so generic code that wraps the result and infers from it still sees both outcomes.
 // Plain primitives need no brand normalization.
-export type IsLiteral<T> = IsNever<T> extends true ? false : _IsLiteral<CollapseLiterals<T extends object ? UnwrapBrandedPrimitive<T> : T>>;
+export type IsLiteral<T> = IsAny<T> extends true ? false : IsNever<T> extends true ? false : _IsLiteral<CollapseLiterals<T extends object ? UnwrapBrandedPrimitive<T> : T>>;
 
 // Reuse the normalized input instead of repeating the public scalar predicates' boundary checks.
 type _IsLiteral<T> =

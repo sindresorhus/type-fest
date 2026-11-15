@@ -1,6 +1,7 @@
 import type {CollapseLiterals} from './collapse-literals.d.ts';
 import type {UnwrapBrandedPrimitive} from './unwrap-branded-primitive.d.ts';
 import type {IsNever} from './is-never.d.ts';
+import type {IsAny} from './is-any.d.ts';
 
 /**
 Returns a boolean for whether the given type is a `number` or `bigint` [literal type](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#literal-types).
@@ -37,8 +38,9 @@ type G = IsNumericLiteral<1 | bigint>;
 @category Utilities
 */
 // The normalized predicate rejects `any`; only `never` needs a separate guard.
+// `any` is checked before `never`, so generic code that wraps the result and infers from it still sees both outcomes.
 // Plain primitives need no brand normalization.
-export type IsNumericLiteral<T> = IsNever<T> extends true ? false : _IsNumericLiteral<CollapseLiterals<T extends object ? UnwrapBrandedPrimitive<T> : T>>;
+export type IsNumericLiteral<T> = IsAny<T> extends true ? false : IsNever<T> extends true ? false : _IsNumericLiteral<CollapseLiterals<T extends object ? UnwrapBrandedPrimitive<T> : T>>;
 
 // Numeric enum members accept `number`, but only constant members have known values. Comparing printed types also rejects computed members, whose numeric value is unknown.
 export type _IsNumericLiteral<T> = T extends number | bigint
