@@ -265,6 +265,9 @@ type Object3 = {
 };
 expectTypeOf<'[1]' | '[2]'>().toBe<Paths<Object3, {bracketNotation: true}>>();
 
+// A key with surrounding whitespace is not a numeric key, so it does not use bracket notation.
+expectTypeOf<Paths<{' 1': string; '2': string}, {bracketNotation: true}>>().toBe<' 1' | '[2]'>();
+
 type Object4 = {
 	1: {
 		a: string;

@@ -78,27 +78,27 @@ expectTypeOf<IsNumberLike<'0o17'>>().toBe<true>();
 expectTypeOf<IsNumberLike<'0O10'>>().toBe<true>();
 expectTypeOf<IsNumberLike<'0o0'>>().toBe<true>();
 
-// The result follows TypeScript's own notion of a numeric string, which is lenient about surrounding whitespace, a leading `+`, and a hexadecimal form.
-expectTypeOf<IsNumberLike<' 1'>>().toBe<true>();
-expectTypeOf<IsNumberLike<'1 '>>().toBe<true>();
-expectTypeOf<IsNumberLike<'\t-1.5\n'>>().toBe<true>();
-expectTypeOf<IsNumberLike<'\u{A0}42\u{FEFF}'>>().toBe<true>();
-expectTypeOf<IsNumberLike<'\u{3000}1\u{3000}'>>().toBe<true>();
-expectTypeOf<IsNumberLike<'\u{FEFF}1'>>().toBe<true>();
-expectTypeOf<IsNumberLike<'  +1.5e-3  '>>().toBe<true>();
-expectTypeOf<IsNumberLike<'\n0x1f\t'>>().toBe<true>();
-expectTypeOf<IsNumberLike<' 0x10 '>>().toBe<true>();
-expectTypeOf<IsNumberLike<' 0b101 '>>().toBe<true>();
-expectTypeOf<IsNumberLike<' 0o17 '>>().toBe<true>();
-expectTypeOf<IsNumberLike<' '>>().toBe<true>();
-expectTypeOf<IsNumberLike<'\t\n'>>().toBe<true>();
-expectTypeOf<IsNumberLike<'\r1'>>().toBe<true>();
-expectTypeOf<IsNumberLike<'\v1'>>().toBe<true>();
-expectTypeOf<IsNumberLike<'\f1'>>().toBe<true>();
-expectTypeOf<IsNumberLike<'\u{1680}1'>>().toBe<true>();
-expectTypeOf<IsNumberLike<'\u{2007}1'>>().toBe<true>();
-expectTypeOf<IsNumberLike<'\u{2028}1'>>().toBe<true>();
-expectTypeOf<IsNumberLike<'\u{2029}1'>>().toBe<true>();
+// Surrounding whitespace and whitespace-only strings are rejected, like `IsNumericString` does, because TypeScript does not treat them as numeric keys.
+expectTypeOf<IsNumberLike<' 1'>>().toBe<false>();
+expectTypeOf<IsNumberLike<'1 '>>().toBe<false>();
+expectTypeOf<IsNumberLike<'\t-1.5\n'>>().toBe<false>();
+expectTypeOf<IsNumberLike<'\u{A0}42\u{FEFF}'>>().toBe<false>();
+expectTypeOf<IsNumberLike<'\u{3000}1\u{3000}'>>().toBe<false>();
+expectTypeOf<IsNumberLike<'\u{FEFF}1'>>().toBe<false>();
+expectTypeOf<IsNumberLike<'  +1.5e-3  '>>().toBe<false>();
+expectTypeOf<IsNumberLike<'\n0x1f\t'>>().toBe<false>();
+expectTypeOf<IsNumberLike<' 0x10 '>>().toBe<false>();
+expectTypeOf<IsNumberLike<' 0b101 '>>().toBe<false>();
+expectTypeOf<IsNumberLike<' 0o17 '>>().toBe<false>();
+expectTypeOf<IsNumberLike<' '>>().toBe<false>();
+expectTypeOf<IsNumberLike<'\t\n'>>().toBe<false>();
+expectTypeOf<IsNumberLike<'\r1'>>().toBe<false>();
+expectTypeOf<IsNumberLike<'\v1'>>().toBe<false>();
+expectTypeOf<IsNumberLike<'\f1'>>().toBe<false>();
+expectTypeOf<IsNumberLike<'\u{1680}1'>>().toBe<false>();
+expectTypeOf<IsNumberLike<'\u{2007}1'>>().toBe<false>();
+expectTypeOf<IsNumberLike<'\u{2028}1'>>().toBe<false>();
+expectTypeOf<IsNumberLike<'\u{2029}1'>>().toBe<false>();
 
 // Invalid numeric strings
 expectTypeOf<IsNumberLike<''>>().toBe<false>();
@@ -274,7 +274,7 @@ expectTypeOf<IsNumberLike<unknown | never>>().toBe<false>();
 expectTypeOf<IsNumberLike<42 | 'unknown'>>().toBe<boolean>();
 expectTypeOf<IsNumberLike<'1' | 'foo'>>().toBe<boolean>();
 expectTypeOf<IsNumberLike<'1' | ''>>().toBe<boolean>();
-expectTypeOf<IsNumberLike<'' | ' '>>().toBe<boolean>();
+expectTypeOf<IsNumberLike<'' | ' '>>().toBe<false>();
 expectTypeOf<IsNumberLike<1 | 'a'>>().toBe<boolean>();
 expectTypeOf<IsNumberLike<1 | '2' | true>>().toBe<boolean>();
 expectTypeOf<IsNumberLike<number | bigint>>().toBe<boolean>();

@@ -174,9 +174,10 @@ expectTypeOf<IsNumericString<NumericText.Invalid>>().toBe<false>();
 expectTypeOf<IsNumericString<NumericText>>().toBe<boolean>();
 expectTypeOf<IsNumericString<typeof NumericText>>().toBe<false>();
 
-// The related types have distinct contracts.
-expectTypeOf<IsNumberLike<' 42'>>().toBe<true>();
+// `IsNumberLike` also accepts numbers, and checks strings the same way.
+expectTypeOf<IsNumberLike<' 42'>>().toBe<false>();
 expectTypeOf<IsNumberLike<42>>().toBe<true>();
+expectTypeOf<IsNumericString<42>>().toBe<false>();
 expectTypeOf<IsNumericString<NonNegativeIntegerString<'007'>>>().toBe<true>();
 expectTypeOf<If<IsNumericString<'42'>, number, string>>().toBe<number>();
 expectTypeOf<If<IsNumericString<'42' | 'auto'>, number, string>>().toBe<number | string>();
