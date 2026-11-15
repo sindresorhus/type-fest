@@ -1,5 +1,5 @@
 import {expectTypeOf} from 'nz';
-import type {ConditionalPickDeep, PartialDeep} from '../index.d.ts';
+import type {ConditionalPick, ConditionalPickDeep, PartialDeep} from '../index.d.ts';
 
 declare class ClassA {
 	public a: string;
@@ -49,7 +49,6 @@ expectTypeOf(stringPick).toBe<{
 	instanceA: {
 		a: string;
 	};
-	never: never;
 	object: {
 		string: string;
 		subObject: {
@@ -79,7 +78,6 @@ expectTypeOf(stringPickOptional).toBe<{
 	instanceA: {
 		a: string;
 	};
-	never: never;
 	object: {
 		string: string;
 		subObject: {
@@ -93,13 +91,13 @@ declare const stringPickOptionalOnly: ConditionalPickDeep<Example, string | unde
 expectTypeOf(stringPickOptionalOnly).toBe<{object: {subObject: {optional?: string}}}>();
 
 declare const booleanPick: ConditionalPickDeep<Example, boolean | undefined>;
-expectTypeOf(booleanPick).toBe<{optional?: boolean; optionalWithUndefined?: boolean | undefined; never: never}>();
+expectTypeOf(booleanPick).toBe<{optional?: boolean; optionalWithUndefined?: boolean | undefined}>();
 
 declare const numberPick: ConditionalPickDeep<Example, number>;
-expectTypeOf(numberPick).toBe<{number: 1; interface: {a: number}; never: never}>();
+expectTypeOf(numberPick).toBe<{number: 1; interface: {a: number}}>();
 
 declare const emptyPick: ConditionalPickDeep<Example, 'abcdefg'>;
-expectTypeOf(emptyPick).toBe<{never: never}>();
+expectTypeOf(emptyPick).toBe<never>();
 
 declare const emptyEqualityPick: ConditionalPickDeep<Example, 'abcdefg', {condition: 'equality'}>;
 expectTypeOf(emptyEqualityPick).toBe<never>();
@@ -196,9 +194,9 @@ expectTypeOf(unionWithCallable).toBe<{text: string}>();
 declare const optionalArray: ConditionalPickDeep<{data?: Array<{b: 1}>}, 1>;
 expectTypeOf(optionalArray).toBe<never>();
 
-// An optional `any`, `unknown`, or `never` value is excluded unless it matches directly.
+// An optional `any` value matches, like in `ConditionalKeys`. An optional `unknown` or `never` value is excluded unless it matches directly.
 declare const optionalAny: ConditionalPickDeep<{data?: any; other: string}, string>;
-expectTypeOf(optionalAny).toBe<{other: string}>();
+expectTypeOf(optionalAny).toBe<{data?: any; other: string}>();
 
 declare const optionalUnknown: ConditionalPickDeep<{data?: unknown; other: string}, string>;
 expectTypeOf(optionalUnknown).toBe<{other: string}>();
@@ -297,7 +295,6 @@ expectTypeOf(stringOrBooleanPick).toBe<{
 	instanceA: {
 		a: string;
 	};
-	never: never;
 	object: {
 		string: string;
 		subObject: {
@@ -310,31 +307,31 @@ declare const stringOrBooleanPickOnly: ConditionalPickDeep<Example, string | boo
 expectTypeOf(stringOrBooleanPickOnly).toBe<{stringOrBoolean: string | boolean}>();
 
 declare const arrayPick: ConditionalPickDeep<Example, string[]>;
-expectTypeOf(arrayPick).toBe<{array: string[]; tuples: ['foo', 'bar']; never: never}>();
+expectTypeOf(arrayPick).toBe<{array: string[]; tuples: ['foo', 'bar']}>();
 
 declare const arrayEqualityPick: ConditionalPickDeep<Example, string[], {condition: 'equality'}>;
 expectTypeOf(arrayEqualityPick).toBe<{array: string[]}>();
 
 declare const tuplePick: ConditionalPickDeep<Example, ['foo', 'bar']>;
-expectTypeOf(tuplePick).toBe<{tuples: ['foo', 'bar']; never: never}>();
+expectTypeOf(tuplePick).toBe<{tuples: ['foo', 'bar']}>();
 
 declare const instancePick: ConditionalPickDeep<Example, ClassA>;
-expectTypeOf(instancePick).toBe<{instanceA: ClassA; never: never}>();
+expectTypeOf(instancePick).toBe<{instanceA: ClassA}>();
 
 declare const classPick: ConditionalPickDeep<Example, typeof ClassA>;
-expectTypeOf(classPick).toBe<{ClassA: typeof ClassA; never: never}>();
+expectTypeOf(classPick).toBe<{ClassA: typeof ClassA}>();
 
 declare const functionPick: ConditionalPickDeep<Example, (...arguments_: string[]) => string>;
-expectTypeOf(functionPick).toBe<{function: (...arguments_: string[]) => string; never: never}>();
+expectTypeOf(functionPick).toBe<{function: (...arguments_: string[]) => string}>();
 
 declare const mapPick: ConditionalPickDeep<Example, Map<string, string>>;
-expectTypeOf(mapPick).toBe<{map: Map<string, string>; never: never}>();
+expectTypeOf(mapPick).toBe<{map: Map<string, string>}>();
 
 declare const setPick: ConditionalPickDeep<Example, Set<string>>;
-expectTypeOf(setPick).toBe<{set: Set<string>; never: never}>();
+expectTypeOf(setPick).toBe<{set: Set<string>}>();
 
 declare const interfaceTest: ConditionalPickDeep<Example, InterfaceA>;
-expectTypeOf(interfaceTest).toBe<{interface: InterfaceA; never: never}>();
+expectTypeOf(interfaceTest).toBe<{interface: InterfaceA}>();
 
 // An object with only an index signature is not empty, so it must not be filtered out. The shallow `ConditionalPick` already handles it.
 declare const indexSignatureString: ConditionalPickDeep<{[key: string]: string}, string>;
@@ -403,9 +400,15 @@ declare const selectedSymbol: unique symbol;
 expectTypeOf<ConditionalPickDeep<{readonly [selectedSymbol]: {label: string; ignored: number}; 0: {label: string}}, string>>()
 	.toBe<{readonly [selectedSymbol]: {label: string}; 0: {label: string}}>();
 
-// Unknown values are excluded unless they match directly; a matching never property keeps its key.
+// An `any` value matches and a `never` value does not, like in `ConditionalKeys`. An `unknown` value is excluded unless it matches directly.
 expectTypeOf<ConditionalPickDeep<{label: string; ignored: any; unknown: unknown; missing: never}, string>>()
-	.toBe<{label: string; missing: never}>();
+	.toBe<{label: string; ignored: any}>();
+expectTypeOf<ConditionalPickDeep<{c: string; e: any; f: never}, string>>().toBe<ConditionalPick<{c: string; e: any; f: never}, string>>();
+expectTypeOf<ConditionalPickDeep<{nested: {c: string; e: any; f: never}}, string>>().toBe<{nested: {c: string; e: any}}>();
+expectTypeOf<ConditionalPickDeep<{c: string; f: never}, never>>().toBe<{f: never}>();
+expectTypeOf<ConditionalPickDeep<{c: string; e: any; f: never}, string, {condition: 'equality'}>>().toBe<{c: string}>();
+// Every property of `any` is `any`, which matches.
+expectTypeOf<ConditionalPickDeep<any, string>>().toBe<{[x: string]: any}>();
 expectTypeOf<ConditionalPickDeep<unknown, string>>().toBe<never>();
 expectTypeOf<ConditionalPickDeep<never, string>>().toBe<never>();
 

@@ -5,7 +5,9 @@ import type {IsEmptyObject} from './empty-object.d.ts';
 import type {IsNever} from './is-never.d.ts';
 import type {IsRecordLike} from './is-record-like.d.ts';
 import type {ApplyDefaultOptions} from './apply-default-options.d.ts';
+import type {Extends} from './internal/type.d.ts';
 import type {ConditionalPick} from './conditional-pick.d.ts'; // For `@link`
+import type {ConditionalKeys} from './conditional-keys.d.ts'; // For `@link`
 
 /**
 Assert the condition according to the {@link ConditionalPickDeepOptions.condition|condition} option.
@@ -14,9 +16,8 @@ Properties are excluded by their keys, so matching values like `undefined` or `{
 */
 type AssertCondition<Type, Condition, Options extends ConditionalPickDeepOptions> = Options['condition'] extends 'equality'
 	? IsEqual<Type, Condition>
-	: Type extends Condition
-		? true
-		: false;
+	// The same check as `ConditionalKeys`, so an `any` value matches and a `never` value does not.
+	: Extends<Type, Condition, true>;
 
 /**
 Options for the `ConditionalPickDeep` type.
@@ -26,6 +27,8 @@ Options for the `ConditionalPickDeep` type.
 export type ConditionalPickDeepOptions = {
 	/**
 	The condition assertion mode.
+
+	With `'extends'`, a value matches when its whole type extends the condition, like in {@link ConditionalKeys}. An `any` value matches, and a `never` value does not. With `'equality'`, a value matches when its type is equal to the condition.
 
 	@default 'extends'
 	*/
