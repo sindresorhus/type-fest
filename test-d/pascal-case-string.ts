@@ -13,6 +13,10 @@ expectTypeOf<PascalCaseString<'FööBär'>>().toBe<'FööBär'>();
 // A string with no letters has no case, so every casing accepts it
 expectTypeOf<PascalCaseString<'123'>>().toBe<'123'>();
 
+// Numbers are not split by default, so a numeric run stays inside its word
+expectTypeOf<PascalCaseString<'P2pNetwork'>>().toBe<'P2pNetwork'>();
+expectTypeOf<PascalCaseString<'P2pNetwork', {splitOnNumbers: true}>>().toBe<never>();
+
 // Anything the transformer would change is rejected
 expectTypeOf<PascalCaseString<'fooBar'>>().toBe<never>();
 expectTypeOf<PascalCaseString<'foo'>>().toBe<never>();

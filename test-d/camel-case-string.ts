@@ -14,10 +14,16 @@ expectTypeOf<CamelCaseString<'123'>>().toBe<'123'>();
 expectTypeOf<CamelCaseString<'a'>>().toBe<'a'>();
 expectTypeOf<CamelCaseString<'A'>>().toBe<never>();
 
-// Numbers are split by default, so a numeric run must start a new word
-expectTypeOf<CamelCaseString<'foo2bar'>>().toBe<never>();
+// Numbers are not split by default, so a numeric run stays inside its word
+expectTypeOf<CamelCaseString<'foo2bar'>>().toBe<'foo2bar'>();
 expectTypeOf<CamelCaseString<'foo2Bar'>>().toBe<'foo2Bar'>();
-expectTypeOf<CamelCaseString<'2fa'>>().toBe<never>();
+expectTypeOf<CamelCaseString<'2fa'>>().toBe<'2fa'>();
+expectTypeOf<CamelCaseString<'p2pNetwork'>>().toBe<'p2pNetwork'>();
+
+// With `splitOnNumbers`, a numeric run must start a new word
+expectTypeOf<CamelCaseString<'foo2bar', {splitOnNumbers: true}>>().toBe<never>();
+expectTypeOf<CamelCaseString<'foo2Bar', {splitOnNumbers: true}>>().toBe<'foo2Bar'>();
+expectTypeOf<CamelCaseString<'2fa', {splitOnNumbers: true}>>().toBe<never>();
 
 // Anything the transformer would change is rejected
 expectTypeOf<CamelCaseString<'FooBar'>>().toBe<never>();

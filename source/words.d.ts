@@ -25,7 +25,7 @@ export type WordsOptions = {
 	/**
 	Split on numeric sequence.
 
-	@default true
+	@default `true` for `Words`, and `false` for the case conversion types, such as `CamelCase` and `KebabCase`
 
 	@example
 	```

@@ -65,6 +65,7 @@ expectTypeOf<PascalCase<'__p2p:network', {splitOnNumbers: true; splitOnPunctuati
 expectTypeOf<PascalCase<'__p2p:network', {splitOnNumbers: false; splitOnPunctuation: true}>>().toBe<'P2pNetwork'>();
 expectTypeOf<PascalCase<'__p2p:network', {splitOnNumbers: true; splitOnPunctuation: false}>>().toBe<'P2P:network'>();
 expectTypeOf<PascalCase<'__p2p:network', {splitOnNumbers: false; splitOnPunctuation: false}>>().toBe<'P2p:network'>();
+expectTypeOf<PascalCase<'__p2p:network'>>().toBe<'P2pNetwork'>();
 expectTypeOf<PascalCase<Tagged<'__fooBAR', 'Text'>, {preserveLeadingUnderscores: true; preserveConsecutiveUppercase: true}>>().toBe<'__fooBAR'>();
 expectTypeOf<PascalCase<Tagged<'foo-bar', 'Text'>, never>>().toBe<'FooBar'>();
 expectTypeOf<PascalCase<'__FOO_BAR', never>>().toBe<'FooBar'>();

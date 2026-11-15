@@ -1,6 +1,6 @@
 import {expectTypeOf} from 'nz';
 import type {CamelCaseOptions} from '../source/camel-case.d.ts';
-import type {CamelCasedProperties, IsEqual} from '../index.d.ts';
+import type {CamelCasedProperties, IsEqual, SnakeCasedProperties} from '../index.d.ts';
 
 declare const foo: CamelCasedProperties<{A: number; B: {C: string}}>;
 expectTypeOf(foo).toBe<{a: number; b: {C: string}}>();
@@ -10,6 +10,10 @@ expectTypeOf(bar).toBe<Array<{helloWorld: string}>>();
 
 declare const fooBar: CamelCasedProperties<() => {a: string}>;
 expectTypeOf(fooBar).toBe<() => {a: string}>();
+
+// Numbers are not split by default, so a key survives a round trip through snake case.
+expectTypeOf<CamelCasedProperties<SnakeCasedProperties<{p2pNetwork: 1}>>>().toBe<{p2pNetwork: 1}>();
+expectTypeOf<CamelCasedProperties<{p2p_network: 1}, {splitOnNumbers: true}>>().toBe<{p2PNetwork: 1}>();
 
 declare const baz: CamelCasedProperties<{fooBAR: number; BARFoo: string}, {preserveConsecutiveUppercase: true}>;
 expectTypeOf(baz).toBe<{fooBAR: number; bARFoo: string}>();

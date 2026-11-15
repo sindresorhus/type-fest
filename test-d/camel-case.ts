@@ -83,10 +83,14 @@ expectTypeOf('string' as string).toBe<CamelCase<string>>();
 // Test splitOnNumbers option
 expectTypeOf('' as CamelCase<'a1b_text', {splitOnNumbers: false}>).toBe<'a1bText'>();
 expectTypeOf('' as CamelCase<'a1b_text', {splitOnNumbers: true}>).toBe<'a1BText'>();
-expectTypeOf('' as CamelCase<'a1b_text'>).toBe<'a1BText'>();
+expectTypeOf('' as CamelCase<'a1b_text'>).toBe<'a1bText'>();
 
 expectTypeOf('' as CamelCase<'p2pNetwork', {splitOnNumbers: false}>).toBe<'p2pNetwork'>();
 expectTypeOf('' as CamelCase<'p2pNetwork', {splitOnNumbers: true}>).toBe<'p2PNetwork'>();
+expectTypeOf('' as CamelCase<'p2pNetwork'>).toBe<'p2pNetwork'>();
+expectTypeOf<CamelCase<'b2b_registration_request'>>().toBe<'b2bRegistrationRequest'>();
+expectTypeOf<CamelCase<'b2b_registration_request', {splitOnNumbers: true}>>().toBe<'b2BRegistrationRequest'>();
+expectTypeOf<CamelCase<'P2P_NETWORK'>>().toBe<'p2pNetwork'>();
 
 // Punctuation
 expectTypeOf<CamelCase<'onDialog:close', {splitOnPunctuation: false}>>().toBe<'onDialog:close'>();

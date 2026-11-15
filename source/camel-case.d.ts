@@ -1,6 +1,7 @@
 import type {UnwrapBrandedPrimitive} from './unwrap-branded-primitive.d.ts';
 import type {ApplyDefaultOptions} from './apply-default-options.d.ts';
 import type {IsStringLiteral} from './is-string-literal.d.ts';
+import type {Merge} from './merge.d.ts';
 import type {_DefaultWordsOptions, _Words, WordsOptions} from './words.d.ts';
 
 /**
@@ -28,10 +29,11 @@ export type CamelCaseOptions = WordsOptions & {
 	preserveLeadingUnderscores?: boolean;
 };
 
-export type _DefaultCamelCaseOptions = _DefaultWordsOptions & {
+export type _DefaultCamelCaseOptions = Merge<_DefaultWordsOptions, {
+	splitOnNumbers: false;
 	preserveConsecutiveUppercase: false;
 	preserveLeadingUnderscores: false;
-};
+}>;
 
 /**
 Extract leading underscores from a string.
@@ -87,6 +89,8 @@ import type {CamelCase} from 'type-fest';
 
 const someVariable: CamelCase<'foo-bar'> = 'fooBar';
 const preserveConsecutiveUppercase: CamelCase<'foo-BAR-baz', {preserveConsecutiveUppercase: true}> = 'fooBARBaz';
+const noSplitOnNumbers: CamelCase<'p2p_network'> = 'p2pNetwork';
+const splitOnNumbers: CamelCase<'p2p_network', {splitOnNumbers: true}> = 'p2PNetwork';
 const splitOnPunctuation: CamelCase<'foo-bar:BAZ'> = 'fooBarBaz';
 const noSplitOnPunctuation: CamelCase<'foo-bar:baz', {splitOnPunctuation: false}> = 'fooBar:baz';
 const preserveLeadingUnderscores: CamelCase<'_foo_bar', {preserveLeadingUnderscores: true}> = '_fooBar';
