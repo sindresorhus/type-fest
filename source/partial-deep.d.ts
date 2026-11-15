@@ -207,9 +207,10 @@ type _PartialDeep<T, Options extends Required<PartialDeepOptions>> =
 											: T extends Options['keep']
 												? T // A kept array is returned as is, including its elements, instead of being rebuilt around them.
 												: ItemType[] extends T // Test for arrays (non-tuples) specifically
+													// `undefined` is added outside the recursion, so a leaf element resolves even when the options are generic, like `string` in `PartialDeep<string[], Options>`.
 													? readonly ItemType[] extends T // Differentiate readonly and mutable arrays
-														? ReadonlyArray<_PartialDeep<Options['allowUndefinedInNonTupleArrays'] extends false ? ItemType : ItemType | undefined, Options>>
-														: Array<_PartialDeep<Options['allowUndefinedInNonTupleArrays'] extends false ? ItemType : ItemType | undefined, Options>>
+														? ReadonlyArray<_PartialDeep<ItemType, Options> | (Options['allowUndefinedInNonTupleArrays'] extends false ? never : undefined)>
+														: Array<_PartialDeep<ItemType, Options> | (Options['allowUndefinedInNonTupleArrays'] extends false ? never : undefined)>
 													: PartialObjectDeep<T, Options> // Tuples behave properly
 										: PartialObjectDeep<T, Options>
 									: unknown;

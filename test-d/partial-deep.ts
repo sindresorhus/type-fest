@@ -273,6 +273,15 @@ function _partialPromiseInput<Value, Options extends PartialDeepOptions>(value: 
 	return {value};
 }
 
+function _partialShallowArrayInput<Options extends {recurseIntoArrays: false}>(value: string[]): PartialDeep<string[], Options> {
+	return value;
+}
+
+// An array of leaves is accepted whatever the options are, because a partial leaf is the leaf itself.
+function _partialLeafArrayInput<Options extends PartialDeepOptions>(value: string[], readonlyValue: readonly number[]): [PartialDeep<string[], Options>, PartialDeep<readonly number[], Options>] {
+	return [value, readonlyValue];
+}
+
 function _partialCallbackInput<Options extends PartialDeepOptions>(value: () => string): PartialDeep<() => string, Options> {
 	return value;
 }
