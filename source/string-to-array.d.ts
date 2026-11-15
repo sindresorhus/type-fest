@@ -8,43 +8,43 @@ import type {IsStringLiteral} from './is-string-literal.d.ts';
 */
 export type StringToArrayOptions = {
 	/**
-	When enabled, non-literal parts of the string (e.g., `string`, `Uppercase<string>`) are mapped as single elements instead of being mapped as a rest element. Otherwise, a non-literal part becomes `...string[]`, since its individual characters do not necessarily satisfy the type of the whole part.
+	When enabled, a non-literal part of the string (e.g., `string`, `Uppercase<string>`) becomes `...string[]`, since its individual characters do not necessarily satisfy the type of the whole part. When disabled, each non-literal part is mapped as a single element instead.
 
-	Note: Enabling this option can produce misleading results that might not reflect the actual runtime behavior.
-	For example, `StringToArray<string, {mapNonLiteralsDirectly: true}>` returns `[string]`, but at runtime, the string could be `'abc'` (which satisfies `string`), and converting it to an array would result in `['a', 'b', 'c']`, which doesn't satisfy `[string]`.
+	Note: Disabling this option can produce misleading results that might not reflect the actual runtime behavior.
+	For example, `StringToArray<string, {strict: false}>` returns `[string]`, but at runtime, the string could be `'abc'` (which satisfies `string`), and converting it to an array would result in `['a', 'b', 'c']`, which doesn't satisfy `[string]`.
 
-	So, it is recommended to not enable this option unless you are aware of the implications.
+	So, it is recommended to not disable this option unless you are aware of the implications.
 
-	@default false
+	@default true
 
 	@example
 	```
 	import type {StringToArray} from 'type-fest';
 
-	type A = StringToArray<string, {mapNonLiteralsDirectly: false}>;
+	type A = StringToArray<string, {strict: true}>;
 	//=> string[]
 
-	type B = StringToArray<string, {mapNonLiteralsDirectly: true}>;
+	type B = StringToArray<string, {strict: false}>;
 	//=> [string]
 
-	type C = StringToArray<`on${string}`, {mapNonLiteralsDirectly: false}>;
+	type C = StringToArray<`on${string}`, {strict: true}>;
 	//=> ['o', 'n', ...string[]]
 
-	type D = StringToArray<`on${string}`, {mapNonLiteralsDirectly: true}>;
+	type D = StringToArray<`on${string}`, {strict: false}>;
 	//=> ['o', 'n', string]
 
-	type E = StringToArray<`${string}xyz`, {mapNonLiteralsDirectly: false}>;
+	type E = StringToArray<`${string}xyz`, {strict: true}>;
 	//=> [...string[], 'x', 'y', 'z']
 
-	type F = StringToArray<`${string}xyz`, {mapNonLiteralsDirectly: true}>;
+	type F = StringToArray<`${string}xyz`, {strict: false}>;
 	//=> [string, 'x', 'y', 'z']
 	```
 	*/
-	mapNonLiteralsDirectly?: boolean;
+	strict?: boolean;
 };
 
 type DefaultStringToArrayOptions = {
-	mapNonLiteralsDirectly: false;
+	strict: true;
 };
 
 /**
@@ -66,7 +66,7 @@ type C = StringToArray<string>;
 type D = StringToArray<`foo${string}bar`>;
 //=> ['f', 'o', 'o', ...string[], 'b', 'a', 'r']
 
-type E = StringToArray<`foo${string}bar`, {mapNonLiteralsDirectly: true}>;
+type E = StringToArray<`foo${string}bar`, {strict: false}>;
 //=> ['f', 'o', 'o', string, 'b', 'a', 'r']
 ```
 
@@ -92,13 +92,13 @@ export type StringToArray<S extends string, Options extends StringToArrayOptions
 
 type _StringToArray<S extends string, Options extends Required<StringToArrayOptions>, Accumulator extends string[] = []> =
 	S extends `${infer First}${infer Rest}`
-		? (Options['mapNonLiteralsDirectly'] extends true ? true : IsStringLiteral<First>) extends true
+		? (Options['strict'] extends false ? true : IsStringLiteral<First>) extends true
 			? _StringToArray<Rest, Options, [...Accumulator, First]>
 			// A placeholder like `${number}` can include characters such as `-` and `.`, which are not themselves numeric strings.
 			: _StringToArray<Rest, Options, [...Accumulator, ...string[]]>
 		: S extends ''
 			? Accumulator
-			: Options['mapNonLiteralsDirectly'] extends true
+			: Options['strict'] extends false
 				? [...Accumulator, S]
 				: [...Accumulator, ...string[]];
 
