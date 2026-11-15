@@ -233,7 +233,6 @@ Click the type names for complete docs.
 - [`Paths`](source/paths.d.ts) - Generate a union of all possible paths to properties in the given object.
 - [`OptionalPaths`](source/optional-paths.d.ts) - Get a union of all paths to optional properties in the given object.
 - [`ParsePath`](source/parse-path.d.ts) - Convert a property path into a tuple of keys, with numeric indices.
-- [`PathParameters`](source/path-parameters.d.ts) - Extract named parameters from a URL path pattern.
 - [`SharedUnionFields`](source/shared-union-fields.d.ts) - Create a type with shared fields from a union of object types.
 - [`SharedUnionFieldsDeep`](source/shared-union-fields-deep.d.ts) - Create a type with shared fields from a union of object types, deeply traversing nested structures.
 - [`AllUnionFields`](source/all-union-fields.d.ts) - Create a type with all fields from a union of object types.
@@ -340,6 +339,7 @@ Click the type names for complete docs.
 - [`AsciiPunctuationCharacter`](source/ascii-punctuation-character.d.ts) - Matches a single ASCII punctuation character.
 - [`Trim`](source/trim.d.ts) - Remove leading and trailing spaces from a string.
 - [`Split`](source/split.d.ts) - Represents an array of strings split using a given character or character set.
+- [`RouteParameters`](source/route-parameters.d.ts) - Extract the named parameters from a URL route pattern, like `/users/:id`.
 - [`Words`](source/words.d.ts) - Split a string similar to Lodash's `_.words()` function.
 - [`StartsWith`](source/starts-with.d.ts) - Returns a boolean for whether the given string starts with the given prefix.
 - [`ConsistsOnlyOf`](source/consists-only-of.d.ts) - Returns a boolean for whether a string consists only of zero or more repetitions of the given pattern.
@@ -549,6 +549,7 @@ Click the type names for complete docs.
 - `SetProp`, `SetPath`, `KeyPathSet`, `SetPathValue`, `SetFieldTypeDeep` - See [`SetProperty`](source/set-property.d.ts)
 - `ExtendsFrom`, `SubsetUnion` - See [`SubsetOf`](source/subset-of.d.ts)
 - `TypedEventTarget` - See [`StrictEventTarget`](source/strict-event-target.d.ts)
+- `PathParameters`, `PathParams`, `RouteParams`, `ExtractRouteParams` - See [`RouteParameters`](source/route-parameters.d.ts)
 - `Zip` - See [`ArrayZip`](source/array-zip.d.ts)
 - `Chunk` - See [`ArrayChunk`](source/array-chunk.d.ts)
 - `GroupBy` - See [`ArrayGroupBy`](source/array-group-by.d.ts)

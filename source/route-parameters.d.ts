@@ -45,13 +45,13 @@ type SegmentParameters<Segment extends string> =
 /**
 Collect parameters from slash-separated segments. An unsupported segment makes the whole result `never`, rather than retaining partially extracted parameters.
 */
-type ExtractPathParameters<Pattern extends string, Parameters = {}> =
+type ExtractRouteParameters<Pattern extends string, Parameters = {}> =
 	Pattern extends `${infer Segment}/${infer Rest}`
-		? ExtractPathParameters<Rest, Parameters & SegmentParameters<Segment>>
+		? ExtractRouteParameters<Rest, Parameters & SegmentParameters<Segment>>
 		: Parameters & SegmentParameters<Pattern>;
 
 /**
-Extract named parameters from a URL path pattern.
+Extract the named parameters from a URL route pattern, like `/users/:id`.
 
 Supports a flat subset of the [URL Pattern API](https://developer.mozilla.org/en-US/docs/Web/API/URL_Pattern_API) pathname syntax: literal text and named parameters, including multiple parameters in one segment like `/flights/:from-:to`. Parameter names must start with an ASCII letter, `$`, or `_`, followed by ASCII letters, digits, `$`, or `_`. Other ASCII punctuation or whitespace ends a name, so `/:id.json` captures `id`.
 
@@ -64,40 +64,42 @@ Modifiers are supported only at the end of a slash-separated segment, including 
 
 Unsupported syntax makes the entire pattern fall back to `Record<string, string | undefined>`, without partially extracting parameters. This includes Unicode parameter names, regular expression groups (`/:id(\\d+)`), brace groups (`/users{/:id}?`), escapes, bare wildcards (`/files/*`), full URLs, search strings, and fragments. For example, `/users/:id/*` falls back without retaining `id`. Use a named catchall like `/files/:path*` instead of a bare wildcard.
 
+The route syntaxes of other routers, like `/blog/[slug]` in Next.js or `/posts/$id` in TanStack Router, are literal text in this syntax, so they give `{}`.
+
 Non-literal patterns, including `string`, `any`, and template literal patterns containing placeholders like `` `${string}` ``, also fall back to `Record<string, string | undefined>`. A `LiteralUnion` preserves its literal members alongside that fallback. This type does not validate patterns at runtime or diagnose every invalid pattern. Validate patterns with `new URLPattern({pathname: pattern})` when needed.
 
 Use-cases:
-- Type the `params` that a router passes to a route, from a route path constant.
+- Type the `params` that a router passes to a route, from a route pattern constant.
 - Type the arguments for building a URL from a pattern.
 
 @example
 ```
-import type {PathParameters} from 'type-fest';
+import type {RouteParameters} from 'type-fest';
 
-type A = PathParameters<'/users/:id'>;
+type A = RouteParameters<'/users/:id'>;
 //=> {id: string}
 
-type B = PathParameters<'/users/:id?'>;
+type B = RouteParameters<'/users/:id?'>;
 //=> {id?: string | undefined}
 
-type C = PathParameters<'/users/:id/files/:fileId?'>;
+type C = RouteParameters<'/users/:id/files/:fileId?'>;
 //=> {id: string; fileId?: string | undefined}
 
-type D = PathParameters<'/files/:folderId/:path*'>;
+type D = RouteParameters<'/files/:folderId/:path*'>;
 //=> {folderId: string; path?: string | undefined}
 
-type E = PathParameters<'/flights/:from-:to'>;
+type E = RouteParameters<'/flights/:from-:to'>;
 //=> {from: string; to: string}
 
-type F = PathParameters<'/files/:file.:ext?'>;
+type F = RouteParameters<'/files/:file.:ext?'>;
 //=> {file: string; ext?: string | undefined}
 ```
 
 @example
 ```
-import type {PathParameters} from 'type-fest';
+import type {RouteParameters} from 'type-fest';
 
-declare function createRoute<Pattern extends string>(pattern: Pattern, handler: (parameters: PathParameters<Pattern>) => Promise<Response>): void;
+declare function createRoute<Pattern extends string>(pattern: Pattern, handler: (parameters: RouteParameters<Pattern>) => Promise<Response>): void;
 
 createRoute('/users/:userId/posts/:postId', ({userId, postId}) => fetch(`/users/${userId}/posts/${postId}`));
 
@@ -106,18 +108,18 @@ createRoute('/about', () => fetch('/about'));
 
 @category Template literal
 */
-export type PathParameters<Pattern extends string> =
+export type RouteParameters<Pattern extends string> =
 	IsAny<Pattern> extends true
 		? Record<string, string | undefined>
 		// Distribute here, inside the `IsAny` check, so a union of patterns shows as a union of parameter objects.
 		: Pattern extends unknown
-			? PathParametersImplementation<UnwrapPathBrand<Pattern>>
+			? RouteParametersImplementation<UnwrapPathBrand<Pattern>>
 			: never;
 
 // The brand is unwrapped before checking whether the pattern is a literal or extracting its parameters.
-type PathParametersImplementation<Pattern extends string> =
+type RouteParametersImplementation<Pattern extends string> =
 	IsStringLiteral<Pattern> extends true
-		? ExtractPathParameters<Pattern> extends infer Parameters
+		? ExtractRouteParameters<Pattern> extends infer Parameters
 			? [Parameters] extends [never]
 				? Record<string, string | undefined>
 				: Simplify<Parameters>
