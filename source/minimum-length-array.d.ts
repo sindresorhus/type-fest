@@ -2,7 +2,7 @@ import type {NonEmptyTuple} from './non-empty-tuple.d.ts'; // For `@link`
 import type {TupleOf} from './tuple-of.d.ts';
 
 /**
-Create an array type with N or more elements of the given type.
+Create an array type with at least the given number of elements of the given type.
 
 Use-cases:
 - Model data that requires a minimum number of items, like a sports team with at least 3 players or an auction with at least 2 competing bids.
@@ -10,9 +10,9 @@ Use-cases:
 
 @example
 ```
-import type {MinimumN} from 'type-fest';
+import type {MinimumLengthArray} from 'type-fest';
 
-type FencingTeam = MinimumN<string, 3>;
+type FencingTeam = MinimumLengthArray<string, 3>;
 //=> [string, string, string, ...string[]]
 
 const homeFencingTeam: FencingTeam = ['Josh', 'Michael', 'Robert'];
@@ -24,9 +24,9 @@ const awayFencingTeam: FencingTeam = ['George', 'John'];
 
 @example
 ```
-import type {MinimumN} from 'type-fest';
+import type {MinimumLengthArray} from 'type-fest';
 
-const average = (...numbers: MinimumN<number, 2>): number => numbers.reduce((total, value) => total + value, 0) / numbers.length;
+const average = (...numbers: MinimumLengthArray<number, 2>): number => numbers.reduce((total, value) => total + value, 0) / numbers.length;
 
 average(1, 2);
 // Ok
@@ -43,9 +43,9 @@ Note: If the specified minimum is the non-literal `number` type, the result will
 
 @example
 ```
-import type {MinimumN} from 'type-fest';
+import type {MinimumLengthArray} from 'type-fest';
 
-type StringArray = MinimumN<string, number>;
+type StringArray = MinimumLengthArray<string, number>;
 //=> string[]
 ```
 
@@ -53,9 +53,9 @@ Note: If the specified minimum is negative, the result will be a regular array.
 
 @example
 ```
-import type {MinimumN} from 'type-fest';
+import type {MinimumLengthArray} from 'type-fest';
 
-type NegativeMinimum = MinimumN<string, -3>;
+type NegativeMinimum = MinimumLengthArray<string, -3>;
 //=> string[]
 ```
 
@@ -63,13 +63,13 @@ Note: If the specified minimum has a decimal part, the decimal part will be igno
 
 @example
 ```
-import type {MinimumN} from 'type-fest';
+import type {MinimumLengthArray} from 'type-fest';
 
-type DecimalMinimum = MinimumN<string, 2.5>;
+type DecimalMinimum = MinimumLengthArray<string, 2.5>;
 //=> [string, string, ...string[]]
 ```
 
-Note: If you need a readonly tuple, simply wrap this type with `Readonly`, for example, to create `readonly [string, string, ...string[]]` use `Readonly<MinimumN<string, 2>>`.
+Note: If you need a readonly tuple, simply wrap this type with `Readonly`, for example, to create `readonly [string, string, ...string[]]` use `Readonly<MinimumLengthArray<string, 2>>`.
 
 @see {@link TupleOf} for a tuple of an exact length.
 
@@ -77,6 +77,6 @@ Note: If you need a readonly tuple, simply wrap this type with `Readonly`, for e
 
 @category Array
 */
-export type MinimumN<Element, Length extends number> = [...TupleOf<Length, Element>, ...Element[]];
+export type MinimumLengthArray<Element, Length extends number> = [...TupleOf<Length, Element>, ...Element[]];
 
 export {};

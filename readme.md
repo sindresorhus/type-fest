@@ -368,6 +368,7 @@ Click the type names for complete docs.
 - [`FirstArrayElement`](source/first-array-element.d.ts) - Extract the type of the first element of an array.
 - [`LastArrayElement`](source/last-array-element.d.ts) - Extract the type of the last element of an array.
 - [`FixedLengthArray`](source/fixed-length-array.d.ts) - Create a type that represents an array of the given type and length. The `Array` prototype methods that manipulate its length are excluded from the resulting type.
+- [`MinimumLengthArray`](source/minimum-length-array.d.ts) - Create an array type with at least the given number of elements of the given type.
 - [`MultidimensionalArray`](source/multidimensional-array.d.ts) - Create a type that represents a multidimensional array of the given type and dimension.
 - [`MultidimensionalReadonlyArray`](source/multidimensional-readonly-array.d.ts) - Create a type that represents a multidimensional readonly array of the given type and dimension.
 - [`TupleToUnion`](source/tuple-to-union.d.ts) - Convert a tuple/array into a union type of its elements.
@@ -382,7 +383,6 @@ Click the type names for complete docs.
 - [`TupleOf`](source/tuple-of.d.ts) - Create a tuple type of the specified length with elements of the specified type.
 - [`TupleMax`](source/tuple-max.d.ts) - Returns the maximum number in a tuple of numbers.
 - [`TupleMin`](source/tuple-min.d.ts) - Returns the minimum number in a tuple of numbers.
-- [`MinimumN`](source/minimum-n.d.ts) - Create an array type with N or more elements of the given type.
 - [`IndexTuple`](source/index-tuple.d.ts) - Create a tuple type of the indices of a constant array or tuple.
 - [`SplitOnRestElement`](source/split-on-rest-element.d.ts) - Splits an array into three parts, where the first contains all elements before the rest element, the second is the [`rest`](https://www.typescriptlang.org/docs/handbook/2/objects.html#tuple-types) element itself, and the third contains all elements after the rest element.
 - [`ExtractRestElement`](source/extract-rest-element.d.ts) - Extract the [`rest`](https://www.typescriptlang.org/docs/handbook/2/objects.html#tuple-types) element type from an array.
@@ -550,6 +550,7 @@ Click the type names for complete docs.
 - `ExtendsFrom`, `SubsetUnion` - See [`SubsetOf`](source/subset-of.d.ts)
 - `TypedEventTarget` - See [`StrictEventTarget`](source/strict-event-target.d.ts)
 - `PathParameters`, `PathParams`, `RouteParams`, `ExtractRouteParams` - See [`RouteParameters`](source/route-parameters.d.ts)
+- `MinimumN`, `MinLengthArray`, `AtLeastN` - See [`MinimumLengthArray`](source/minimum-length-array.d.ts)
 - `Zip` - See [`ArrayZip`](source/array-zip.d.ts)
 - `Chunk` - See [`ArrayChunk`](source/array-chunk.d.ts)
 - `GroupBy` - See [`ArrayGroupBy`](source/array-group-by.d.ts)
