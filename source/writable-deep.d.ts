@@ -2,6 +2,7 @@ import type {HasMultipleCallSignatures} from './has-multiple-call-signatures.d.t
 import type {CallSignatureOf, IsArrayOfUnknownLength, NonRecursiveLeaf, NonRecursiveType} from './internal/index.d.ts';
 import type {ApplyDefaultOptions} from './apply-default-options.d.ts';
 import type {IsNever} from './is-never.d.ts';
+import type {ReadonlyDate} from './readonly-date.d.ts';
 import type {Writable} from './writable.d.ts'; // For `@link`
 
 /**
@@ -32,6 +33,8 @@ export type WritableDeepOptions = {
 Create a deeply mutable version of an `object`/`ReadonlyMap`/`ReadonlySet`/`ReadonlyArray` type. The inverse of `ReadonlyDeep<T>`. Use `Writable<T>` if you only need one level deep.
 
 This can be used to [store and mutate options within a class](https://github.com/sindresorhus/pageres/blob/4a5d05fca19a5fbd2f53842cbf3eb7b1b63bddd2/source/index.ts#L72), [edit `readonly` objects within tests](https://stackoverflow.com/questions/50703834), [construct a `readonly` object within a function](https://github.com/Microsoft/TypeScript/issues/24509), or to define a single model where the only thing that changes is whether or not some of the keys are writable.
+
+A {@link ReadonlyDate} becomes a `Date`.
 
 @example
 ```
@@ -99,7 +102,12 @@ type _WritableDeep<Value, Keep> =
 	Value extends Keep
 		? Value
 		: Value extends NonRecursiveLeaf
-			? Value
+			// A `Date` is a `ReadonlyDate` too, so it is matched first to keep its subclasses and tags. Anything else that matches `ReadonlyDate` becomes a plain `Date`.
+			? Value extends Date
+				? Value
+				: Value extends ReadonlyDate
+					? Date
+					: Value
 			: Value extends (...arguments_: any[]) => unknown
 				? IsNever<keyof Value> extends true // For functions with no properties
 					? Value

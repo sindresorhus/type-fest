@@ -14,7 +14,7 @@ Matches any primitive, `void`, `Date`, or `RegExp` value.
 export type BuiltIns = Primitive | void | Date | RegExp;
 
 /**
-Matches the built-ins that are a single value rather than a structure to recurse into. Recursing into any of them replaces their members with something useless, so the `*Deep` types keep them as is.
+Matches the built-ins that are a single value rather than a structure to recurse into. Recursing into any of them replaces their members with something useless, so the `*Deep` types keep them as is. The exceptions are `ReadonlyDeep`, which turns a `Date` into a `ReadonlyDate`, and `WritableDeep`, which turns a `ReadonlyDate` back into a `Date`.
 
 A plain construct signature is assignable to an abstract one, so the abstract form matches every class constructor.
 */

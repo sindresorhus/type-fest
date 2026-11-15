@@ -2,6 +2,7 @@ import {expectTypeOf} from 'nz';
 import type {Opaque, tag} from '../source/tagged.d.ts';
 import type {ReadonlyDeep, _ReadonlyObjectDeep} from '../source/readonly-deep.d.ts';
 import type {WritableDeep} from '../source/writable-deep.d.ts';
+import type {ReadonlyDate} from '../source/readonly-date.d.ts';
 import type {JsonValue} from '../source/json-value.d.ts';
 import type {IsEqual} from '../source/is-equal.d.ts';
 import type {TupleOf} from '../source/tuple-of.d.ts';
@@ -85,7 +86,7 @@ expectTypeOf(readonlyData.boolean).toBe<boolean>();
 expectTypeOf(readonlyData.symbol).toBe<symbol>();
 expectTypeOf(readonlyData.null).toBe<null>();
 expectTypeOf(readonlyData.undefined).toBe<undefined>();
-expectTypeOf(readonlyData.date).toBe<Date>();
+expectTypeOf(readonlyData.date).toBe<ReadonlyDate>();
 expectTypeOf(readonlyData.regExp).toBe<RegExp>();
 expectTypeOf(readonlyData.map).toBe<Readonly<ReadonlyMap<string, string>>>();
 expectTypeOf(readonlyData.set).toBe<Readonly<ReadonlySet<string>>>();
@@ -383,8 +384,9 @@ expectTypeOf<ReadonlyDeep<Map<string, [number, string[]]>>>().toBe<Readonly<Read
 // A union of maps and sets is transformed member by member.
 expectTypeOf<ReadonlyDeep<Map<string, number> | Set<string> | undefined>>().toBe<Readonly<ReadonlyMap<string, number>> | Readonly<ReadonlySet<string>> | undefined>();
 
-// The values that are kept as is elsewhere are kept as is inside a map or set too.
-expectTypeOf<ReadonlyDeep<Map<string, Date>>>().toBe<Readonly<ReadonlyMap<string, Date>>>();
+// The values that are kept as is elsewhere are kept as is inside a map or set too, and a `Date` becomes a `ReadonlyDate` there too.
+expectTypeOf<ReadonlyDeep<Map<string, RegExp>>>().toBe<Readonly<ReadonlyMap<string, RegExp>>>();
+expectTypeOf<ReadonlyDeep<Map<string, Date>>>().toBe<Readonly<ReadonlyMap<string, ReadonlyDate>>>();
 expectTypeOf<ReadonlyDeep<Map<string, () => number[]>>>().toBe<Readonly<ReadonlyMap<string, () => number[]>>>();
 expectTypeOf<ReadonlyDeep<Set<WeakMap<{id: number}, number[]>>>>().toBe<Readonly<ReadonlySet<WeakMap<{id: number}, number[]>>>>();
 

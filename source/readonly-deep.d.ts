@@ -2,6 +2,7 @@ import type {HasMultipleCallSignatures} from './has-multiple-call-signatures.d.t
 import type {CallSignatureOf, IsArrayOfUnknownLength, NonRecursiveLeaf, NonRecursiveType} from './internal/index.d.ts';
 import type {ApplyDefaultOptions} from './apply-default-options.d.ts';
 import type {IsNever} from './is-never.d.ts';
+import type {ReadonlyDate} from './readonly-date.d.ts';
 
 /**
 @see {@link ReadonlyDeep}
@@ -118,6 +119,8 @@ readonlyTheme.background.r = 3; // OK: `Color` is kept as is, so its properties 
 
 Overloaded functions, including their properties, are kept as is due to a [TypeScript limitation](https://github.com/microsoft/TypeScript/issues/29732). See {@link HasMultipleCallSignatures} for overload detection limitations.
 
+A `Date` becomes a {@link ReadonlyDate}, which has no `set*` methods. A subclass of `Date` or a tagged `Date` becomes a plain `ReadonlyDate` too. Use the `keep` option to keep dates as is.
+
 Note that the methods of an array, such as `join`, can still be reassigned, because TypeScript treats `Readonly<ReadonlyArray<T>>` the same as `ReadonlyArray<T>`. The methods of a `Map` or a `Set` are made readonly.
 
 @see {@link ReadonlyDeepOptions}
@@ -138,7 +141,9 @@ type _ReadonlyDeep<Value, Keep> =
 	Value extends Keep
 		? Value
 		: Value extends NonRecursiveLeaf
-			? Value
+			? Value extends Date
+				? ReadonlyDate
+				: Value
 			: Value extends (...arguments_: any[]) => unknown
 				? IsNever<keyof Value> extends true // For functions with no properties
 					? Value

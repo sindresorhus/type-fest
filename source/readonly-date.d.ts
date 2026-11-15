@@ -1,4 +1,5 @@
 import type {ReadonlyDeep} from './readonly-deep.d.ts'; // For `@link`
+import type {WritableDeep} from './writable-deep.d.ts'; // For `@link`
 
 /**
 Matches a `Date` that cannot be changed.
@@ -37,7 +38,7 @@ Note: This is only a compile-time check. The value is still a `Date` at runtime,
 
 Note: It removes every `set*` method, including a setter that a project adds to `Date`.
 
-The `*Deep` types, like {@link ReadonlyDeep `ReadonlyDeep`}, do not walk into a `ReadonlyDate`.
+{@link ReadonlyDeep `ReadonlyDeep`} turns a `Date` into a `ReadonlyDate`, and {@link WritableDeep `WritableDeep`} turns a `ReadonlyDate` back into a `Date`. The other `*Deep` types do not walk into a `ReadonlyDate`.
 
 @category Object
 */
