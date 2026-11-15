@@ -29,7 +29,7 @@ type JsonifyListItemResult<T> = T extends NotJsonable ? null : NeverToNull<Jsoni
 // The leading required elements are kept in `Result`, so the recursion over them is in tail position and a long tuple does not hit the recursion limit.
 type JsonifyList<T extends UnknownArray, Result extends UnknownArray = []> = T extends readonly [infer F, ...infer R]
 	// A tuple position always holds a value, so a `never` member becomes `null`. `JsonifyListItem` distributes, which would turn it into `never`.
-	? [F, ...R] extends T // With TS 5.8.3, if `string[] & ['foo']`, `R` is `unknown[]` here, making the inferred types not equal to the original one
+	? [F, ...R] extends T // If `string[] & ['foo']`, `R` is `unknown[]` here, making the inferred types not equal to the original one
 		? JsonifyList<R, [...Result, NeverToNull<JsonifyListItem<F>>]>
 		: [...Result, NeverToNull<JsonifyListItem<F>>]
 	// The rest is jsonified on its own, so an array that is already JSON is kept as it is, including whether it is readonly.

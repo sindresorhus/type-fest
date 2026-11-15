@@ -143,3 +143,12 @@ function _createNoKeys<Key extends PropertyKey>(): RequireNone<Key> {
 function _readForbiddenKey<Key extends PropertyKey>(value: RequireNone<Key>, key: Key): undefined {
 	return value[key];
 }
+
+// Forbids keys on a generic object type, which `Except` cannot do.
+declare function insert<Row extends object>(row: Row & RequireNone<'id'>): Row;
+expectTypeOf(insert({name: 'Alice'})).toBe<{name: string}>();
+// @ts-expect-error
+insert({id: 1, name: 'Alice'});
+declare const rowWithId: {id: number; name: string};
+// @ts-expect-error
+insert(rowWithId);

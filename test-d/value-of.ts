@@ -100,6 +100,8 @@ expectTypeOf<ValueOf<{a: 1; b: 2} | {a: 3; c: 4}, any>>().toBe<any>();
 
 // Returns `never` when `Key` is `never`
 expectTypeOf<ValueOf<{a: 1; b: 2} | {a: 3; c: 4}, never>>().toBe<never>();
+// A `never` key reads the index signature of a single object (limitation)
+expectTypeOf<ValueOf<Record<string, number>, never>>().toBe<number>();
 
 // Conflicting discriminants do not hide a value present in only one member.
 type Result = {kind: 'success'; value: string} | {kind: 'failure'; error: Error};

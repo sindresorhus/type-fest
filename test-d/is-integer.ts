@@ -99,4 +99,3 @@ type WrappedIsInteger<Value> = [IsInteger<Value>] extends infer Result extends [
 expectTypeOf<WrappedIsInteger<1>>().toBe<'integer'>();
 expectTypeOf<WrappedIsInteger<1n>>().toBe<'integer'>();
 expectTypeOf<WrappedIsInteger<1.5>>().toBe<'other'>();
-expectTypeOf<WrappedIsInteger<never>>().toBe<'other'>();

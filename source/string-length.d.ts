@@ -5,6 +5,8 @@ import type {IsStringLiteral} from './is-string-literal.d.ts';
 /**
 Returns the length of the given string.
 
+Note: Whether a supplementary Unicode character, such as an emoji, counts as one character or two depends on the TypeScript compiler. TypeScript 7 counts it as one, unlike `String#length`.
+
 @example
 ```
 import type {StringLength} from 'type-fest';

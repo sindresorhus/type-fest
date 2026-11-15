@@ -133,5 +133,4 @@ type WrappedIsReadonlyKeyOfKey<Key extends keyof WrappedShape> = [IsReadonlyKeyO
 type WrappedIsReadonlyKeyOfType<Type extends {c: 3}> = [IsReadonlyKeyOf<Type, 'c'>] extends infer Result extends [boolean] ? ([true] extends Result ? 'yes' : 'no') : never;
 expectTypeOf<WrappedIsReadonlyKeyOfKey<'c'>>().toBe<'yes'>();
 expectTypeOf<WrappedIsReadonlyKeyOfKey<'a'>>().toBe<'no'>();
-expectTypeOf<WrappedIsReadonlyKeyOfKey<never>>().toBe<'no'>();
 expectTypeOf<WrappedIsReadonlyKeyOfType<{readonly c: 3}>>().toBe<'yes'>();

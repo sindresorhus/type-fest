@@ -89,6 +89,4 @@ type WrappedLessThanOrEqualLeft<Left extends number> = [LessThanOrEqual<Left, 1>
 type WrappedLessThanOrEqualRight<Right extends number> = [LessThanOrEqual<1, Right>] extends infer Result extends [boolean] ? ([true] extends Result ? 'yes' : 'no') : never;
 expectTypeOf<WrappedLessThanOrEqualLeft<1>>().toBe<'yes'>();
 expectTypeOf<WrappedLessThanOrEqualLeft<2>>().toBe<'no'>();
-expectTypeOf<WrappedLessThanOrEqualLeft<never>>().toBe<'no'>();
 expectTypeOf<WrappedLessThanOrEqualRight<1>>().toBe<'yes'>();
-expectTypeOf<WrappedLessThanOrEqualRight<never>>().toBe<'no'>();

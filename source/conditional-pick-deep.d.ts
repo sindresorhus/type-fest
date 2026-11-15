@@ -16,7 +16,7 @@ Properties are excluded by their keys, so matching values like `undefined` or `{
 */
 type AssertCondition<Type, Condition, Options extends ConditionalPickDeepOptions> = Options['condition'] extends 'equality'
 	? IsEqual<Type, Condition>
-	// The same check as `ConditionalKeys`, so an `any` value matches and a `never` value does not.
+	// The same check as `ConditionalKeys`, so an `any` value matches every condition, and a `never` value matches only `never`, `unknown`, and `any`.
 	: Extends<Type, Condition, true>;
 
 /**
@@ -28,7 +28,7 @@ export type ConditionalPickDeepOptions = {
 	/**
 	The condition assertion mode.
 
-	With `'extends'`, a value matches when its whole type extends the condition, like in {@link ConditionalKeys}. An `any` value matches, and a `never` value does not. With `'equality'`, a value matches when its type is equal to the condition.
+	With `'extends'`, a value matches when its whole type extends the condition, like in {@link ConditionalKeys}. An `any` value matches every condition, and a `never` value matches only `never`, `unknown`, and `any`. With `'equality'`, a value matches when its type is equal to the condition.
 
 	@default 'extends'
 	*/

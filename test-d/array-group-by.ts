@@ -112,6 +112,8 @@ expectTypeOf<ArrayGroupBy<[Item, Item], 'kind'>>().toBe<{item: [Item, Item]}>();
 expectTypeOf<ArrayGroupBy<[{a: 'x'; b: 'y'}], 'a' | 'b'>>().toBe<{x: [{a: 'x'; b: 'y'}]} | {y: [{a: 'x'; b: 'y'}]}>();
 // @ts-expect-error Every key in a union must be a key of the elements.
 type PartlyMissingKey = ArrayGroupBy<[{a: 'x'}], 'a' | 'missing'>;
+// @ts-expect-error The key must be a key of the elements of every array in the union.
+type KeyMissingInUnionMember = ArrayGroupBy<[{a: 'x'}] | [{b: 'y'}], 'a'>;
 expectTypeOf<ArrayGroupBy<[{a: 'x'}], never>>().toBe<never>();
 
 // Every element must have one literal group value.

@@ -100,7 +100,7 @@ console.log(JSON.stringify(good)); // {"number": 3, "date": "2025-12-25T00:00:00
 export type Jsonifiable = JsonPrimitive | JsonifiableObject | JsonifiableArray;
 
 /**
-Matches a value of type `Value` that can be losslessly converted to JSON, including an `interface`.
+Validates that a function argument of type `Value` can be losslessly converted to JSON, including an `interface`.
 
 {@link Jsonifiable} is a union that a value must be assignable to. An `interface` is not assignable, because it has no implicit index signature. `JsonifiableValue` takes the concrete type `Value`, keeps it, and checks its properties, so an interface works. It accepts everything `Jsonifiable` accepts, apart from a callable type without `toJSON`, and it also accepts interfaces and data-only class instances.
 

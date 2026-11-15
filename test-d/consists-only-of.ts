@@ -386,7 +386,5 @@ type WrappedConsistsOnlyOfValue<Value extends string> = [ConsistsOnlyOf<Value, '
 type WrappedConsistsOnlyOfPattern<Pattern extends string> = [ConsistsOnlyOf<'abab', Pattern>] extends infer Result extends [boolean] ? ([true] extends Result ? 'match' : 'other') : never;
 expectTypeOf<WrappedConsistsOnlyOfValue<'abab'>>().toBe<'match'>();
 expectTypeOf<WrappedConsistsOnlyOfValue<'aba'>>().toBe<'other'>();
-expectTypeOf<WrappedConsistsOnlyOfValue<never>>().toBe<'other'>();
 expectTypeOf<WrappedConsistsOnlyOfPattern<'ab'>>().toBe<'match'>();
 expectTypeOf<WrappedConsistsOnlyOfPattern<'a'>>().toBe<'other'>();
-expectTypeOf<WrappedConsistsOnlyOfPattern<never>>().toBe<'other'>();

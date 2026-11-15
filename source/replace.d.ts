@@ -4,6 +4,11 @@ import type {ApplyDefaultOptions} from './apply-default-options.d.ts';
 import type {IsStringLiteral} from './is-string-literal.d.ts';
 
 export type ReplaceOptions = {
+	/**
+	Replace all matches instead of only the first one.
+
+	@default false
+	*/
 	all?: boolean;
 };
 

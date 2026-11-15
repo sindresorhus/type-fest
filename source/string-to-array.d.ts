@@ -50,6 +50,8 @@ type DefaultStringToArrayOptions = {
 /**
 Returns an array of the characters of the specified string.
 
+Note: Whether a supplementary Unicode character, such as an emoji, counts as one character or two depends on the TypeScript compiler. TypeScript 7 counts it as one, unlike `String#split('')`.
+
 @example
 ```
 import type {StringToArray} from 'type-fest';

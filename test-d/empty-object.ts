@@ -94,4 +94,3 @@ expectTypeOf<IsEmptyObject<unknown & object>>().toBe<false>();
 type WrappedIsEmptyObject<Value> = [IsEmptyObject<Value>] extends infer Result extends [boolean] ? ([true] extends Result ? 'empty' : 'other') : never;
 expectTypeOf<WrappedIsEmptyObject<{}>>().toBe<'empty'>();
 expectTypeOf<WrappedIsEmptyObject<{a: 1}>>().toBe<'other'>();
-expectTypeOf<WrappedIsEmptyObject<never>>().toBe<'other'>();

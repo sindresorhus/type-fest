@@ -166,7 +166,7 @@ expectTypeOf(unknownArray.filter((value): value is Truthy<typeof value> => Boole
 const tuple = ['a', '', 0, 1, null, undefined, false] as const;
 expectTypeOf<Truthy<typeof tuple[number]>>().toBe<'a' | 1>();
 
-// Same result as `Filter` with `Boolean`, for elements that are not unions
+// Same result as `ExcludeValues` with `Falsy`, for elements that are not unions
 expectTypeOf<ExcludeValues<[0, 'a', null, 1n, false, {}], Falsy>[number]>().toBe<Truthy<0 | 'a' | null | 1n | false | {}>>();
 
 // A `compact` function

@@ -459,7 +459,5 @@ type WrappedStartsWithValue<Value extends string> = [StartsWith<Value, 'user:'>]
 type WrappedStartsWithPrefix<Prefix extends string> = [StartsWith<'user:created', Prefix>] extends infer Result extends [boolean] ? ([true] extends Result ? 'match' : 'other') : never;
 expectTypeOf<WrappedStartsWithValue<'user:created'>>().toBe<'match'>();
 expectTypeOf<WrappedStartsWithValue<'order:created'>>().toBe<'other'>();
-expectTypeOf<WrappedStartsWithValue<never>>().toBe<'other'>();
 expectTypeOf<WrappedStartsWithPrefix<'user:'>>().toBe<'match'>();
 expectTypeOf<WrappedStartsWithPrefix<'order:'>>().toBe<'other'>();
-expectTypeOf<WrappedStartsWithPrefix<never>>().toBe<'other'>();

@@ -3,7 +3,7 @@ type AsyncFunction = (...arguments_: any[]) => PromiseLike<unknown>;
 /**
 Unwrap the return type of a function that returns a `Promise`.
 
-There has been [discussion](https://github.com/microsoft/TypeScript/pull/35998) about implementing this type in TypeScript.
+It is the same as the built-in `Awaited<ReturnType<Target>>`, except that it only accepts a function that returns a promise.
 
 @example
 ```ts

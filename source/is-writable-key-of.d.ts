@@ -7,7 +7,9 @@ Returns a boolean for whether the given key is a writable key of type.
 
 This is useful when writing utility types or schema validators that need to differentiate `writable` keys.
 
-Distributes over object and key unions, returning `boolean` when results differ. Returns `false` when either input is `never`. Otherwise, returns `true` for an `any` object, because `any` has every key and none of them are readonly, like `WritableKeysOf<any>` is `PropertyKey`, and `boolean` for an `any` key. `unknown` is not accepted.
+Distributes over object and key unions, returning `boolean` when results differ. Returns `false` when either input is `never`.
+
+An `any` object has every key, and none of them are readonly, so the result is `true`, like `WritableKeysOf<any>` is `PropertyKey`. This also applies when the key is `any`. Otherwise, an `any` key returns `boolean`. `unknown` is not accepted.
 
 @example
 ```

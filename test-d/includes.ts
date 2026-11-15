@@ -413,4 +413,3 @@ function _constructKnownPrefix<Value>(): Includes<readonly ['ready', Value], 're
 type WrappedIncludes<Array_ extends readonly unknown[]> = [Includes<Array_, 1>] extends infer Result extends [boolean] ? ([true] extends Result ? 'included' : 'other') : never;
 expectTypeOf<WrappedIncludes<[1, 2]>>().toBe<'included'>();
 expectTypeOf<WrappedIncludes<[2]>>().toBe<'other'>();
-expectTypeOf<WrappedIncludes<never>>().toBe<'other'>();

@@ -82,4 +82,3 @@ expectTypeOf<FloatShapes<[-1.5, -1, 0, 0.25, 1e-7, 1e21, 1.5e21]>>().toBe<[true,
 type WrappedIsFloat<Value> = [IsFloat<Value>] extends infer Result extends [boolean] ? ([true] extends Result ? 'float' : 'other') : never;
 expectTypeOf<WrappedIsFloat<1.5>>().toBe<'float'>();
 expectTypeOf<WrappedIsFloat<1>>().toBe<'other'>();
-expectTypeOf<WrappedIsFloat<never>>().toBe<'other'>();

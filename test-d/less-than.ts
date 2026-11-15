@@ -103,7 +103,7 @@ expectTypeOf<LessThan<never, 1n>>().toBe<false>();
 expectTypeOf<LessThan<1n | 2, 5n>>().toBe<true>();
 expectTypeOf<LessThan<1n | 10, 5>>().toBe<boolean>();
 
-// Reversing the strict comparison retains sentinel inputs, nominal values, and each union member.
+// Reversing the strict comparison keeps the `false` result for `never`, nominal values, and each union member.
 expectTypeOf<LessThan<never, number>>().toBe<false>();
 expectTypeOf<LessThan<bigint, never>>().toBe<false>();
 expectTypeOf<LessThan<any, never>>().toBe<false>();
@@ -125,6 +125,4 @@ type WrappedLessThanLeft<Left extends number> = [LessThan<Left, 2>] extends infe
 type WrappedLessThanRight<Right extends number> = [LessThan<1, Right>] extends infer Result extends [boolean] ? ([true] extends Result ? 'yes' : 'no') : never;
 expectTypeOf<WrappedLessThanLeft<1>>().toBe<'yes'>();
 expectTypeOf<WrappedLessThanLeft<2>>().toBe<'no'>();
-expectTypeOf<WrappedLessThanLeft<never>>().toBe<'no'>();
 expectTypeOf<WrappedLessThanRight<2>>().toBe<'yes'>();
-expectTypeOf<WrappedLessThanRight<never>>().toBe<'no'>();

@@ -15,7 +15,7 @@ The input must be a fixed tuple of required elements. Arrays and rest tuples giv
 
 Groups are required and preserve the input's readonly modifier. The resulting record is mutable. Numeric and string forms of the selected property and group values are resolved with TypeScript's key rules, so `0` and `'0'` belong to the same group.
 
-Distributes over unions of arrays and keys. Returns `any` for `any` and `never` for `never`.
+Distributes over unions of arrays and keys. The selected property must be a key of the elements of every array in the union. Returns `any` for `any` and `never` for `never`.
 
 @example
 ```

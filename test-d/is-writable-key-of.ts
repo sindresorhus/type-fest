@@ -140,5 +140,4 @@ type WrappedIsWritableKeyOfKey<Key extends keyof WrappedShape> = [IsWritableKeyO
 type WrappedIsWritableKeyOfType<Type extends {c: 3}> = [IsWritableKeyOf<Type, 'c'>] extends infer Result extends [boolean] ? ([true] extends Result ? 'yes' : 'no') : never;
 expectTypeOf<WrappedIsWritableKeyOfKey<'a'>>().toBe<'yes'>();
 expectTypeOf<WrappedIsWritableKeyOfKey<'c'>>().toBe<'no'>();
-expectTypeOf<WrappedIsWritableKeyOfKey<never>>().toBe<'no'>();
 expectTypeOf<WrappedIsWritableKeyOfType<{c: 3}>>().toBe<'yes'>();

@@ -39,6 +39,7 @@ type F = IsFloat<1.23e+21>;
 // Plain primitives need no unwrapping; branded or tagged intersections are normalized because `${T}` does not reduce for a literal intersected with an object type.
 export type IsFloat<T> =
 	// `any` is not a float and is not the absence of one either, so it answers `boolean`, the same as `IsInteger` does for it. `IsNumericLiteral`, `IsBooleanLiteral`, `IsStringLiteral` and `IsSymbolLiteral` answer `false` for `any` instead, because each of them narrows to one kind of literal, while a number may be either a float or an integer.
+	// `any` is checked before `never`, so generic code that wraps the result and infers from it still sees both outcomes.
 	IsAny<T> extends true
 		? boolean
 		: IsNever<T> extends true

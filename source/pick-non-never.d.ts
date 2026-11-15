@@ -5,7 +5,7 @@ import type {RequireAll} from './internal/index.d.ts';
 /**
 Pick only the properties of the given object type that do not have the `never` type.
 
-A mapped type often marks the properties it filters out by setting them to `never`. This type removes those properties. Unlike `ConditionalExcept<ObjectType, never>`, it keeps a generic `ObjectType` assignable to the result.
+A mapped type often marks the properties it filters out by setting them to `never`. This type removes those properties. Unlike `ConditionalExcept<ObjectType, never>`, it also removes optional `never` properties, like `d?: never`, and it keeps a generic `ObjectType` assignable to the result.
 
 Use-cases:
 - Remove the `never` markers from a mapped type that you cannot change.

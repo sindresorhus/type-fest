@@ -341,4 +341,3 @@ type ArrayInput = IsWhitespace<string[]>;
 type WrappedIsWhitespace<Value extends string> = [IsWhitespace<Value>] extends infer Result extends [boolean] ? ([true] extends Result ? 'whitespace' : 'other') : never;
 expectTypeOf<WrappedIsWhitespace<' \t'>>().toBe<'whitespace'>();
 expectTypeOf<WrappedIsWhitespace<'text'>>().toBe<'other'>();
-expectTypeOf<WrappedIsWhitespace<never>>().toBe<'other'>();

@@ -7,8 +7,6 @@ import type {IterableElement} from './iterable-element.d.ts'; // For `@link`
 /**
 Create a union of the given object's values, and optionally specify which keys to get the values from.
 
-Please upvote [this issue](https://github.com/microsoft/TypeScript/issues/31438) if you want to have this type as a built-in in TypeScript.
-
 @example
 ```
 import type {ValueOf} from 'type-fest';
@@ -69,7 +67,7 @@ export type ValueOf<ObjectType, ValueType extends KeysOfUnion<ObjectType> = Keys
 	[ObjectType] extends [unknown]
 		// The distributed read reads each member at its own keys: the selected keys the member covers, like a key in its index signature, and the member's keys that the selection covers, like a named property for a `string` key. Comparing the keys with `extends`, rather than intersecting them, keeps unrelated template literal keys apart, since TypeScript does not reduce `data-${string}` & `aria-${string}` to `never`.
 		? (ObjectType extends unknown ? MemberValue<ObjectType, Extract<ValueType, keyof ObjectType> | Extract<keyof ObjectType, ValueType>> : never)
-		// The undistributed read keeps a generic `ObjectType[Key]` assignable to the result, because a value is assignable to a union when it is assignable to one of its members. For a concrete type it adds nothing, since it is a subset of the distributed read. It is only added when every member has the same keys, because reading a union at a key that only some members' index signatures cover is invalid and gives `unknown`, like `({[key: string]: 1} | {[key: `x${string}`]: 2})[`x${string}`]`. TypeScript treats a generic type as passing this check, so the generic read stays.
+		// The undistributed read keeps a generic `ObjectType[Key]` assignable to the result, because a value is assignable to a union when it is assignable to one of its members. For a concrete type it adds nothing, since it is a subset of the distributed read, except for a `never` key on a type with an index signature, where it reads the index signature's value (limitation). It is only added when every member has the same keys, because reading a union at a key that only some members' index signatures cover is invalid and gives `unknown`, like `({[key: string]: 1} | {[key: `x${string}`]: 2})[`x${string}`]`. TypeScript treats a generic type as passing this check, so the generic read stays.
 		| ([ObjectType extends unknown ? keyof ObjectType : never] extends [keyof ObjectType] ? ObjectType[ValueType & keyof ObjectType] : never)
 		: never;
 

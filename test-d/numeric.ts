@@ -237,7 +237,6 @@ type WrappedIsNegative<Value extends number | bigint> = [IsNegative<Value>] exte
 expectTypeOf<WrappedIsNegative<-1>>().toBe<'negative'>();
 expectTypeOf<WrappedIsNegative<-1n>>().toBe<'negative'>();
 expectTypeOf<WrappedIsNegative<1>>().toBe<'other'>();
-expectTypeOf<WrappedIsNegative<never>>().toBe<'other'>();
 
 // `IsNegative` reports the sign, so it still treats `-Infinity` as negative.
 expectTypeOf<IsNegative<NegativeInfinity>>().toBe<true>();

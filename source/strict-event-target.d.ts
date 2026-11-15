@@ -63,6 +63,33 @@ target.dispatchEvent(new CustomEvent('save', {detail: {id: 'abc'}}));
 
 Declare the target as `StrictEventTarget<EventMap>`, then assign or cast the real `EventTarget` to it. The methods are declared structurally, so no runtime code is needed.
 
+A class cannot extend the type directly, because it has no runtime value. Cast the `EventTarget` constructor instead:
+
+@example
+```
+import type {StrictEventTarget} from 'type-fest';
+
+type CounterEvents = {
+	change: CustomEvent<{count: number}>;
+};
+
+class Counter extends (EventTarget as new () => StrictEventTarget<CounterEvents>) {
+	count = 0;
+
+	increment(): void {
+		this.count++;
+		this.dispatchEvent(new CustomEvent('change', {detail: {count: this.count}}));
+	}
+}
+
+const counter = new Counter();
+
+counter.addEventListener('change', event => {
+	const {count} = event.detail;
+	//=> number
+});
+```
+
 Note: `dispatchEvent` checks the event type, not the event name, because the type of `CustomEvent` does not include its event name. It also cannot check that a `detail` is present, because the constructor takes the detail type from the map. When a mapped value is a wider type, like `Event`, any event of that type is accepted, including one whose name is not in the map. In a map with several events, an event can carry the detail type of a different event.
 
 @category Improved Built-in

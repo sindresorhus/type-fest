@@ -9,30 +9,6 @@
 	<br>
 	<br>
 	<br>
-	<hr>
-	<div align="center">
-		<p>
-			<p>
-				<sup>
-					<a href="https://github.com/sponsors/sindresorhus">Sindre Sorhus' open source work is supported by the community</a>
-				</sup>
-			</p>
-			<sup>Special thanks to:</sup>
-			<br>
-			<br>
-			<a href="https://nitric.io/?utm_campaign=github_repo&utm_medium=referral&utm_content=sindresorhus&utm_source=github">
-				<div>
-					<img width="230" src="https://sindresorhus.com/assets/thanks/nitric-logo.svg" alt="nitric logo">
-				</div>
-				<b>Effortless backends with infrastructure from code</b>
-				<div>
-					<sup>An open-source framework that supports any programming language, cloud provider, or deployment automation tool.</sup>
-				</div>
-			</a>
-		</p>
-	</div>
-	<br>
-	<hr>
 </div>
 <br>
 <br>
@@ -128,7 +104,7 @@ Click the type names for complete docs.
 - [`RequireExactlyOne`](source/require-exactly-one.d.ts) - Create a type that requires exactly one of the given keys and disallows more, while keeping the remaining keys as is.
 - [`RequireAllOrNone`](source/require-all-or-none.d.ts) - Create a type that requires all of the given keys or none of the given keys, while keeping the remaining keys as is.
 - [`RequireOneOrNone`](source/require-one-or-none.d.ts) - Create a type that requires exactly one of the given keys or none of the given keys, while keeping the remaining keys as is.
-- [`RequireNone`](source/require-none.d.ts) - Create an object type that disallows the given keys.
+- [`RequireNone`](source/require-none.d.ts) - Create an object type that forbids the given keys, to intersect with another object type.
 - [`SingleKeyObject`](source/single-key-object.d.ts) - Create a type that only accepts an object with a single key.
 - [`RequiredDeep`](source/required-deep.d.ts) - Create a deeply required version of another type.
 - [`RequiredKeepUndefined`](source/required-keep-undefined.d.ts) - Create a type that makes all keys required, while the keys that were optional also accept `undefined`.
@@ -296,7 +272,7 @@ Click the type names for complete docs.
 - [`Jsonifiable`](source/jsonifiable.d.ts) - Matches a value that can be losslessly converted to JSON.
 - [`JsonifiableObject`](source/jsonifiable.d.ts) - Matches an object that can be losslessly converted to JSON.
 - [`JsonifiableArray`](source/jsonifiable.d.ts) - Matches an array that can be losslessly converted to JSON.
-- [`JsonifiableValue`](source/jsonifiable.d.ts) - Matches a value of type `Value` that can be losslessly converted to JSON, including an `interface`.
+- [`JsonifiableValue`](source/jsonifiable.d.ts) - Validates that a function argument of type `Value` can be losslessly converted to JSON, including an `interface`.
 - [`JsonPrimitive`](source/json-value.d.ts) - Matches any valid JSON primitive value.
 - [`JsonObject`](source/json-value.d.ts) - Matches a JSON object.
 - [`JsonArray`](source/json-value.d.ts) - Matches a JSON array.
@@ -548,6 +524,7 @@ Click the type names for complete docs.
 - `SetProp`, `SetPath`, `KeyPathSet`, `SetPathValue`, `SetFieldTypeDeep` - See [`SetProperty`](source/set-property.d.ts)
 - `ExtendsFrom`, `SubsetUnion` - See [`SubsetOf`](source/subset-of.d.ts)
 - `TypedEventTarget` - See [`StrictEventTarget`](source/strict-event-target.d.ts)
+- `ValidateJsonifiable`, `JsonifiableValidate`, `AsJsonifiable` - See [`JsonifiableValue`](source/jsonifiable.d.ts)
 - `PathParameters`, `PathParams`, `RouteParams`, `ExtractRouteParams` - See [`RouteParameters`](source/route-parameters.d.ts)
 - `MinimumN`, `MinLengthArray`, `AtLeastN` - See [`MinimumLengthArray`](source/minimum-length-array.d.ts)
 - `Zip` - See [`ArrayZip`](source/array-zip.d.ts)

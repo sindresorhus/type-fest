@@ -78,7 +78,7 @@ expectTypeOf<IsNumberLike<'0o17'>>().toBe<true>();
 expectTypeOf<IsNumberLike<'0O10'>>().toBe<true>();
 expectTypeOf<IsNumberLike<'0o0'>>().toBe<true>();
 
-// Surrounding whitespace and whitespace-only strings are rejected, like `IsNumericString` does, because TypeScript does not treat them as numeric keys.
+// Surrounding whitespace and whitespace-only strings are rejected, like `IsNumericString` does.
 expectTypeOf<IsNumberLike<' 1'>>().toBe<false>();
 expectTypeOf<IsNumberLike<'1 '>>().toBe<false>();
 expectTypeOf<IsNumberLike<'\t-1.5\n'>>().toBe<false>();

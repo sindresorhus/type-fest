@@ -369,3 +369,23 @@ declare const neverTarget: StrictEventTarget<never>;
 neverTarget.addEventListener('anything', null);
 // @ts-expect-error A `never` map accepts no event to dispatch.
 neverTarget.dispatchEvent(new Event('close'));
+
+// A class can extend a cast of the `EventTarget` constructor.
+type CounterEvents = {change: CustomEvent<{count: number}>};
+
+class Counter extends (EventTarget as new () => StrictEventTarget<CounterEvents>) {
+	count = 0;
+
+	increment(): void {
+		this.count++;
+		this.dispatchEvent(new CustomEvent('change', {detail: {count: this.count}}));
+	}
+}
+
+const counter = new Counter();
+counter.addEventListener('change', event => {
+	expectTypeOf(event.detail).toBe<{count: number}>();
+});
+// @ts-expect-error `unknown` is not an event name.
+counter.addEventListener('unknown', null);
+expectTypeOf(counter.count).toBe<number>();

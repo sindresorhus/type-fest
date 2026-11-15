@@ -46,6 +46,8 @@ Represents an array of strings split using a given character or character set.
 
 Use-case: Defining the return type of a method like `String.prototype.split`.
 
+Note: With an empty delimiter, whether a supplementary Unicode character, such as an emoji, counts as one character or two depends on the TypeScript compiler. TypeScript 7 counts it as one, unlike `String#split('')`.
+
 @example
 ```
 import type {Split} from 'type-fest';

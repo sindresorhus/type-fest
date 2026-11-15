@@ -14,7 +14,7 @@ Supports readonly tuples, negative numbers, decimals, and infinities. Brands are
 
 Distributes over tuple unions and unions within elements, returning all possible maxima.
 
-Returns {@link NegativeInfinity} for an empty tuple, like `Math.max()`. Returns `number` for arrays with unknown length (including unbounded rest elements) and for a tuple containing a non-literal `number`, like {@link UnionMax}. Returns `any` for `any` or a tuple containing `any`, and `never` for `never` or a tuple containing `never`. Optional elements and non-number elements, including `bigint` and `unknown`, are not accepted.
+Returns {@link NegativeInfinity} for an empty tuple, like `Math.max()`. Returns `number` for arrays with unknown length (including unbounded rest elements) and for a tuple containing a non-literal `number`, like {@link UnionMax}. Returns `any` for `any` or a tuple containing `any`, and `never` for `never`. A `never` element gives `never`, unless a non-literal `number` element makes the result `number`. Tuple union members that give `never` do not add to the result. Optional elements and non-number elements, including `bigint` and `unknown`, are not accepted.
 
 @example
 ```

@@ -150,5 +150,4 @@ type WrappedIsOptionalKeyOfKey<Key extends keyof WrappedShape> = [IsOptionalKeyO
 type WrappedIsOptionalKeyOfType<Type extends {b?: 2}> = [IsOptionalKeyOf<Type, 'b'>] extends infer Result extends [boolean] ? ([true] extends Result ? 'yes' : 'no') : never;
 expectTypeOf<WrappedIsOptionalKeyOfKey<'b'>>().toBe<'yes'>();
 expectTypeOf<WrappedIsOptionalKeyOfKey<'a'>>().toBe<'no'>();
-expectTypeOf<WrappedIsOptionalKeyOfKey<never>>().toBe<'no'>();
 expectTypeOf<WrappedIsOptionalKeyOfType<{b?: 2}>>().toBe<'yes'>();

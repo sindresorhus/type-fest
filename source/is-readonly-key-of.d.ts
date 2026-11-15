@@ -6,7 +6,9 @@ Returns a boolean for whether the given key is a readonly key of type.
 
 This is useful when writing utility types or schema validators that need to differentiate `readonly` keys.
 
-Distributes over object and key unions, returning `boolean` when results differ. Returns `false` when either input is `never`. Otherwise, returns `false` for an `any` object, because `any` has every key and none of them are readonly, like `ReadonlyKeysOf<any>` is `never`, and `boolean` for an `any` key. `unknown` is not accepted.
+Distributes over object and key unions, returning `boolean` when results differ. Returns `false` when either input is `never`.
+
+An `any` object has every key, and none of them are readonly, so the result is `false`, like `ReadonlyKeysOf<any>` is `never`. This also applies when the key is `any`. Otherwise, an `any` key returns `boolean`. `unknown` is not accepted.
 
 @example
 ```

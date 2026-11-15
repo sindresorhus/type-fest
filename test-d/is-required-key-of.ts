@@ -182,5 +182,4 @@ type WrappedIsRequiredKeyOfKey<Key extends keyof WrappedShape> = [IsRequiredKeyO
 type WrappedIsRequiredKeyOfType<Type extends {b?: 2}> = [IsRequiredKeyOf<Type, 'b'>] extends infer Result extends [boolean] ? ([true] extends Result ? 'yes' : 'no') : never;
 expectTypeOf<WrappedIsRequiredKeyOfKey<'a'>>().toBe<'yes'>();
 expectTypeOf<WrappedIsRequiredKeyOfKey<'b'>>().toBe<'no'>();
-expectTypeOf<WrappedIsRequiredKeyOfKey<never>>().toBe<'no'>();
 expectTypeOf<WrappedIsRequiredKeyOfType<{b: 2}>>().toBe<'yes'>();

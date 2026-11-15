@@ -327,7 +327,7 @@ export namespace TsConfigJson {
 		/**
 		Specify module code generation.
 
-		@default 'ESNext'
+		Default: `'ESNext'` when `target` is `'ESNext'`, `'ES2022'` when `target` is `'ES2022'` or later, `'ES2020'` when `target` is `'ES2020'` or `'ES2021'`, and `'ES2015'` otherwise.
 		*/
 		module?: CompilerOptions.Module;
 

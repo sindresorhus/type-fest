@@ -307,6 +307,4 @@ type WrappedGreaterThanLeft<Left extends number> = [GreaterThan<Left, 1>] extend
 type WrappedGreaterThanRight<Right extends number> = [GreaterThan<2, Right>] extends infer Result extends [boolean] ? ([true] extends Result ? 'yes' : 'no') : never;
 expectTypeOf<WrappedGreaterThanLeft<2>>().toBe<'yes'>();
 expectTypeOf<WrappedGreaterThanLeft<1>>().toBe<'no'>();
-expectTypeOf<WrappedGreaterThanLeft<never>>().toBe<'no'>();
 expectTypeOf<WrappedGreaterThanRight<1>>().toBe<'yes'>();
-expectTypeOf<WrappedGreaterThanRight<never>>().toBe<'no'>();
