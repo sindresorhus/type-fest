@@ -93,21 +93,21 @@ expectTypeOf<LessThan<bigint, PositiveInfinity>>().toBe<boolean>();
 expectTypeOf<LessThan<NegativeInfinity, bigint>>().toBe<boolean>();
 expectTypeOf<LessThan<bigint, NegativeInfinity>>().toBe<boolean>();
 
-// `any` could be any value, so the result is `boolean`, and `never` is not a value, so there is nothing to compare.
+// `any` could be any value, so the result is `boolean`, and `never` is not a value, so the comparison is `false`.
 expectTypeOf<LessThan<any, 1n>>().toBe<boolean>();
 expectTypeOf<LessThan<1n, any>>().toBe<boolean>();
 expectTypeOf<LessThan<any, any>>().toBe<boolean>();
-expectTypeOf<LessThan<never, 1n>>().toBe<never>();
+expectTypeOf<LessThan<never, 1n>>().toBe<false>();
 
 // A union mixing `bigint` and `number` values is compared per member.
 expectTypeOf<LessThan<1n | 2, 5n>>().toBe<true>();
 expectTypeOf<LessThan<1n | 10, 5>>().toBe<boolean>();
 
 // Reversing the strict comparison retains sentinel inputs, nominal values, and each union member.
-expectTypeOf<LessThan<never, number>>().toBe<never>();
-expectTypeOf<LessThan<bigint, never>>().toBe<never>();
-expectTypeOf<LessThan<any, never>>().toBe<never>();
-expectTypeOf<LessThan<never, any>>().toBe<never>();
+expectTypeOf<LessThan<never, number>>().toBe<false>();
+expectTypeOf<LessThan<bigint, never>>().toBe<false>();
+expectTypeOf<LessThan<any, never>>().toBe<false>();
+expectTypeOf<LessThan<never, any>>().toBe<false>();
 expectTypeOf<LessThan<Tagged<-2, 'Limit'>, Tagged<1, 'Limit'>>>().toBe<true>();
 expectTypeOf<LessThan<Tagged<2, 'Limit'>, 2n>>().toBe<false>();
 expectTypeOf<LessThan<-2n | Tagged<2, 'Limit'>, 0>>().toBe<boolean>();
@@ -119,3 +119,12 @@ type UnknownRightLessOperand = LessThan<0, unknown>;
 function _readLessComparison<Left extends number | bigint, Right extends number | bigint>(value: LessThan<Left, Right>): boolean {
 	return value;
 }
+
+// Generic code that wraps the result and infers it back still resolves after instantiation, for either operand.
+type WrappedLessThanLeft<Left extends number> = [LessThan<Left, 2>] extends infer Result extends [boolean] ? ([true] extends Result ? 'yes' : 'no') : never;
+type WrappedLessThanRight<Right extends number> = [LessThan<1, Right>] extends infer Result extends [boolean] ? ([true] extends Result ? 'yes' : 'no') : never;
+expectTypeOf<WrappedLessThanLeft<1>>().toBe<'yes'>();
+expectTypeOf<WrappedLessThanLeft<2>>().toBe<'no'>();
+expectTypeOf<WrappedLessThanLeft<never>>().toBe<'no'>();
+expectTypeOf<WrappedLessThanRight<2>>().toBe<'yes'>();
+expectTypeOf<WrappedLessThanRight<never>>().toBe<'no'>();

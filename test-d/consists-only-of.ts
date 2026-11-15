@@ -113,14 +113,14 @@ expectTypeOf<ConsistsOnlyOf<any, ''>>().toBe<boolean>();
 expectTypeOf<ConsistsOnlyOf<'abc', any>>().toBe<boolean>();
 expectTypeOf<ConsistsOnlyOf<any, any>>().toBe<boolean>();
 
-// An empty input union has no results; an empty pattern union constructs only the empty string.
-expectTypeOf<ConsistsOnlyOf<never, 'a'>>().toBe<never>();
-expectTypeOf<ConsistsOnlyOf<never, ''>>().toBe<never>();
-expectTypeOf<ConsistsOnlyOf<never, string>>().toBe<never>();
-expectTypeOf<ConsistsOnlyOf<never, any>>().toBe<never>();
-expectTypeOf<ConsistsOnlyOf<never, never>>().toBe<never>();
-expectTypeOf<ConsistsOnlyOf<Tagged<never, 'Id'>, 'a'>>().toBe<never>();
-expectTypeOf<ConsistsOnlyOf<Opaque<never, 'Id'>, 'a'>>().toBe<never>();
+// An empty input union returns `false`; an empty pattern union constructs only the empty string.
+expectTypeOf<ConsistsOnlyOf<never, 'a'>>().toBe<false>();
+expectTypeOf<ConsistsOnlyOf<never, ''>>().toBe<false>();
+expectTypeOf<ConsistsOnlyOf<never, string>>().toBe<false>();
+expectTypeOf<ConsistsOnlyOf<never, any>>().toBe<false>();
+expectTypeOf<ConsistsOnlyOf<never, never>>().toBe<false>();
+expectTypeOf<ConsistsOnlyOf<Tagged<never, 'Id'>, 'a'>>().toBe<false>();
+expectTypeOf<ConsistsOnlyOf<Opaque<never, 'Id'>, 'a'>>().toBe<false>();
 expectTypeOf<ConsistsOnlyOf<'abc', never>>().toBe<false>();
 expectTypeOf<ConsistsOnlyOf<'', never>>().toBe<true>();
 expectTypeOf<ConsistsOnlyOf<'' | 'abc', never>>().toBe<boolean>();
@@ -380,3 +380,13 @@ type NullInput = ConsistsOnlyOf<null, 'a'>;
 type UndefinedPattern = ConsistsOnlyOf<'abc', undefined>;
 // @ts-expect-error Every input union member must be a string.
 type InvalidUnion = ConsistsOnlyOf<'abc' | 123, 'a'>;
+
+// Generic code that wraps the result and infers it back still resolves after instantiation, for either operand.
+type WrappedConsistsOnlyOfValue<Value extends string> = [ConsistsOnlyOf<Value, 'ab'>] extends infer Result extends [boolean] ? ([true] extends Result ? 'match' : 'other') : never;
+type WrappedConsistsOnlyOfPattern<Pattern extends string> = [ConsistsOnlyOf<'abab', Pattern>] extends infer Result extends [boolean] ? ([true] extends Result ? 'match' : 'other') : never;
+expectTypeOf<WrappedConsistsOnlyOfValue<'abab'>>().toBe<'match'>();
+expectTypeOf<WrappedConsistsOnlyOfValue<'aba'>>().toBe<'other'>();
+expectTypeOf<WrappedConsistsOnlyOfValue<never>>().toBe<'other'>();
+expectTypeOf<WrappedConsistsOnlyOfPattern<'ab'>>().toBe<'match'>();
+expectTypeOf<WrappedConsistsOnlyOfPattern<'a'>>().toBe<'other'>();
+expectTypeOf<WrappedConsistsOnlyOfPattern<never>>().toBe<'other'>();

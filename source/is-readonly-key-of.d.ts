@@ -6,7 +6,7 @@ Returns a boolean for whether the given key is a readonly key of type.
 
 This is useful when writing utility types or schema validators that need to differentiate `readonly` keys.
 
-Distributes over object and key unions, returning `boolean` when results differ. Returns `never` when either input is `any` or `never`; `unknown` is not accepted.
+Distributes over object and key unions, returning `boolean` when results differ. Returns `false` when either input is `never`. Otherwise, returns `false` for an `any` object, because `any` has every key and none of them are readonly, like `ReadonlyKeysOf<any>` is `never`, and `boolean` for an `any` key. `unknown` is not accepted.
 
 @example
 ```
@@ -44,11 +44,14 @@ type T5 = IsReadonlyKeyOf<User | Admin, 'id'>;
 @category Utilities
 */
 export type IsReadonlyKeyOf<Type extends object, Key extends keyof Type> =
-	IsAny<Type | Key> extends true ? never
-		: Key extends unknown // For distributing `Key`
-			? Type extends unknown // For distributing `Type`
-				? IsReadonlyProperty<Type, Key>
-				: never // Should never happen
-			: never; // Should never happen
+	// `any` is checked before `never`, so generic code that wraps the result keeps resolving it after instantiation. `any` has every key, and none of them are readonly.
+	IsAny<Type | Key> extends true
+		? [Type, Key] extends [never, unknown] | [unknown, never] ? false : IsAny<Type> extends true ? false : boolean
+		: [Type, Key] extends [never, unknown] | [unknown, never] ? false
+			: Key extends unknown // For distributing `Key`
+				? Type extends unknown // For distributing `Type`
+					? IsReadonlyProperty<Type, Key>
+					: never // Should never happen
+				: never; // Should never happen
 
 export {};

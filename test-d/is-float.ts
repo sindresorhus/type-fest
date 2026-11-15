@@ -51,8 +51,8 @@ function _holdFractionalFlag<Value>(flag: IsFloat<Value>): {readonly fractional:
 	return {fractional: flag};
 }
 
-// The primitive shortcut preserves impossible, unknown and non-numeric inputs.
-expectTypeOf<IsFloat<never>>().toBe<never>();
+// Impossible, unknown and non-numeric inputs are not floats.
+expectTypeOf<IsFloat<never>>().toBe<false>();
 expectTypeOf<IsFloat<unknown>>().toBe<false>();
 expectTypeOf<IsFloat<symbol>>().toBe<false>();
 expectTypeOf<IsFloat<InstanceType<NumberConstructor>>>().toBe<false>();
@@ -77,3 +77,9 @@ expectTypeOf<IsFloat<1.5 | {value: 1.5}>>().toBe<boolean>();
 // Exponents with a positive sign are integers even when the printed mantissa has a decimal point.
 type FloatShapes<Values extends readonly number[]> = {[Index in keyof Values]: IsFloat<Values[Index]>};
 expectTypeOf<FloatShapes<[-1.5, -1, 0, 0.25, 1e-7, 1e21, 1.5e21]>>().toBe<[true, false, false, true, true, false, false]>();
+
+// Generic code that wraps the result and infers it back still resolves after instantiation.
+type WrappedIsFloat<Value> = [IsFloat<Value>] extends infer Result extends [boolean] ? ([true] extends Result ? 'float' : 'other') : never;
+expectTypeOf<WrappedIsFloat<1.5>>().toBe<'float'>();
+expectTypeOf<WrappedIsFloat<1>>().toBe<'other'>();
+expectTypeOf<WrappedIsFloat<never>>().toBe<'other'>();

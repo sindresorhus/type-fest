@@ -236,8 +236,11 @@ expectTypeOf(requireOne({} as [1?])).toBe<'no'>();
 expectTypeOf(requireOne({} as Array<1>)).toBe<'no'>();
 
 // Edge cases
-expectTypeOf<Includes<any, any>>().toBe<any>();
-expectTypeOf<Includes<never, never>>().toBe<never>();
+expectTypeOf<Includes<any, any>>().toBe<false>();
+expectTypeOf<Includes<any, 1>>().toBe<false>();
+expectTypeOf<Includes<never, never>>().toBe<false>();
+expectTypeOf<Includes<never, 1>>().toBe<false>();
+expectTypeOf<Includes<never, 1, {distributeItem: true}>>().toBe<false>();
 expectTypeOf<Includes<any[], any>>().toBe<boolean>();
 expectTypeOf<Includes<unknown[], unknown>>().toBe<boolean>();
 
@@ -405,3 +408,9 @@ expectTypeOf<Includes<readonly ['start', (string | undefined)?], string | undefi
 function _constructKnownPrefix<Value>(): Includes<readonly ['ready', Value], 'ready'> {
 	return true;
 }
+
+// Generic code that wraps the result and infers it back still resolves after instantiation.
+type WrappedIncludes<Array_ extends readonly unknown[]> = [Includes<Array_, 1>] extends infer Result extends [boolean] ? ([true] extends Result ? 'included' : 'other') : never;
+expectTypeOf<WrappedIncludes<[1, 2]>>().toBe<'included'>();
+expectTypeOf<WrappedIncludes<[2]>>().toBe<'other'>();
+expectTypeOf<WrappedIncludes<never>>().toBe<'other'>();

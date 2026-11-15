@@ -111,6 +111,7 @@ Study: `source/tuple-of.d.ts`, `is-equal.d.ts`, `literal-union.d.ts`, `internal/
 - Count via tuple `['length']`
 - Union distribution is tricky—test it
 - Predicate results are an API contract: Use `true`/`false` for definite whole-type classification (`IsNull<any>` and `IsPrimitive<any>` are `false`). Use `boolean` when preserving uncertainty or mixed distributed results is intentional. Explicitly document and test `any`, `never`, `unknown`, and union behavior.
+- A boolean predicate returns `false` for `never` (like `If`, `And`, `Or`, and `Not`, which read `never` as `false`), and for a `never` in any input of a multi-input predicate. Guard with `IsAny<T> extends true ? <any result> : IsNever<T> extends true ? false : <logic>`. Check `any` first: a `never`-first guard gives wrong results in generic code that wraps the result and infers from it, like `[IsFloat<T>] extends infer R extends [boolean] ? ([true] extends R ? 'yes' : 'no') : never`. Test that pattern with a matching value.
 - Path autocomplete: use `LiteralUnion<Paths<T, {maxRecursionDepth: 2}>, string | number>`, never full-depth `Paths<T>`. Deeper `Paths` in a constraint can take minutes on large union-heavy types (#954), and `number` keeps a generic `Paths<T>` valid.
 
 ## Philosophy

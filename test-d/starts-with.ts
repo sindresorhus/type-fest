@@ -120,7 +120,7 @@ expectTypeOf<StartsWith<Opaque<Tagged<'user:created', 'A'>, 'B'>, 'user:'>>().to
 expectTypeOf<StartsWith<Tagged<Opaque<'user:created', 'A'>, 'B'>, 'user:'>>().toBe<true>();
 
 // A tag does not change an empty or `never` base.
-expectTypeOf<StartsWith<Tagged<never, 'E'>, 'user:'>>().toBe<never>();
+expectTypeOf<StartsWith<Tagged<never, 'E'>, 'user:'>>().toBe<false>();
 expectTypeOf<StartsWith<'', Tagged<never, 'P'>>>().toBe<false>();
 expectTypeOf<StartsWith<Tagged<'', 'E'>, 'user:'>>().toBe<false>();
 expectTypeOf<StartsWith<Tagged<'user', 'E'>, 'user:'>>().toBe<false>();
@@ -185,11 +185,11 @@ enum NumericEvent {
 // @ts-expect-error Numeric enum members are numbers, not strings.
 type NumericEnumInput = StartsWith<NumericEvent.One, '1'>;
 
-// An empty input union produces no results; an empty prefix union cannot match.
-expectTypeOf<StartsWith<never, 'user:'>>().toBe<never>();
-expectTypeOf<StartsWith<never, string>>().toBe<never>();
-expectTypeOf<StartsWith<never, any>>().toBe<never>();
-expectTypeOf<StartsWith<never, never>>().toBe<never>();
+// An empty input union or an empty prefix union cannot match.
+expectTypeOf<StartsWith<never, 'user:'>>().toBe<false>();
+expectTypeOf<StartsWith<never, string>>().toBe<false>();
+expectTypeOf<StartsWith<never, any>>().toBe<false>();
+expectTypeOf<StartsWith<never, never>>().toBe<false>();
 expectTypeOf<StartsWith<'user:created', never>>().toBe<false>();
 expectTypeOf<StartsWith<string, never>>().toBe<false>();
 expectTypeOf<StartsWith<any, 'user:'>>().toBe<boolean>();
@@ -363,12 +363,12 @@ expectTypeOf<StartsWith<Tagged<EventName.UserCreated, 'Event'>, EventPrefix.User
 expectTypeOf<StartsWith<EventName, ''>>().toBe<true>();
 
 // Empty choices and dynamic operands retain their documented precedence.
-expectTypeOf<StartsWith<never, ''>>().toBe<never>();
-expectTypeOf<StartsWith<never, Tagged<'user:', 'Prefix'>>>().toBe<never>();
+expectTypeOf<StartsWith<never, ''>>().toBe<false>();
+expectTypeOf<StartsWith<never, Tagged<'user:', 'Prefix'>>>().toBe<false>();
 expectTypeOf<StartsWith<'', never>>().toBe<false>();
 expectTypeOf<StartsWith<`user:${string}`, never>>().toBe<false>();
 expectTypeOf<StartsWith<Tagged<string, 'Event'>, never>>().toBe<false>();
-expectTypeOf<StartsWith<never, `user:${string}`>>().toBe<never>();
+expectTypeOf<StartsWith<never, `user:${string}`>>().toBe<false>();
 expectTypeOf<StartsWith<'', any>>().toBe<boolean>();
 expectTypeOf<StartsWith<any, 'user:' | 'order:'>>().toBe<boolean>();
 expectTypeOf<StartsWith<any, `user:${string}`>>().toBe<boolean>();
@@ -453,3 +453,13 @@ expectTypeOf<UserEventHandlers<Record<`user:${string}`, number>>>().toBe<Record<
 expectTypeOf<UserEventHandlers<Record<string, number>>>().toBe<{}>();
 expectTypeOf<UserEventHandlers<Record<`order:${string}`, number>>>().toBe<{}>();
 expectTypeOf<UserEventHandlers<Record<`user:${string}` | `order:${string}`, number>>>().toBe<Record<`user:${string}`, number>>();
+
+// Generic code that wraps the result and infers it back still resolves after instantiation, for either operand.
+type WrappedStartsWithValue<Value extends string> = [StartsWith<Value, 'user:'>] extends infer Result extends [boolean] ? ([true] extends Result ? 'match' : 'other') : never;
+type WrappedStartsWithPrefix<Prefix extends string> = [StartsWith<'user:created', Prefix>] extends infer Result extends [boolean] ? ([true] extends Result ? 'match' : 'other') : never;
+expectTypeOf<WrappedStartsWithValue<'user:created'>>().toBe<'match'>();
+expectTypeOf<WrappedStartsWithValue<'order:created'>>().toBe<'other'>();
+expectTypeOf<WrappedStartsWithValue<never>>().toBe<'other'>();
+expectTypeOf<WrappedStartsWithPrefix<'user:'>>().toBe<'match'>();
+expectTypeOf<WrappedStartsWithPrefix<'order:'>>().toBe<'other'>();
+expectTypeOf<WrappedStartsWithPrefix<never>>().toBe<'other'>();

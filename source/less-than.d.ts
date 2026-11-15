@@ -4,7 +4,7 @@ import type {_Numeric} from './numeric.d.ts';
 /**
 Returns a boolean for whether a given number is less than another number.
 
-Distributes over both operands; mixed results return `boolean`. A `never` operand returns `never`. Otherwise, an `any` operand returns `boolean`. Only numeric operands are accepted.
+Distributes over both operands; mixed results return `boolean`. A `never` operand returns `false`. Otherwise, an `any` operand returns `boolean`. Only numeric operands are accepted.
 
 @example
 ```

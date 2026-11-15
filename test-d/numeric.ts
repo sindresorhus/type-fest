@@ -228,9 +228,16 @@ expectTypeOf<IsNegative<Level>>().toBe<false>();
 expectTypeOf<IsNegative<number>>().toBe<false>();
 expectTypeOf<IsNegative<bigint>>().toBe<false>();
 expectTypeOf<IsNegative<any>>().toBe<boolean>();
-expectTypeOf<IsNegative<never>>().toBe<never>();
+expectTypeOf<IsNegative<never>>().toBe<false>();
 // @ts-expect-error An unknown value is not necessarily numeric.
 type UnknownSign = IsNegative<unknown>;
+
+// Generic code that wraps the result and infers it back still resolves after instantiation.
+type WrappedIsNegative<Value extends number | bigint> = [IsNegative<Value>] extends infer Result extends [boolean] ? ([true] extends Result ? 'negative' : 'other') : never;
+expectTypeOf<WrappedIsNegative<-1>>().toBe<'negative'>();
+expectTypeOf<WrappedIsNegative<-1n>>().toBe<'negative'>();
+expectTypeOf<WrappedIsNegative<1>>().toBe<'other'>();
+expectTypeOf<WrappedIsNegative<never>>().toBe<'other'>();
 
 // `IsNegative` reports the sign, so it still treats `-Infinity` as negative.
 expectTypeOf<IsNegative<NegativeInfinity>>().toBe<true>();

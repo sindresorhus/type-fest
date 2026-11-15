@@ -117,12 +117,13 @@ expectTypeOf(boolean).toBe<IsOptionalKeyOf<A, 'b' | 'x'>>(); // 'x' is not in A,
 
 // `never` / `any
 type K = {a?: string};
-expectTypeOf(never).toBe<IsOptionalKeyOf<K, any>>();
-expectTypeOf(never).toBe<IsOptionalKeyOf<any, any>>();
-expectTypeOf(never).toBe<IsOptionalKeyOf<any, 'a'>>();
-expectTypeOf(never).toBe<IsOptionalKeyOf<K, never>>();
-expectTypeOf(never).toBe<IsOptionalKeyOf<any, never>>();
-expectTypeOf(never).toBe<IsOptionalKeyOf<never, 'a'>>();
+expectTypeOf<IsOptionalKeyOf<K, any>>().toBe<boolean>();
+expectTypeOf<IsOptionalKeyOf<any, any>>().toBe<false>();
+expectTypeOf<IsOptionalKeyOf<any, 'a'>>().toBe<false>();
+expectTypeOf<IsOptionalKeyOf<K, never>>().toBe<false>();
+expectTypeOf<IsOptionalKeyOf<any, never>>().toBe<false>();
+expectTypeOf<IsOptionalKeyOf<never, 'a'>>().toBe<false>();
+expectTypeOf<IsOptionalKeyOf<never, any>>().toBe<false>();
 
 // Only the built-in `Record` type disagrees, because TypeScript compares it with the `Record` in the check by its type arguments instead of by its properties. It is not caused by `keyof`, which is the same for `Record<string, T>` and `{[Key in string]: T}`. See the note in the docs.
 type CustomRecord<Key extends PropertyKey, Value> = {[RecordKey in Key]: Value};
@@ -142,3 +143,12 @@ type UnknownObject = IsOptionalKeyOf<unknown, never>;
 
 // @ts-expect-error An unknown key is not known to belong to the object.
 type UnknownKey = IsOptionalKeyOf<{value: string}, unknown>;
+
+// Generic code that wraps the result and infers it back still resolves after instantiation, for either input.
+type WrappedShape = {a: 1; b?: 2; readonly c: 3};
+type WrappedIsOptionalKeyOfKey<Key extends keyof WrappedShape> = [IsOptionalKeyOf<WrappedShape, Key>] extends infer Result extends [boolean] ? ([true] extends Result ? 'yes' : 'no') : never;
+type WrappedIsOptionalKeyOfType<Type extends {b?: 2}> = [IsOptionalKeyOf<Type, 'b'>] extends infer Result extends [boolean] ? ([true] extends Result ? 'yes' : 'no') : never;
+expectTypeOf<WrappedIsOptionalKeyOfKey<'b'>>().toBe<'yes'>();
+expectTypeOf<WrappedIsOptionalKeyOfKey<'a'>>().toBe<'no'>();
+expectTypeOf<WrappedIsOptionalKeyOfKey<never>>().toBe<'no'>();
+expectTypeOf<WrappedIsOptionalKeyOfType<{b?: 2}>>().toBe<'yes'>();

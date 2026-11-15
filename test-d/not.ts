@@ -31,9 +31,9 @@ type StringNegation = Not<'true'>;
 // @ts-expect-error Logical negation requires a boolean.
 type NullNegation = Not<null>;
 
-// Negating a predicate that resolves to `never` gives `true`
-expectTypeOf<IsFloat<never>>().toBe<never>();
-expectTypeOf<IsInteger<never>>().toBe<never>();
+// Negating a predicate that returns `false` for `never` gives `true`
+expectTypeOf<IsFloat<never>>().toBe<false>();
+expectTypeOf<IsInteger<never>>().toBe<false>();
 expectTypeOf<Not<IsFloat<never>>>().toBe<true>();
 expectTypeOf<Not<IsInteger<never>>>().toBe<true>();
 // A predicate that is unsure about `any` keeps its result wide

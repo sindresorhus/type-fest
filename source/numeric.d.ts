@@ -2,6 +2,8 @@ import type {UnwrapBrandedPrimitive} from './unwrap-branded-primitive.d.ts';
 import type {IsFloat} from './is-float.d.ts';
 import type {IsInteger} from './is-integer.d.ts';
 import type {IsNumericLiteral} from './is-numeric-literal.d.ts';
+import type {IsAny} from './is-any.d.ts';
+import type {IsNever} from './is-never.d.ts';
 import type {Tagged} from './tagged.d.ts'; // For `@link`
 
 export type _Numeric = number | bigint;
@@ -290,7 +292,7 @@ export type NonNegativeInteger<T extends number> = NonNegative<Integer<T>>;
 /**
 Returns a boolean for whether the given number is a negative number.
 
-Checks union members separately; mixed results return `boolean`. Returns `boolean` for `any`, `never` for `never`, and `false` for the widened `number` and `bigint` types. Only numeric inputs are accepted.
+Checks union members separately; mixed results return `boolean`. Returns `boolean` for `any`, and `false` for `never` and the widened `number` and `bigint` types. Only numeric inputs are accepted.
 
 Unlike {@link Negative}, it returns `true` for `-Infinity`, since it only checks the sign.
 
@@ -312,6 +314,12 @@ type C = IsNegative<NegativeInfinity>;
 
 @category Numeric
 */
-export type IsNegative<T extends _Numeric> = T extends NegativeSign<T> ? true : false;
+// `any` is checked before `never`, so generic code that wraps the result keeps resolving it after instantiation.
+export type IsNegative<T extends _Numeric> =
+	IsAny<T> extends true
+		? boolean
+		: IsNever<T> extends true
+			? false
+			: T extends NegativeSign<T> ? true : false;
 
 export {};

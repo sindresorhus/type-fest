@@ -68,7 +68,7 @@ expectTypeOf<IsEmptyObject<{} | null>>().toBe<boolean>();
 expectTypeOf<IsEmptyObject<object | undefined>>().toBe<false>();
 expectTypeOf<IsEmptyObject<object | string | null>>().toBe<false>();
 expectTypeOf<IsEmptyObject<any>>().toBe<false>();
-expectTypeOf<IsEmptyObject<never>>().toBe<never>();
+expectTypeOf<IsEmptyObject<never>>().toBe<false>();
 expectTypeOf<IsEmptyObject<unknown>>().toBe<false>();
 
 function _booleanResult<Value>(result: IsEmptyObject<Value>): boolean {
@@ -89,3 +89,9 @@ expectTypeOf<IsEmptyObject<EmptyObject & {readonly id?: number}>>().toBe<false>(
 expectTypeOf<IsEmptyObject<object & {}>>().toBe<false>();
 expectTypeOf<IsEmptyObject<NonNullable<object | null>>>().toBe<false>();
 expectTypeOf<IsEmptyObject<unknown & object>>().toBe<false>();
+
+// Generic code that wraps the result and infers it back still resolves after instantiation.
+type WrappedIsEmptyObject<Value> = [IsEmptyObject<Value>] extends infer Result extends [boolean] ? ([true] extends Result ? 'empty' : 'other') : never;
+expectTypeOf<WrappedIsEmptyObject<{}>>().toBe<'empty'>();
+expectTypeOf<WrappedIsEmptyObject<{a: 1}>>().toBe<'other'>();
+expectTypeOf<WrappedIsEmptyObject<never>>().toBe<'other'>();

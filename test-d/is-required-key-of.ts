@@ -117,12 +117,13 @@ expectTypeOf(boolean).toBe<IsRequiredKeyOf<A, 'a' | 'x'>>(); // 'x' is not in A,
 
 // `never` / `any
 type K = {a: string};
-expectTypeOf(never).toBe<IsRequiredKeyOf<K, any>>();
-expectTypeOf(never).toBe<IsRequiredKeyOf<any, any>>();
-expectTypeOf(never).toBe<IsRequiredKeyOf<any, 'a'>>();
-expectTypeOf(never).toBe<IsRequiredKeyOf<K, never>>();
-expectTypeOf(never).toBe<IsRequiredKeyOf<any, never>>();
-expectTypeOf(never).toBe<IsRequiredKeyOf<never, 'a'>>();
+expectTypeOf<IsRequiredKeyOf<K, any>>().toBe<boolean>();
+expectTypeOf<IsRequiredKeyOf<any, any>>().toBe<true>();
+expectTypeOf<IsRequiredKeyOf<any, 'a'>>().toBe<true>();
+expectTypeOf<IsRequiredKeyOf<K, never>>().toBe<false>();
+expectTypeOf<IsRequiredKeyOf<any, never>>().toBe<false>();
+expectTypeOf<IsRequiredKeyOf<never, 'a'>>().toBe<false>();
+expectTypeOf<IsRequiredKeyOf<never, any>>().toBe<false>();
 
 // The mirror of the `IsOptionalKeyOf` index-signature discrepancy: only the built-in `Record` type reports a literal key as required. See the note in that type's docs.
 expectTypeOf<IsRequiredKeyOf<{[key: string]: number}, 'a'>>().toBe<false>();
@@ -174,3 +175,12 @@ readRequiredField(requiredRecord, 'missing');
 
 // @ts-expect-error An unknown key is not known to belong to the object.
 type UnknownKey = IsRequiredKeyOf<{value: string}, unknown>;
+
+// Generic code that wraps the result and infers it back still resolves after instantiation, for either input.
+type WrappedShape = {a: 1; b?: 2; readonly c: 3};
+type WrappedIsRequiredKeyOfKey<Key extends keyof WrappedShape> = [IsRequiredKeyOf<WrappedShape, Key>] extends infer Result extends [boolean] ? ([true] extends Result ? 'yes' : 'no') : never;
+type WrappedIsRequiredKeyOfType<Type extends {b?: 2}> = [IsRequiredKeyOf<Type, 'b'>] extends infer Result extends [boolean] ? ([true] extends Result ? 'yes' : 'no') : never;
+expectTypeOf<WrappedIsRequiredKeyOfKey<'a'>>().toBe<'yes'>();
+expectTypeOf<WrappedIsRequiredKeyOfKey<'b'>>().toBe<'no'>();
+expectTypeOf<WrappedIsRequiredKeyOfKey<never>>().toBe<'no'>();
+expectTypeOf<WrappedIsRequiredKeyOfType<{b: 2}>>().toBe<'yes'>();

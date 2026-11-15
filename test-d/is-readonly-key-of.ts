@@ -113,15 +113,25 @@ expectTypeOf(boolean).toBe<IsReadonlyKeyOf<A, 'b' | 'x'>>(); // 'x' is not in A,
 
 // `never` / `any`
 type L = {readonly a: string};
-expectTypeOf(never).toBe<IsReadonlyKeyOf<K, any>>();
-expectTypeOf(never).toBe<IsReadonlyKeyOf<any, any>>();
-expectTypeOf(never).toBe<IsReadonlyKeyOf<any, 'a'>>();
-expectTypeOf(never).toBe<IsReadonlyKeyOf<K, never>>();
-expectTypeOf(never).toBe<IsReadonlyKeyOf<any, never>>();
-expectTypeOf(never).toBe<IsReadonlyKeyOf<never, 'a'>>();
+expectTypeOf<IsReadonlyKeyOf<K, any>>().toBe<boolean>();
+expectTypeOf<IsReadonlyKeyOf<any, any>>().toBe<false>();
+expectTypeOf<IsReadonlyKeyOf<any, 'a'>>().toBe<false>();
+expectTypeOf<IsReadonlyKeyOf<K, never>>().toBe<false>();
+expectTypeOf<IsReadonlyKeyOf<any, never>>().toBe<false>();
+expectTypeOf<IsReadonlyKeyOf<never, 'a'>>().toBe<false>();
+expectTypeOf<IsReadonlyKeyOf<never, any>>().toBe<false>();
 
 // @ts-expect-error An unknown value is not known to be an object.
 type UnknownObject = IsReadonlyKeyOf<unknown, never>;
 
 // @ts-expect-error An unknown key is not known to belong to the object.
 type UnknownKey = IsReadonlyKeyOf<{value: string}, unknown>;
+
+// Generic code that wraps the result and infers it back still resolves after instantiation, for either input.
+type WrappedShape = {a: 1; b?: 2; readonly c: 3};
+type WrappedIsReadonlyKeyOfKey<Key extends keyof WrappedShape> = [IsReadonlyKeyOf<WrappedShape, Key>] extends infer Result extends [boolean] ? ([true] extends Result ? 'yes' : 'no') : never;
+type WrappedIsReadonlyKeyOfType<Type extends {c: 3}> = [IsReadonlyKeyOf<Type, 'c'>] extends infer Result extends [boolean] ? ([true] extends Result ? 'yes' : 'no') : never;
+expectTypeOf<WrappedIsReadonlyKeyOfKey<'c'>>().toBe<'yes'>();
+expectTypeOf<WrappedIsReadonlyKeyOfKey<'a'>>().toBe<'no'>();
+expectTypeOf<WrappedIsReadonlyKeyOfKey<never>>().toBe<'no'>();
+expectTypeOf<WrappedIsReadonlyKeyOfType<{readonly c: 3}>>().toBe<'yes'>();

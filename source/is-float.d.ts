@@ -1,10 +1,11 @@
 import type {IsAny} from './is-any.d.ts';
+import type {IsNever} from './is-never.d.ts';
 import type {UnwrapBrandedPrimitive} from './unwrap-branded-primitive.d.ts';
 
 /**
 Returns a boolean for whether the given number is a float, like `1.5` or `-1.5`.
 
-Checks union members separately, so mixed results return `boolean` and `never` returns `never`. Returns `boolean` for `any`, and `false` for `unknown` and the widened `number` type.
+Checks union members separately, so mixed results return `boolean`. Returns `boolean` for `any`, and `false` for `never`, `unknown`, and the widened `number` type.
 
 Use-case:
 - If you want to make a conditional branch based on the result of whether a number is a float or not.
@@ -40,7 +41,9 @@ export type IsFloat<T> =
 	// `any` is not a float and is not the absence of one either, so it answers `boolean`, the same as `IsInteger` does for it. `IsNumericLiteral`, `IsBooleanLiteral`, `IsStringLiteral` and `IsSymbolLiteral` answer `false` for `any` instead, because each of them narrows to one kind of literal, while a number may be either a float or an integer.
 	IsAny<T> extends true
 		? boolean
-		: _IsFloat<T extends object ? UnwrapBrandedPrimitive<T> : T>;
+		: IsNever<T> extends true
+			? false
+			: _IsFloat<T extends object ? UnwrapBrandedPrimitive<T> : T>;
 
 type _IsFloat<T> = T extends number
 	? `${T}` extends `${number}e+${number}`

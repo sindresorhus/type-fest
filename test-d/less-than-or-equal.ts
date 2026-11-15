@@ -58,11 +58,11 @@ expectTypeOf<LessThanOrEqual<bigint, bigint>>().toBe<boolean>();
 expectTypeOf<LessThanOrEqual<bigint, 1>>().toBe<boolean>();
 expectTypeOf<LessThanOrEqual<1, bigint>>().toBe<boolean>();
 
-// `any` could be any value, so the result is `boolean`, and `never` is not a value, so there is nothing to compare.
+// `any` could be any value, so the result is `boolean`, and `never` is not a value, so the comparison is `false`.
 expectTypeOf<LessThanOrEqual<any, 1n>>().toBe<boolean>();
 expectTypeOf<LessThanOrEqual<1n, any>>().toBe<boolean>();
 expectTypeOf<LessThanOrEqual<any, any>>().toBe<boolean>();
-expectTypeOf<LessThanOrEqual<never, 1n>>().toBe<never>();
+expectTypeOf<LessThanOrEqual<never, 1n>>().toBe<false>();
 
 // A union mixing `bigint` and `number` values is compared per member.
 expectTypeOf<LessThanOrEqual<5n | 5, 5>>().toBe<true>();
@@ -71,10 +71,10 @@ expectTypeOf<LessThanOrEqual<1n | 10, 5n>>().toBe<boolean>();
 // The inclusive comparison treats equal numeric values alike across primitive and branded representations.
 expectTypeOf<LessThanOrEqual<Tagged<2, 'Limit'>, 2n>>().toBe<true>();
 expectTypeOf<LessThanOrEqual<-2n | Tagged<2, 'Limit'>, 0>>().toBe<boolean>();
-expectTypeOf<LessThanOrEqual<never, number>>().toBe<never>();
-expectTypeOf<LessThanOrEqual<bigint, never>>().toBe<never>();
-expectTypeOf<LessThanOrEqual<any, never>>().toBe<never>();
-expectTypeOf<LessThanOrEqual<never, any>>().toBe<never>();
+expectTypeOf<LessThanOrEqual<never, number>>().toBe<false>();
+expectTypeOf<LessThanOrEqual<bigint, never>>().toBe<false>();
+expectTypeOf<LessThanOrEqual<any, never>>().toBe<false>();
+expectTypeOf<LessThanOrEqual<never, any>>().toBe<false>();
 // @ts-expect-error An unknown value is not a numeric operand.
 type UnknownLessEqualOperand = LessThanOrEqual<unknown, 0>;
 // @ts-expect-error An unknown value is not a numeric operand.
@@ -83,3 +83,12 @@ type UnknownRightLessEqualOperand = LessThanOrEqual<0, unknown>;
 function _readLessEqualComparison<Left extends number | bigint, Right extends number | bigint>(value: LessThanOrEqual<Left, Right>): boolean {
 	return value;
 }
+
+// Generic code that wraps the result and infers it back still resolves after instantiation, for either operand.
+type WrappedLessThanOrEqualLeft<Left extends number> = [LessThanOrEqual<Left, 1>] extends infer Result extends [boolean] ? ([true] extends Result ? 'yes' : 'no') : never;
+type WrappedLessThanOrEqualRight<Right extends number> = [LessThanOrEqual<1, Right>] extends infer Result extends [boolean] ? ([true] extends Result ? 'yes' : 'no') : never;
+expectTypeOf<WrappedLessThanOrEqualLeft<1>>().toBe<'yes'>();
+expectTypeOf<WrappedLessThanOrEqualLeft<2>>().toBe<'no'>();
+expectTypeOf<WrappedLessThanOrEqualLeft<never>>().toBe<'no'>();
+expectTypeOf<WrappedLessThanOrEqualRight<1>>().toBe<'yes'>();
+expectTypeOf<WrappedLessThanOrEqualRight<never>>().toBe<'no'>();

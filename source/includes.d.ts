@@ -54,7 +54,7 @@ Returns a boolean for whether the given array includes the given item.
 
 This can be useful if another type wants to make a decision based on whether the array includes that item.
 
-Distributes over unions of arrays. Returns `any` when the array itself is `any` and `never` when it is `never`.
+Distributes over unions of arrays. Returns `false` when the array itself is `any` or `never`.
 
 Elements are compared exactly, so `Includes<[boolean], true>` is `false`. Use the `distributeItem` option to compare by assignability.
 
@@ -99,7 +99,7 @@ export type Includes<
 	Array_ extends UnknownArray, Item,
 	Options extends IncludesOptions = {},
 > =
-	IsAnyOrNever<Array_> extends true ? Array_ // Handle any/never
+	IsAnyOrNever<Array_> extends true ? false // An `any` or `never` array is not known to include the item
 		// Keep inferred options so a constrained exact-comparison mode remains exact.
 		: ApplyDefaultOptions<
 			IncludesOptions,

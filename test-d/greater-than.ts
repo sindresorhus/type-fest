@@ -157,17 +157,17 @@ expectTypeOf<LessThan<-123_456_789_012_345_678_901_234_567_890n, -123_456_789_01
 expectTypeOf<GreaterThan<Tagged<5n, 'A'>, 3n>>().toBe<true>();
 expectTypeOf<GreaterThanOrEqual<3n, Tagged<3n, 'A'>>>().toBe<true>();
 
-// `never` is not a value, so there is nothing to compare.
-expectTypeOf<GreaterThan<never, 1n>>().toBe<never>();
+// `never` is not a value, so the comparison is `false`.
+expectTypeOf<GreaterThan<never, 1n>>().toBe<false>();
 
 // `any` could be any value, so the result is `boolean`, as with a `number`.
 expectTypeOf<GreaterThan<any, 1n>>().toBe<boolean>();
 expectTypeOf<GreaterThan<1n, any>>().toBe<boolean>();
 expectTypeOf<GreaterThan<any, any>>().toBe<boolean>();
-expectTypeOf<GreaterThan<never, number>>().toBe<never>();
-expectTypeOf<GreaterThan<number, never>>().toBe<never>();
-expectTypeOf<GreaterThan<never, any>>().toBe<never>();
-expectTypeOf<GreaterThan<any, never>>().toBe<never>();
+expectTypeOf<GreaterThan<never, number>>().toBe<false>();
+expectTypeOf<GreaterThan<number, never>>().toBe<false>();
+expectTypeOf<GreaterThan<never, any>>().toBe<false>();
+expectTypeOf<GreaterThan<any, never>>().toBe<false>();
 
 // A `bigint` against a `number` of `1e+21` and above is `boolean`, because the `number` is printed in exponential notation and cannot be compared digit by digit. A smaller exponent is still decided.
 expectTypeOf<GreaterThan<1_000_000_000_000_000_000_001n, 1e21>>().toBe<boolean>();
@@ -204,16 +204,16 @@ expectTypeOf<GreaterThan<ComparisonLimit.High, 5n>>().toBe<false>();
 expectTypeOf<GreaterThanOrEqual<5n, ComparisonLimit.High>>().toBe<true>();
 expectTypeOf<GreaterThan<ComparisonLimit.High, number>>().toBe<boolean>();
 expectTypeOf<GreaterThan<ComparisonLimit.High, any>>().toBe<boolean>();
-expectTypeOf<GreaterThan<ComparisonLimit.High, never>>().toBe<never>();
+expectTypeOf<GreaterThan<ComparisonLimit.High, never>>().toBe<false>();
 // @ts-expect-error - Only numeric values can be compared.
 type UnknownComparison = GreaterThan<unknown, ComparisonLimit.High>;
 // @ts-expect-error An unknown value is not a numeric operand.
 type UnknownRightComparison = GreaterThan<ComparisonLimit.High, unknown>;
 
-expectTypeOf<GreaterThan<never, never>>().toBe<never>();
-expectTypeOf<GreaterThanOrEqual<never, never>>().toBe<never>();
-expectTypeOf<LessThan<never, never>>().toBe<never>();
-expectTypeOf<LessThanOrEqual<never, never>>().toBe<never>();
+expectTypeOf<GreaterThan<never, never>>().toBe<false>();
+expectTypeOf<GreaterThanOrEqual<never, never>>().toBe<false>();
+expectTypeOf<LessThan<never, never>>().toBe<false>();
+expectTypeOf<LessThanOrEqual<never, never>>().toBe<false>();
 
 // Infinity comparisons distribute complete pairs before deciding the result.
 expectTypeOf<GreaterThan<0 | PositiveInfinity, -1>>().toBe<true>();
@@ -301,3 +301,12 @@ const comparisonFlags = {
 	equal: compareValues(0, 0n),
 } as const;
 expectTypeOf(comparisonFlags).toBe<{readonly above: true; readonly below: false; readonly equal: false}>();
+
+// Generic code that wraps the result and infers it back still resolves after instantiation, for either operand.
+type WrappedGreaterThanLeft<Left extends number> = [GreaterThan<Left, 1>] extends infer Result extends [boolean] ? ([true] extends Result ? 'yes' : 'no') : never;
+type WrappedGreaterThanRight<Right extends number> = [GreaterThan<2, Right>] extends infer Result extends [boolean] ? ([true] extends Result ? 'yes' : 'no') : never;
+expectTypeOf<WrappedGreaterThanLeft<2>>().toBe<'yes'>();
+expectTypeOf<WrappedGreaterThanLeft<1>>().toBe<'no'>();
+expectTypeOf<WrappedGreaterThanLeft<never>>().toBe<'no'>();
+expectTypeOf<WrappedGreaterThanRight<1>>().toBe<'yes'>();
+expectTypeOf<WrappedGreaterThanRight<never>>().toBe<'no'>();

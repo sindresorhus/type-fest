@@ -1,4 +1,5 @@
 import type {IsEqual} from './is-equal.d.ts';
+import type {IsAnyOrNever} from './internal/type.d.ts';
 
 declare const emptyObjectSymbol: unique symbol;
 
@@ -36,7 +37,7 @@ export type EmptyObject = {[emptyObjectSymbol]?: never};
 /**
 Returns a boolean for whether the type is strictly equal to an empty plain object, the `{}` value.
 
-Distributes over unions, returning `boolean` when members disagree. Returns `false` for `any` and `unknown`, and `never` for `never`.
+Distributes over unions, returning `boolean` when members disagree. Returns `false` for `any`, `unknown`, and `never`.
 
 @example
 ```
@@ -53,14 +54,17 @@ type Fail4 = IsEmptyObject<{[key: symbol]: number}>; //=> false
 @category Object
 */
 export type IsEmptyObject<T> =
-	T extends EmptyObject
-		// The broad `object` type also accepts nonempty objects.
-		? IsEqual<T, object> extends true
-			? false
-			// Any declared key or index signature beyond the private marker makes the object nonempty.
-			: [keyof T] extends [keyof EmptyObject]
-				? true
-				: false
-		: false;
+	// `any` is not known to be empty, and `never` is not an object. Checking `any` first also lets generic code that wraps the result keep resolving it after instantiation.
+	IsAnyOrNever<T> extends true
+		? false
+		: T extends EmptyObject
+			// The broad `object` type also accepts nonempty objects.
+			? IsEqual<T, object> extends true
+				? false
+				// Any declared key or index signature beyond the private marker makes the object nonempty.
+				: [keyof T] extends [keyof EmptyObject]
+					? true
+					: false
+			: false;
 
 export {};

@@ -1,11 +1,13 @@
+import type {IsAny} from './is-any.d.ts';
 import type {IsFloat} from './is-float.d.ts';
+import type {IsNever} from './is-never.d.ts';
 import type {IsNumericLiteral} from './is-numeric-literal.d.ts';
 import type {PositiveInfinity, NegativeInfinity} from './numeric.d.ts';
 
 /**
 Returns a boolean for whether the given number is an integer, like `-5`, `1.0`, or `100`.
 
-Checks union members separately, so mixed results return `boolean` and `never` returns `never`. Returns `boolean` for `any`, and `false` for `unknown` and the widened `number` type. The widened `bigint` type returns `true`, since every bigint is an integer.
+Checks union members separately, so mixed results return `boolean`. Returns `boolean` for `any`, and `false` for `never`, `unknown`, and the widened `number` type. The widened `bigint` type returns `true`, since every bigint is an integer.
 
 Use-case:
 - If you want to make a conditional branch based on the result of whether a number is an integer or not.
@@ -48,18 +50,23 @@ type J = IsInteger<1e-7>;
 @category Type Guard
 @category Numeric
 */
+// `any` is checked before `never`, so generic code that wraps the result keeps resolving it after instantiation.
 export type IsInteger<T> =
-	T extends bigint
-		? true
-		: T extends number
-			? IsFloat<T> extends true
-				? false
-				// A numeric enum member is a literal even though `number extends T` is `true` for it, so what separates it from the widened `number` is being a literal, which is the question `IsNumericLiteral` answers, brand included.
-				: IsNumericLiteral<T> extends true
-					? T extends PositiveInfinity | NegativeInfinity
+	IsAny<T> extends true
+		? boolean
+		: IsNever<T> extends true
+			? false
+			: T extends bigint
+				? true
+				: T extends number
+					? IsFloat<T> extends true
 						? false
-						: true
-					: false
-			: false;
+						// A numeric enum member is a literal even though `number extends T` is `true` for it, so what separates it from the widened `number` is being a literal, which is the question `IsNumericLiteral` answers, brand included.
+						: IsNumericLiteral<T> extends true
+							? T extends PositiveInfinity | NegativeInfinity
+								? false
+								: true
+							: false
+					: false;
 
 export {};

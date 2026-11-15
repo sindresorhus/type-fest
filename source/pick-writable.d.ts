@@ -41,7 +41,7 @@ Known limitations:
 @category Object
 */
 export type PickWritable<ObjectType extends object> =
-	IsAny<ObjectType> extends true ? ObjectType // `any` has every key, and none of them are readonly. `IsWritableKeyOf<any, Key>` is `never`, which would filter out every key below.
+	IsAny<ObjectType> extends true ? ObjectType // `any` has every key, and none of them are readonly, so it is kept as is. Mapping over `keyof any` below would turn it into an object with index signatures.
 		: {[Key in keyof ObjectType as // A mapped type over `keyof ObjectType` maps each member of a union by itself, and unlike a distributive conditional type, it keeps a generic `ObjectType` assignable to the result.
 			IsWritableKeyOf<ObjectType, Key> extends false
 				? never

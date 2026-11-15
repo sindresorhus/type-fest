@@ -85,23 +85,23 @@ expectTypeOf<GreaterThanOrEqual<bigint, PositiveInfinity>>().toBe<boolean>();
 expectTypeOf<GreaterThanOrEqual<NegativeInfinity, bigint>>().toBe<boolean>();
 expectTypeOf<GreaterThanOrEqual<bigint, NegativeInfinity>>().toBe<boolean>();
 
-// `any` could be any value, so the result is `boolean`, and `never` is not a value, so there is nothing to compare.
+// `any` could be any value, so the result is `boolean`, and `never` is not a value, so the comparison is `false`.
 expectTypeOf<GreaterThanOrEqual<any, 1n>>().toBe<boolean>();
 expectTypeOf<GreaterThanOrEqual<1n, any>>().toBe<boolean>();
 expectTypeOf<GreaterThanOrEqual<any, any>>().toBe<boolean>();
-expectTypeOf<GreaterThanOrEqual<never, 1n>>().toBe<never>();
+expectTypeOf<GreaterThanOrEqual<never, 1n>>().toBe<false>();
 
 // A union mixing `bigint` and `number` values is compared per member.
 expectTypeOf<GreaterThanOrEqual<5n | 5, 5>>().toBe<true>();
 expectTypeOf<GreaterThanOrEqual<5n | 6, 5n>>().toBe<true>();
 
 // An impossible operand supplies no value to compare, even beside an unknown numeric operand.
-expectTypeOf<GreaterThanOrEqual<never, number>>().toBe<never>();
-expectTypeOf<GreaterThanOrEqual<number, never>>().toBe<never>();
-expectTypeOf<GreaterThanOrEqual<never, bigint>>().toBe<never>();
-expectTypeOf<GreaterThanOrEqual<bigint, never>>().toBe<never>();
-expectTypeOf<GreaterThanOrEqual<never, any>>().toBe<never>();
-expectTypeOf<GreaterThanOrEqual<any, never>>().toBe<never>();
+expectTypeOf<GreaterThanOrEqual<never, number>>().toBe<false>();
+expectTypeOf<GreaterThanOrEqual<number, never>>().toBe<false>();
+expectTypeOf<GreaterThanOrEqual<never, bigint>>().toBe<false>();
+expectTypeOf<GreaterThanOrEqual<bigint, never>>().toBe<false>();
+expectTypeOf<GreaterThanOrEqual<never, any>>().toBe<false>();
+expectTypeOf<GreaterThanOrEqual<any, never>>().toBe<false>();
 // @ts-expect-error An unknown value is not a numeric operand.
 type UnknownGreaterOperand = GreaterThanOrEqual<unknown, 0>;
 // @ts-expect-error An unknown value is not a numeric operand.
@@ -110,3 +110,12 @@ type UnknownRightGreaterOperand = GreaterThanOrEqual<0, unknown>;
 function _readGreaterComparison<Left extends number | bigint, Right extends number | bigint>(value: GreaterThanOrEqual<Left, Right>): boolean {
 	return value;
 }
+
+// Generic code that wraps the result and infers it back still resolves after instantiation, for either operand.
+type WrappedGreaterThanOrEqualLeft<Left extends number> = [GreaterThanOrEqual<Left, 1>] extends infer Result extends [boolean] ? ([true] extends Result ? 'yes' : 'no') : never;
+type WrappedGreaterThanOrEqualRight<Right extends number> = [GreaterThanOrEqual<1, Right>] extends infer Result extends [boolean] ? ([true] extends Result ? 'yes' : 'no') : never;
+expectTypeOf<WrappedGreaterThanOrEqualLeft<1>>().toBe<'yes'>();
+expectTypeOf<WrappedGreaterThanOrEqualLeft<0>>().toBe<'no'>();
+expectTypeOf<WrappedGreaterThanOrEqualLeft<never>>().toBe<'no'>();
+expectTypeOf<WrappedGreaterThanOrEqualRight<1>>().toBe<'yes'>();
+expectTypeOf<WrappedGreaterThanOrEqualRight<never>>().toBe<'no'>();

@@ -6,7 +6,7 @@ Returns a boolean for whether the given key is a required key of type.
 
 This is useful when writing utility types or schema validators that need to differentiate `required` keys.
 
-Distributes over object and key unions, returning `boolean` when results differ. Returns `never` when either input is `any` or `never`; `unknown` is not accepted.
+Distributes over object and key unions, returning `boolean` when results differ. Returns `false` when either input is `never`. Otherwise, returns `true` for an `any` object, because `any` has every key and all of them are required, like `RequiredKeysOf<any>` is `PropertyKey`, and `boolean` for an `any` key. `unknown` is not accepted.
 
 @example
 ```
@@ -44,13 +44,16 @@ type T5 = IsRequiredKeyOf<User | Admin, 'surname'>;
 @category Utilities
 */
 export type IsRequiredKeyOf<Type extends object, Key extends KeysOfUnion<Type>> =
-	IsAny<Type | Key> extends true ? never
-		: Type extends unknown
-			? Key extends keyof Type
-				? Type extends Record<Key, Type[Key]>
-					? true
+	// `any` is checked before `never`, so generic code that wraps the result keeps resolving it after instantiation. `any` has every key, and all of them are required.
+	IsAny<Type | Key> extends true
+		? [Type, Key] extends [never, unknown] | [unknown, never] ? false : IsAny<Type> extends true ? true : boolean
+		: [Type, Key] extends [never, unknown] | [unknown, never] ? false
+			: Type extends unknown
+				? Key extends keyof Type
+					? Type extends Record<Key, Type[Key]>
+						? true
+						: false
 					: false
-				: false
-			: never;
+				: never;
 
 export {};

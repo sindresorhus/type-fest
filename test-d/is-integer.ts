@@ -55,7 +55,7 @@ expectTypeOf<IsInteger<1.5 | -2.5 | 1e-7>>().toBe<false>();
 expectTypeOf<IsInteger<1 | 1.5>>().toBe<boolean>();
 expectTypeOf<IsInteger<unknown>>().toBe<false>();
 expectTypeOf<IsInteger<any>>().toBe<boolean>();
-expectTypeOf<IsInteger<never>>().toBe<never>();
+expectTypeOf<IsInteger<never>>().toBe<false>();
 expectTypeOf<IsInteger<'42' | {value: 1}>>().toBe<false>();
 
 function _readIntegerResult<Value>(result: IsInteger<Value>): boolean {
@@ -89,6 +89,14 @@ expectTypeOf<IsInteger<Opaque<'42', 'Text'>>>().toBe<false>();
 expectTypeOf<IsInteger<1 | 1.5 | Date>>().toBe<boolean>();
 expectTypeOf<IsInteger<bigint | number>>().toBe<boolean>();
 
-function _readBigintInteger<Value extends bigint>(value: IsInteger<Value>): true {
+// A generic bigint can still be `any` or `never`, so the result is not known to be `true`.
+function _readBigintInteger<Value extends bigint>(value: IsInteger<Value>): boolean {
 	return value;
 }
+
+// Generic code that wraps the result and infers it back still resolves after instantiation.
+type WrappedIsInteger<Value> = [IsInteger<Value>] extends infer Result extends [boolean] ? ([true] extends Result ? 'integer' : 'other') : never;
+expectTypeOf<WrappedIsInteger<1>>().toBe<'integer'>();
+expectTypeOf<WrappedIsInteger<1n>>().toBe<'integer'>();
+expectTypeOf<WrappedIsInteger<1.5>>().toBe<'other'>();
+expectTypeOf<WrappedIsInteger<never>>().toBe<'other'>();

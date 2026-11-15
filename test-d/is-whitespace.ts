@@ -43,7 +43,7 @@ expectTypeOf<IsWhitespace<' \u{200B} '>>().toBe<false>();
 expectTypeOf<IsWhitespace<' \t' | 'ready'>>().toBe<boolean>();
 expectTypeOf<IsWhitespace<string>>().toBe<boolean>();
 expectTypeOf<IsWhitespace<any>>().toBe<boolean>();
-expectTypeOf<IsWhitespace<never>>().toBe<never>();
+expectTypeOf<IsWhitespace<never>>().toBe<false>();
 // @ts-expect-error Whitespace classification requires a string.
 type UnknownWhitespace = IsWhitespace<unknown>;
 
@@ -120,7 +120,7 @@ expectTypeOf<IsWhitespace<Tagged<Tagged<'\t\n', 'Text'>, 'Validated'>>>().toBe<t
 expectTypeOf<IsWhitespace<Tagged<' ' | '', 'Text'>>>().toBe<boolean>();
 expectTypeOf<IsWhitespace<Tagged<'\t', 'Text'> | '\n'>>().toBe<true>();
 expectTypeOf<IsWhitespace<Tagged<'\t', 'Text'> | 'text'>>().toBe<boolean>();
-expectTypeOf<IsWhitespace<Tagged<never, 'Text'>>>().toBe<never>();
+expectTypeOf<IsWhitespace<Tagged<never, 'Text'>>>().toBe<false>();
 
 // `Tagged`, `Opaque`, and `Flavor` all classify by the underlying string.
 expectTypeOf<IsWhitespace<Flavor<' \t', 'Indentation'>>>().toBe<true>();
@@ -242,7 +242,7 @@ expectTypeOf<IsWhitespace<`\t${boolean}\n`>>().toBe<false>();
 expectTypeOf<IsWhitespace<`${boolean}`>>().toBe<false>();
 expectTypeOf<IsWhitespace<`\t${0 | 1}\n`>>().toBe<false>();
 expectTypeOf<IsWhitespace<`${WhitespaceCharacter}${'' | 'x'}`>>().toBe<boolean>();
-expectTypeOf<IsWhitespace<`${never}`>>().toBe<never>();
+expectTypeOf<IsWhitespace<`${never}`>>().toBe<false>();
 
 // Finite template literal unions expand to literal unions and classify each expansion.
 expectTypeOf<IsWhitespace<` ${' ' | '\t'}`>>().toBe<true>();
@@ -252,8 +252,8 @@ expectTypeOf<IsWhitespace<` ${'' | 'x'}`>>().toBe<boolean>();
 expectTypeOf<IsWhitespace<`\t${WhitespaceCharacter}`>>().toBe<true>();
 expectTypeOf<IsWhitespace<`\t${WhitespaceCharacter | 'x'}`>>().toBe<boolean>();
 expectTypeOf<IsWhitespace<`${WhitespaceCharacter}${'\u{200B}' | ''}`>>().toBe<boolean>();
-expectTypeOf<IsWhitespace<` ${never}`>>().toBe<never>();
-expectTypeOf<IsWhitespace<`${never} `>>().toBe<never>();
+expectTypeOf<IsWhitespace<` ${never}`>>().toBe<false>();
+expectTypeOf<IsWhitespace<`${never} `>>().toBe<false>();
 expectTypeOf<IsWhitespace<`${null | undefined}`>>().toBe<false>();
 expectTypeOf<IsWhitespace<`${' ' | 0}`>>().toBe<boolean>();
 
@@ -336,3 +336,9 @@ type BigintInput = IsWhitespace<1n>;
 type ObjectInput = IsWhitespace<{}>;
 // @ts-expect-error Arrays are not strings.
 type ArrayInput = IsWhitespace<string[]>;
+
+// Generic code that wraps the result and infers it back still resolves after instantiation.
+type WrappedIsWhitespace<Value extends string> = [IsWhitespace<Value>] extends infer Result extends [boolean] ? ([true] extends Result ? 'whitespace' : 'other') : never;
+expectTypeOf<WrappedIsWhitespace<' \t'>>().toBe<'whitespace'>();
+expectTypeOf<WrappedIsWhitespace<'text'>>().toBe<'other'>();
+expectTypeOf<WrappedIsWhitespace<never>>().toBe<'other'>();

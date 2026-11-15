@@ -1,4 +1,6 @@
 import type {UnwrapBrandedPrimitive} from './unwrap-branded-primitive.d.ts';
+import type {IsAny} from './is-any.d.ts';
+import type {IsNever} from './is-never.d.ts';
 import type {IsStringLiteral} from './is-string-literal.d.ts';
 
 /**
@@ -8,7 +10,7 @@ Useful for validating character sets or repeated substrings. Matching is case-se
 
 A union of literal patterns allows mixing its members, and overlapping patterns match if any complete segmentation succeeds. Input unions distribute: `true` when every member matches, `false` when none does, and `boolean` when they disagree.
 
-A `never` input returns `never`, and an empty input returns `true` for every pattern. For a non-empty literal input, empty pattern members are ignored and a `never` pattern returns `false`. A non-literal input or pattern, including `any` or a pattern union with a non-literal member, returns `boolean` unless the input is empty or `never`.
+A `never` input returns `false`, and an empty input returns `true` for every pattern. For a non-empty literal input, empty pattern members are ignored and a `never` pattern returns `false`. A non-literal input or pattern, including `any` or a pattern union with a non-literal member, returns `boolean` unless the input is empty or `never`.
 
 @example
 ```
@@ -54,16 +56,23 @@ It removes matching prefixes recursively, keeping every possible remainder so an
 */
 export type ConsistsOnlyOf<Value extends string, Pattern extends string> = _ConsistsOnlyOf<Value extends object ? UnwrapBrandedPrimitive<Value> : Value, Pattern extends object ? UnwrapBrandedPrimitive<Pattern> : Pattern>;
 
-type _ConsistsOnlyOf<Value extends string, Pattern extends string> = Value extends ''
-	? true
-	: IsStringLiteral<Value> extends true
-		? [Pattern] extends [never]
-			? false
-			: IsStringLiteral<Pattern> extends true
-				// An empty pattern member consumes no characters, so leave it out before recurring.
-				? ConsistsOnlyOfLiteral<Value, Exclude<Pattern, ''>>
-				: boolean
-		: boolean;
+// Each operand is checked for `any` before `never`, so generic code that wraps the result keeps resolving it after instantiation.
+type _ConsistsOnlyOf<Value extends string, Pattern extends string> = IsAny<Value> extends true
+	? boolean
+	: IsNever<Value> extends true
+		? false
+		: Value extends ''
+			? true
+			: IsStringLiteral<Value> extends true
+				? IsAny<Pattern> extends true
+					? boolean
+					: IsNever<Pattern> extends true
+						? false
+						: IsStringLiteral<Pattern> extends true
+							// An empty pattern member consumes no characters, so leave it out before recurring.
+							? ConsistsOnlyOfLiteral<Value, Exclude<Pattern, ''>>
+							: boolean
+				: boolean;
 
 // Keep alternative remainders together so any complete segmentation succeeds, without branching the recursion.
 type ConsistsOnlyOfLiteral<Value extends string, Pattern extends string> = [Value] extends [never]

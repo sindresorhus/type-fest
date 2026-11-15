@@ -113,17 +113,18 @@ expectTypeOf<IsWritableKeyOf<A, 'b' | 'x'>>().toBe<false>(); // 'x' is not in A,
 
 // `never` / `any`
 type L = {readonly a: string};
-expectTypeOf(never).toBe<IsWritableKeyOf<K, any>>();
-expectTypeOf(never).toBe<IsWritableKeyOf<any, any>>();
-expectTypeOf(never).toBe<IsWritableKeyOf<any, 'a'>>();
-expectTypeOf(never).toBe<IsWritableKeyOf<K, never>>();
-expectTypeOf(never).toBe<IsWritableKeyOf<any, never>>();
-expectTypeOf(never).toBe<IsWritableKeyOf<never, 'a'>>();
-expectTypeOf(never).toBe<IsWritableKeyOf<never, 'a' | 'b'>>();
-expectTypeOf(never).toBe<IsWritableKeyOf<never, string>>();
+expectTypeOf<IsWritableKeyOf<K, any>>().toBe<boolean>();
+expectTypeOf<IsWritableKeyOf<any, any>>().toBe<true>();
+expectTypeOf<IsWritableKeyOf<any, 'a'>>().toBe<true>();
+expectTypeOf<IsWritableKeyOf<K, never>>().toBe<false>();
+expectTypeOf<IsWritableKeyOf<any, never>>().toBe<false>();
+expectTypeOf<IsWritableKeyOf<never, 'a'>>().toBe<false>();
+expectTypeOf<IsWritableKeyOf<never, any>>().toBe<false>();
+expectTypeOf<IsWritableKeyOf<never, 'a' | 'b'>>().toBe<false>();
+expectTypeOf<IsWritableKeyOf<never, string>>().toBe<false>();
 
-// An empty key selection stays impossible even before its object type is known.
-function _readEmptyWritableKeys<Value extends object>(value: IsWritableKeyOf<Value, never>): never {
+// An empty key selection is `false` even before its object type is known.
+function _readEmptyWritableKeys<Value extends object>(value: IsWritableKeyOf<Value, never>): false {
 	return value;
 }
 
@@ -132,3 +133,12 @@ type UnknownObject = IsWritableKeyOf<unknown, never>;
 
 // @ts-expect-error An unknown key is not known to belong to the object.
 type UnknownKey = IsWritableKeyOf<{value: string}, unknown>;
+
+// Generic code that wraps the result and infers it back still resolves after instantiation, for either input.
+type WrappedShape = {a: 1; b?: 2; readonly c: 3};
+type WrappedIsWritableKeyOfKey<Key extends keyof WrappedShape> = [IsWritableKeyOf<WrappedShape, Key>] extends infer Result extends [boolean] ? ([true] extends Result ? 'yes' : 'no') : never;
+type WrappedIsWritableKeyOfType<Type extends {c: 3}> = [IsWritableKeyOf<Type, 'c'>] extends infer Result extends [boolean] ? ([true] extends Result ? 'yes' : 'no') : never;
+expectTypeOf<WrappedIsWritableKeyOfKey<'a'>>().toBe<'yes'>();
+expectTypeOf<WrappedIsWritableKeyOfKey<'c'>>().toBe<'no'>();
+expectTypeOf<WrappedIsWritableKeyOfKey<never>>().toBe<'no'>();
+expectTypeOf<WrappedIsWritableKeyOfType<{c: 3}>>().toBe<'yes'>();

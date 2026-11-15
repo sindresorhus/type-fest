@@ -2,11 +2,12 @@ import type {PositiveNumericStringGt} from './internal/index.d.ts';
 import type {PositiveInfinity, NegativeInfinity, IsNegative, _Numeric} from './numeric.d.ts';
 import type {Absolute} from './absolute.d.ts';
 import type {UnwrapBrandedPrimitive} from './unwrap-branded-primitive.d.ts';
+import type {IsAny} from './is-any.d.ts';
 
 /**
 Returns a boolean for whether a given number is greater than another number.
 
-Distributes over both operands; mixed results return `boolean`. A `never` operand returns `never`. Otherwise, an `any` operand returns `boolean`. Only numeric operands are accepted.
+Distributes over both operands; mixed results return `boolean`. A `never` operand returns `false`. Otherwise, an `any` operand returns `boolean`. Only numeric operands are accepted.
 
 @example
 ```
@@ -66,7 +67,11 @@ setPositive(-1);
 ```
 */
 export type GreaterThan<A extends _Numeric, B extends _Numeric> =
-	_GreaterThan<A extends object ? UnwrapBrandedPrimitive<A> : A, B extends object ? UnwrapBrandedPrimitive<B> : B>;
+	// `any` is checked before `never`, so generic code that wraps the result keeps resolving it after instantiation. A `never` operand would otherwise make the distribution below return `never`.
+	IsAny<A | B> extends true
+		? [A, B] extends [never, unknown] | [unknown, never] ? false : boolean
+		: [A, B] extends [never, unknown] | [unknown, never] ? false
+			: _GreaterThan<A extends object ? UnwrapBrandedPrimitive<A> : A, B extends object ? UnwrapBrandedPrimitive<B> : B>;
 
 // Numeric enum members accept `number`, but their printed types still identify their known values.
 type _GreaterThan<A extends _Numeric, B extends _Numeric> =
