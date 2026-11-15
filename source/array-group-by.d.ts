@@ -1,5 +1,5 @@
 import type {MatchingKey} from './matching-key.d.ts';
-import type {DeduplicatedKeys} from './internal/keys.d.ts';
+import type {DeduplicatedKeys, WithKeyAliases} from './internal/keys.d.ts';
 import type {IfNotAnyOrNever} from './internal/type.d.ts';
 import type {IsLiteral} from './is-literal.d.ts';
 import type {IsUnion} from './is-union.d.ts';
@@ -11,7 +11,7 @@ Use-cases:
 - Group static route or command definitions by their kind.
 - Keep the contents and length of each group as a tuple.
 
-The input must be a fixed tuple of required elements. Arrays and rest tuples give `never`; optional tuple elements are not accepted. Tuples intersected with brands or extra properties are unsupported. Every element must have the selected property, holding one literal property key. Missing, optional, union-valued, and non-literal group properties give `never`. Branded group values are unsupported.
+The input must be a fixed tuple of required elements. Arrays and rest tuples give `never`; optional tuple elements are not accepted. Tuples intersected with brands or extra properties are unsupported. The selected property must be a key of every element, so a misspelled or missing key is a compile error. It must hold one literal property key. Optional, union-valued, and non-literal group properties give `never`. Branded group values are unsupported.
 
 Groups are required and preserve the input's readonly modifier. The resulting record is mutable. Numeric and string forms of the selected property and group values are resolved with TypeScript's key rules, so `0` and `'0'` belong to the same group.
 
@@ -35,7 +35,7 @@ The group keys are mapped once, and each group collects its items in input order
 
 @category Array
 */
-export type ArrayGroupBy<Items extends readonly object[], Key extends PropertyKey> = IfNotAnyOrNever<Items, {
+export type ArrayGroupBy<Items extends readonly object[], Key extends keyof Items[number] | keyof WithKeyAliases<Items[number]>> = IfNotAnyOrNever<Items, {
 	ifNot: Items extends unknown
 		? Key extends unknown
 			? HasGroupKeys<Items, Key> extends true

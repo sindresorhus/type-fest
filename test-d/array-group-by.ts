@@ -36,7 +36,8 @@ expectTypeOf<ArrayGroupBy<[{kind: 'a'; value: 1} | {kind: 'a'; value: 2}], 'kind
 expectTypeOf<ArrayGroupBy<[{kind: string}], 'kind'>>().toBe<never>();
 expectTypeOf<ArrayGroupBy<[{kind: boolean}], 'kind'>>().toBe<never>();
 expectTypeOf<ArrayGroupBy<[{kind?: 'a'}], 'kind'>>().toBe<never>();
-expectTypeOf<ArrayGroupBy<[{}], 'kind'>>().toBe<never>();
+// @ts-expect-error The selected property must be a key of the elements.
+type EmptyItemKey = ArrayGroupBy<[{}], 'kind'>;
 expectTypeOf<ArrayGroupBy<[{kind: any}], 'kind'>>().toBe<never>();
 expectTypeOf<ArrayGroupBy<[{kind: never}], 'kind'>>().toBe<never>();
 expectTypeOf<ArrayGroupBy<[{kind: unknown}], 'kind'>>().toBe<never>();
@@ -109,13 +110,16 @@ expectTypeOf<ArrayGroupBy<[Item, Item], 'kind'>>().toBe<{item: [Item, Item]}>();
 
 // Unions of keys distribute.
 expectTypeOf<ArrayGroupBy<[{a: 'x'; b: 'y'}], 'a' | 'b'>>().toBe<{x: [{a: 'x'; b: 'y'}]} | {y: [{a: 'x'; b: 'y'}]}>();
-expectTypeOf<ArrayGroupBy<[{a: 'x'}], 'a' | 'missing'>>().toBe<{x: [{a: 'x'}]}>();
+// @ts-expect-error Every key in a union must be a key of the elements.
+type PartlyMissingKey = ArrayGroupBy<[{a: 'x'}], 'a' | 'missing'>;
 expectTypeOf<ArrayGroupBy<[{a: 'x'}], never>>().toBe<never>();
 
 // Every element must have one literal group value.
-expectTypeOf<ArrayGroupBy<[{kind: 'a'}, {}], 'kind'>>().toBe<never>();
+// @ts-expect-error The selected property must be a key of every element.
+type MissingItemKey = ArrayGroupBy<[{kind: 'a'}, {}], 'kind'>;
 expectTypeOf<ArrayGroupBy<[{kind: 'a'}, {kind: 'a' | 'b'}], 'kind'>>().toBe<never>();
-expectTypeOf<ArrayGroupBy<[{kind: 'a'}], 'missing'>>().toBe<never>();
+// @ts-expect-error A misspelled key is rejected instead of giving `never`.
+type MisspelledKey = ArrayGroupBy<Routes, 'methd'>;
 expectTypeOf<ArrayGroupBy<[{kind: number}], 'kind'>>().toBe<never>();
 expectTypeOf<ArrayGroupBy<[{kind: symbol}], 'kind'>>().toBe<never>();
 expectTypeOf<ArrayGroupBy<[{kind: `item-${string}`}], 'kind'>>().toBe<never>();

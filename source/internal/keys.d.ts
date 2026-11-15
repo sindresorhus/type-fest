@@ -123,4 +123,11 @@ export type KeySelector<Key> =
 				: Key | KeyToString<Key & string>
 		: never;
 
+/**
+Adds numeric key aliases to each element before finding the common keys of their union.
+*/
+export type WithKeyAliases<Item extends object> = Item extends unknown
+	? {[Key in keyof Item | `${keyof Item & number}` | MatchingKey<Record<number, unknown>, keyof Item & string>]: unknown}
+	: never;
+
 export {};
