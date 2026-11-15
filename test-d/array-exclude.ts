@@ -1,5 +1,5 @@
 import {expectTypeOf} from 'nz';
-import type {ArrayExclude} from '../index.d.ts';
+import type {ArrayExclude, IndexTuple, TupleOf} from '../index.d.ts';
 
 // Removing values does not change whether the remaining tuple positions are optional.
 expectTypeOf<ArrayExclude<readonly ['remove', 1, 'remove'?, (2 | undefined)?], string>>().toBe<readonly [1, (2 | undefined)?]>();
@@ -115,8 +115,20 @@ expectTypeOf<ArrayExclude<never, 1>>().toBe<never>();
 expectTypeOf<ArrayExclude<string[], unknown>>().toBe<[]>();
 
 // Long tuples
-type Range<Length extends number, Accumulator extends number[] = []> = Accumulator['length'] extends Length ? Accumulator : Range<Length, [...Accumulator, Accumulator['length']]>;
-expectTypeOf<ArrayExclude<Range<500>, 0 | 1>['length']>().toBe<498>();
+expectTypeOf<ArrayExclude<IndexTuple<TupleOf<500>>, 0 | 1>['length']>().toBe<498>();
+
+// Required batches retain order and narrow each element independently.
+expectTypeOf<ArrayExclude<[any, unknown, never, 1 | string, 2], string>>().toBe<[any, unknown, 1, 2]>();
+expectTypeOf<ArrayExclude<readonly [0, 0, 0, 0, 0, 6], 0>>().toBe<readonly [6]>();
+expectTypeOf<ArrayExclude<readonly [0, 1, 0, 2, 0, (3 | undefined)?, ...Array<0 | string>], 0 | undefined>>().toBe<readonly [1, 2, 3?, ...string[]]>();
+expectTypeOf<ArrayExclude<[...Array<0 | string>, 0, 1, 0, 2, 0], 0>>().toBe<[...string[], 1, 2]>();
+
+function makeRetainedBatch<const Value>(value: Value): ArrayExclude<readonly [number, {value: Value}, number, {value: Value}, number], number> {
+	return [{value}, {value}];
+}
+
+const retainedBatch = makeRetainedBatch({id: 'kept'});
+expectTypeOf(retainedBatch[1].value).toBe<{readonly id: 'kept'}>();
 
 // Generic arrays
 function _generic<ArrayType extends unknown[], ExcludeType>(array: ArrayExclude<ArrayType, ExcludeType>) {

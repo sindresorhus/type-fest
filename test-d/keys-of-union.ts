@@ -1,5 +1,5 @@
 import {expectTypeOf} from 'nz';
-import type {KeysOfUnion, UnknownRecord} from '../index.d.ts';
+import type {KeysOfUnion, TupleOf, UnknownRecord} from '../index.d.ts';
 
 // When passing types that are not unions, it behaves exactly as the `keyof` operator.
 
@@ -138,3 +138,11 @@ function _readUnionKey<Value>(value: Value, key: KeysOfUnion<Value>) {
 declare function collectKeys<Value>(value: Value): Array<KeysOfUnion<Value>>;
 declare const response: Response;
 expectTypeOf(collectKeys(response)).toBe<Array<'status' | 'value' | 'error' | 'metadata'>>();
+
+// Large discriminated unions retain every exclusive key.
+type MemberIndexes = Extract<keyof TupleOf<100>, `${number}`>;
+type LargeUnion = {
+	[Index in MemberIndexes]: {kind: Index} & Record<`field${Index}`, unknown>;
+}[MemberIndexes];
+expectTypeOf<KeysOfUnion<LargeUnion>>().toBe<'kind' | `field${MemberIndexes}`>();
+expectTypeOf<'missing'>().not.toBeAssignableTo<KeysOfUnion<LargeUnion>>();

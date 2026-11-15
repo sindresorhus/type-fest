@@ -74,6 +74,17 @@ expectTypeOf<ArrayUnique<[1, 1] | string[]>>().toBe<[1] | string[]>();
 expectTypeOf<ArrayUnique<TupleOf<500, 'a'>>>().toBe<['a']>();
 expectTypeOf<ArrayUnique<[...TupleOf<100, 'a'>, 'b', ...TupleOf<100, 'a'>, 'c']>>().toBe<['a', 'b', 'c']>();
 
+// Batches skip only exact adjacent duplicates, preserving distinct types within them.
+expectTypeOf<ArrayUnique<[0, 0, 0, any, 0, 0]>>().toBe<[0, any]>();
+expectTypeOf<ArrayUnique<[never, never, unknown, never, never, never]>>().toBe<[never, unknown]>();
+expectTypeOf<ArrayUnique<[1 | 2, 1 | 2, 1, 1 | 2, 1 | 2, 1 | 2]>>().toBe<[1 | 2, 1]>();
+expectTypeOf<ArrayUnique<[...TupleOf<5, any>, ...TupleOf<5, never>, ...TupleOf<5, unknown>]>>().toBe<[any, never, unknown]>();
+expectTypeOf<ArrayUnique<readonly [1, 1, 1, 1, 1, 2]>>().toBe<readonly [1, 2]>();
+
+function _readUniqueValue<Value>(values: ArrayUnique<readonly [...TupleOf<5, {value: Value}>, 'last']>): Value {
+	return values[0].value;
+}
+
 // Assignability.
 expectTypeOf<['id', 'name']>().toBeAssignableTo<ArrayUnique<readonly ['id', 'name', 'id']>>();
 expectTypeOf<ArrayUnique<readonly ['id', 'name', 'id']>>().not.toBeAssignableTo<['id', 'name']>();

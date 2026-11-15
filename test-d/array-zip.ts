@@ -1,5 +1,5 @@
 import {expectTypeOf} from 'nz';
-import type {ArrayZip, TupleOf} from '../index.d.ts';
+import type {ArrayZip, IndexTuple, TupleOf} from '../index.d.ts';
 
 expectTypeOf<ArrayZip<['name', 'age'], [string, number]>>().toBe<[['name', string], ['age', number]]>();
 expectTypeOf<ArrayZip<[1, 2, 3], ['a', 'b']>>().toBe<[[1, 'a'], [2, 'b']]>();
@@ -80,6 +80,21 @@ expectTypeOf<ArrayZip<[1] | number[], ['a']>>().toBe<[[1, 'a']] | Array<[number,
 expectTypeOf<ArrayZip<TupleOf<200, 1>, TupleOf<200, 'a'>>['length']>().toBe<200>();
 expectTypeOf<ArrayZip<TupleOf<200, 1>, TupleOf<150, 'a'>>['length']>().toBe<150>();
 expectTypeOf<ArrayZip<TupleOf<200, 1>, TupleOf<200, 'a'>>[199]>().toBe<[1, 'a']>();
+
+// Long positional tuples preserve pair order whichever input is shorter.
+type Positions = IndexTuple<TupleOf<500>>;
+type ShorterFirst = ArrayZip<TupleOf<300, 'field'>, Readonly<Positions>>;
+type ShorterSecond = ArrayZip<Positions, TupleOf<300, 'type'>>;
+expectTypeOf<ShorterFirst['length']>().toBe<300>();
+expectTypeOf<ShorterFirst[0]>().toBe<readonly ['field', 0]>();
+expectTypeOf<ShorterFirst[299]>().toBe<readonly ['field', 299]>();
+expectTypeOf<ShorterSecond['length']>().toBe<300>();
+expectTypeOf<ShorterSecond[0]>().toBe<[0, 'type']>();
+expectTypeOf<ShorterSecond[299]>().toBe<[299, 'type']>();
+
+function _readZippedValue<Value>(pairs: ArrayZip<readonly [{value: Value}, 1], ['name']>): Value {
+	return pairs[0][0].value;
+}
 
 // Assignability.
 expectTypeOf<[[1, 'a']]>().toBeAssignableTo<ArrayZip<readonly [1], ['a']>>();

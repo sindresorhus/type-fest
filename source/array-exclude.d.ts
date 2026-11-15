@@ -52,20 +52,30 @@ type _ArrayExclude<
 > =
 	'0' extends keyof TArray
 		// Enters this branch, if `TArray` starts with a non-rest element (e.g., `[string, number]` or `[string, ...number[]]`).
-		? TArray extends readonly [(infer First)?, ...infer Rest]
-			// Optional inference preserves explicitly declared `undefined`.
-			? Exclude<First, TExclude> extends infer Element
-				// Box the result so `never` is tested without distributing. Check optionality only for elements that remain.
-				? _ArrayExclude<Rest, TExclude,
-					[Element] extends [never]
-						? BeforeRestAcc
-						// A tuple allows fewer than one element only when its first element is optional.
-						: TArray extends readonly [unknown, ...unknown[]]
-							? [...BeforeRestAcc, Element]
-							: [...BeforeRestAcc, Element?],
-					AfterRestAcc>
-				: never // Should never happen
-			: never // Should never happen, since `readonly [(infer First)?, ...infer Rest]` is a top-type for arrays.
+		? TArray extends readonly [infer First, infer Second, infer Third, infer Fourth, infer Fifth, ...infer Rest]
+			// Filter five required positions together to reduce tuple slicing and accumulator copies.
+			? _ArrayExclude<Rest, TExclude, [
+				...BeforeRestAcc,
+				...ExcludeElement<First, TExclude>,
+				...ExcludeElement<Second, TExclude>,
+				...ExcludeElement<Third, TExclude>,
+				...ExcludeElement<Fourth, TExclude>,
+				...ExcludeElement<Fifth, TExclude>,
+			], AfterRestAcc>
+			: TArray extends readonly [(infer First)?, ...infer Rest]
+				// Optional inference preserves explicitly declared `undefined`.
+				? Exclude<First, TExclude> extends infer Element
+					// Box the result so `never` is tested without distributing. Check optionality only for elements that remain.
+					? _ArrayExclude<Rest, TExclude,
+						[Element] extends [never]
+							? BeforeRestAcc
+							// A tuple allows fewer than one element only when its first element is optional.
+							: TArray extends readonly [unknown, ...unknown[]]
+								? [...BeforeRestAcc, Element]
+								: [...BeforeRestAcc, Element?],
+						AfterRestAcc>
+					: never // Should never happen
+				: never // Should never happen, since `readonly [(infer First)?, ...infer Rest]` is a top-type for arrays.
 		// Enters this branch, if `TArray` is empty (e.g., `[]`), has no fixed length (e.g., `string[]`),
 		// or contains no non-rest elements preceding the rest element (e.g., `[...string[], string]`).
 		: TArray extends readonly [...infer Rest, infer Last]
@@ -75,5 +85,10 @@ type _ArrayExclude<
 			: Exclude<TArray[number], TExclude> extends infer Element // Add the rest element between the accumulated elements.
 				? [...BeforeRestAcc, ...([Element] extends [never] ? [] : Element[]), ...AfterRestAcc]
 				: never; // Should never happen
+
+/**
+Keeps a required tuple position after exclusion, or removes the position when its remaining type is `never`.
+*/
+type ExcludeElement<Element, ExcludeType> = [Exclude<Element, ExcludeType>] extends [never] ? [] : [Exclude<Element, ExcludeType>];
 
 export {};

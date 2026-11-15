@@ -161,8 +161,16 @@ type _ArrayTrimStart<Array_ extends UnknownArray, Item, Options extends Required
 	'0' extends keyof Array_
 		// The array starts with a required or optional element.
 		? Array_ extends readonly [(infer First)?, ...infer Rest]
+			// Check the boundary first so a known mismatch does not wait for later generic elements.
 			? Matches<First, Item, Options> extends true
-				? _ArrayTrimStart<Rest, Item, Options>
+				? _ArrayTrimStart<
+					// Drop four more required elements at once when each matches, reducing intermediate tuple types.
+					Rest extends [infer Second, infer Third, infer Fourth, infer Fifth, ...infer Remaining]
+						? Matches<[Second, Third, Fourth, Fifth], [Item, Item, Item, Item], Options> extends true ? Remaining : Rest
+						: Rest,
+					Item,
+					Options
+				>
 				: Array_
 			: never // Should never happen
 		// The array is empty, or starts with a rest element, so there is no fixed prefix to retain.
@@ -177,8 +185,16 @@ type _ArrayTrimStart<Array_ extends UnknownArray, Item, Options extends Required
 type _ArrayTrimEnd<Array_ extends UnknownArray, Item, Options extends Required<ArrayTrimOptions>> =
 	Array_ extends readonly [...infer Rest, infer Last]
 		// The array ends with a required element.
+		// Check the boundary first so a known mismatch does not wait for earlier generic elements.
 		? Matches<Last, Item, Options> extends true
-			? _ArrayTrimEnd<Rest, Item, Options>
+			? _ArrayTrimEnd<
+				// Drop four more required elements at once when each matches, reducing intermediate tuple types.
+				Rest extends [...infer Remaining, infer First, infer Second, infer Third, infer Fourth]
+					? Matches<[First, Second, Third, Fourth], [Item, Item, Item, Item], Options> extends true ? Remaining : Rest
+					: Rest,
+				Item,
+				Options
+			>
 			: Array_
 		: Array_ extends readonly []
 			? Array_

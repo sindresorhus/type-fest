@@ -28,7 +28,7 @@ type Empty = ArrayChunk<[], 2>;
 //=> []
 ```
 
-Elements accumulate in a chunk, which is appended to the result as soon as its length reaches the requested size.
+For fixed tuples, a size of one wraps each element directly. Larger sizes accumulate elements in a chunk, which is appended to the result as soon as its length reaches the requested size.
 
 @category Array
 */
@@ -49,14 +49,16 @@ export type ArrayChunk<ArrayType extends UnknownArray, Size extends number> = If
 /**
 Builds fixed chunks, or widens arrays whose length is not known.
 
-Each step consumes one element and closes the chunk as soon as it is full, so the recursion depth matches the array length.
+A size of one maps positions directly to avoid repeated tuple slicing and accumulator copies. For larger sizes, each step consumes one element and closes the chunk as soon as it is full, so the recursion depth matches the array length.
 */
 type Chunk<ArrayType extends UnknownArray, Size extends number, Current extends unknown[] = [], Result extends unknown[] = []> = number extends ArrayType['length']
 	? Array<Array<ArrayType[number]>>
-	: ArrayType extends readonly [infer First, ...infer Rest]
-		? [...Current, First]['length'] extends Size
-			? Chunk<Rest, Size, [], [...Result, [...Current, First]]>
-			: Chunk<Rest, Size, [...Current, First], Result>
-		: Current extends [] ? Result : [...Result, Current];
+	: Size extends 1
+		? {-readonly [Index in keyof ArrayType]: [ArrayType[Index]]}
+		: ArrayType extends readonly [infer First, ...infer Rest]
+			? [...Current, First]['length'] extends Size
+				? Chunk<Rest, Size, [], [...Result, [...Current, First]]>
+				: Chunk<Rest, Size, [...Current, First], Result>
+			: Current extends [] ? Result : [...Result, Current];
 
 export {};

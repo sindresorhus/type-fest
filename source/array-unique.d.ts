@@ -44,7 +44,13 @@ The accumulator has only required positions, so compare them directly without th
 type Unique<ArrayType extends UnknownArray, Result extends unknown[] = []> = number extends ArrayType['length']
 	? Array<ArrayType[number]>
 	: ArrayType extends readonly [infer First, ...infer Rest]
-		? Unique<Rest, true extends {[Index in keyof Result]: IsEqual<Result[Index], First>}[number] ? Result : [...Result, First]>
+		? Unique<
+			// Skip four adjacent duplicates at once to reduce tuple slicing and repeated accumulator lookups.
+			Rest extends [infer Second, infer Third, infer Fourth, infer Fifth, ...infer Remaining]
+				? IsEqual<[Second, Third, Fourth, Fifth], [First, First, First, First]> extends true ? Remaining : Rest
+				: Rest,
+			true extends {[Index in keyof Result]: IsEqual<Result[Index], First>}[number] ? Result : [...Result, First]
+		>
 		: Result;
 
 export {};

@@ -47,10 +47,13 @@ type ArrayFlatImplementation<Array_ extends UnknownArray, Depth extends number> 
 			: Depth extends unknown // For distributing `Depth`
 				? LessThan<Depth, 1> extends true
 					? [...Array_]
-					// Inferring the result with an array constraint lets TypeScript use that constraint for a generic `Array_`, instead of expanding the recursion without end.
-					: SpreadElements<Array_, Subtract<Depth, 1>> extends infer Result extends unknown[]
-						? Result
-						: never // Should never happen
+					// Copy when no element needs flattening and no optional position needs conversion to a rest element.
+					: [unknown extends Array_[number] ? true : false, Extract<Array_[number], UnknownArray>, [...Array_]] extends [false, never, Required<Array_>]
+						? [...Array_]
+						// Inferring the result with an array constraint lets TypeScript use that constraint for a generic `Array_`, instead of expanding the recursion without end.
+						: SpreadElements<Array_, Subtract<Depth, 1>> extends infer Result extends unknown[]
+							? Result
+							: never // Should never happen
 				: never // Should never happen
 		: never; // Should never happen
 }>;

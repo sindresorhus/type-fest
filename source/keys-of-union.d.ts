@@ -1,5 +1,3 @@
-import type {UnionToIntersection} from './union-to-intersection.d.ts';
-
 /**
 Create a union of all keys from a given type, even those exclusive to specific union members.
 
@@ -40,7 +38,11 @@ type AllKeys = KeysOfUnion<Union>;
 export type KeysOfUnion<ObjectType> =
 	// Adds no keys, since these are the keys all members share, but it lets the compiler accept a key narrowed with `keyof` when `ObjectType` is generic, such as a conditional type that is not resolved yet.
 	| keyof ObjectType
-	// Hack to fix https://github.com/sindresorhus/type-fest/issues/1008
-	| keyof UnionToIntersection<ObjectType extends unknown ? Record<keyof ObjectType, never> : never>;
+	// Infer a union of each member's keys from function return types.
+	// This avoids the record intersections and extra `& Union` that `UnionToIntersection` would create.
+	// The outer conditional prevents unresolved generic union keys from being treated as safe to index every member.
+	| ((ObjectType extends unknown ? () => keyof ObjectType : never) extends (() => infer Keys extends PropertyKey)
+		? Keys
+		: never);
 
 export {};

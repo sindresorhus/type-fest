@@ -223,6 +223,15 @@ expectTypeOf<ArrayTrimStart<[1, 2, 1, 2, 1, 'keep'], 1 | 2>>().toBe<[1, 2, 1, 2,
 expectTypeOf<ArrayTrimEnd<['keep', 1, 2, 1, 2, 1], 1 | 2>>().toBe<['keep', 1, 2, 1, 2, 1]>();
 expectTypeOf<ArrayTrim<readonly [1, 2, 1, 2, 1, 'keep', 2, 1, 2, 1, 2], 1 | 2, {condition: 'extends'}>>().toBe<readonly ['keep']>();
 
+// Matching positions around a special type must not hide its mismatch.
+expectTypeOf<ArrayTrimStart<[0, 0, any, 0, 0, 'keep'], 0>>().toBe<[any, 0, 0, 'keep']>();
+expectTypeOf<ArrayTrimEnd<['keep', 0, 0, any, 0, 0], 0>>().toBe<['keep', 0, 0, any]>();
+expectTypeOf<ArrayTrimStart<[0, 0, never, 0, 0, 'keep'], 0>>().toBe<[never, 0, 0, 'keep']>();
+expectTypeOf<ArrayTrimEnd<['keep', 0, 0, never, 0, 0], 0>>().toBe<['keep', 0, 0, never]>();
+expectTypeOf<ArrayTrimStart<[0, 0, unknown, 0, 0, 'keep'], 0>>().toBe<[unknown, 0, 0, 'keep']>();
+expectTypeOf<ArrayTrimEnd<['keep', 0, 0, unknown, 0, 0], 0>>().toBe<['keep', 0, 0, unknown]>();
+expectTypeOf<ArrayTrim<[0, 0, any, 0, never, 'keep', 0, any, 0, 0, 0], number, {condition: 'extends'}>>().toBe<['keep']>();
+
 // Required padding can lead into optional positions and rest elements without making them required.
 expectTypeOf<ArrayTrimStart<readonly [0, 0, 0, 0, 0, 'keep'?, ...string[]], 0>>().toBe<readonly ['keep'?, ...string[]]>();
 expectTypeOf<ArrayTrimEnd<readonly [...string[], 'keep', 0, 0, 0, 0, 0], 0>>().toBe<readonly [...string[], 'keep']>();

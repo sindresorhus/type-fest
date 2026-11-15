@@ -1,4 +1,3 @@
-import type {UnionToIntersection} from './union-to-intersection.d.ts';
 import type {IsNever} from './is-never.d.ts';
 
 /**
@@ -58,8 +57,11 @@ type LastNever = UnionMember<never>;
 export type UnionMember<T> =
 	IsNever<T> extends true
 		? never
-		: UnionToIntersection<T extends any ? () => T : never> extends () => (infer R)
-			? R
+		// This infers the intersection itself instead of using `UnionToIntersection`, whose `& Union` makes TypeScript distribute the intersection over every member, which is slow for large unions and for types like `Tagged` that call this in a loop.
+		: (T extends any ? (member: () => T) => void : never) extends (member: infer Intersection) => void
+			? Intersection extends () => (infer R)
+				? R
+				: never
 			: never;
 
 export {};

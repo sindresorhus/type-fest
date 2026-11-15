@@ -22,6 +22,9 @@ expectTypeOf<ArrayChunk<[1] | [2, 3], 2>>().toBe<[[1]] | [[2, 3]]>();
 expectTypeOf<ArrayChunk<[1, 2], 1 | 2>>().toBe<[[1], [2]] | [[1, 2]]>();
 expectTypeOf<ArrayChunk<[1, 2, 3], 0 | 2>>().toBe<[[1, 2], [3]]>();
 expectTypeOf<ArrayChunk<[any, never, unknown], 2>>().toBe<[[any, never], [unknown]]>();
+expectTypeOf<ArrayChunk<[any, never, unknown], 1>>().toBe<[[any], [never], [unknown]]>();
+expectTypeOf<ArrayChunk<readonly [any, never, unknown], 1>>().toBe<readonly [readonly [any], readonly [never], readonly [unknown]]>();
+expectTypeOf<ArrayChunk<[1, 2], Tagged<1, 'ChunkSize'>>>().toBe<[[1], [2]]>();
 expectTypeOf<ArrayChunk<any, 2>>().toBe<any>();
 expectTypeOf<ArrayChunk<[1], any>>().toBe<any>();
 expectTypeOf<ArrayChunk<never, 2>>().toBe<never>();
@@ -100,3 +103,7 @@ expectTypeOf(rows[1][0]).toBe<3>();
 // @ts-expect-error The last chunk has only one element.
 const _missing: unknown = rows[1][1];
 expectTypeOf<ArrayChunk<TupleOf<900, 0>, 1>['length']>().toBe<900>();
+
+function _readSingletonChunk<Value>(chunks: ArrayChunk<readonly [{value: Value}, string], 1>): Value {
+	return chunks[0][0].value;
+}

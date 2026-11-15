@@ -1,5 +1,5 @@
 import {expectTypeOf} from 'nz';
-import type {ArrayFlat, Opaque, PositiveInfinity, Tagged} from '../index.d.ts';
+import type {ArrayFlat, IndexTuple, Opaque, PositiveInfinity, Tagged, TupleOf} from '../index.d.ts';
 
 // Fixed-length tuples
 expectTypeOf<ArrayFlat<[]>>().toBe<[]>();
@@ -63,8 +63,24 @@ expectTypeOf<ArrayFlat<ReadonlyArray<readonly string[]>>>().toBe<string[]>();
 expectTypeOf<ArrayFlat<readonly [1, [2]], 0>>().toBe<[1, [2]]>();
 
 // Long tuples
-type LongTuple<Length extends number, Accumulator extends unknown[] = []> = Accumulator['length'] extends Length ? Accumulator : LongTuple<Length, [...Accumulator, [Accumulator['length']]]>;
+type LongTuple<Length extends number, Positions extends readonly unknown[] = IndexTuple<TupleOf<Length>>> = {[Index in keyof Positions]: [Positions[Index]]};
 expectTypeOf<ArrayFlat<LongTuple<300>>['length']>().toBe<300>();
+
+// Tuples that need no flattening preserve every position and only lose outer readonly.
+type FlatPositions = IndexTuple<TupleOf<500>>;
+expectTypeOf<ArrayFlat<Readonly<FlatPositions>>>().toBe<FlatPositions>();
+expectTypeOf<ArrayFlat<readonly [{values: readonly [1, 2]}, never, string | number]>>().toBe<[{values: readonly [1, 2]}, never, string | number]>();
+expectTypeOf<ArrayFlat<readonly [1, 2], number>>().toBe<Array<1 | 2>>();
+expectTypeOf<ArrayFlat<readonly [unknown, 1]>>().toBe<[...unknown[], 1]>();
+expectTypeOf<ArrayFlat<readonly [any, 1]>>().toBe<[...any[], 1]>();
+
+function flattenFlatRecord<const Value>(value: Value): ArrayFlat<readonly [{value: Value}, 0]> {
+	return [{value}, 0];
+}
+
+const flatRecord = flattenFlatRecord({id: 'row'});
+expectTypeOf(flatRecord[0].value).toBe<{readonly id: 'row'}>();
+flatRecord[1] = 0;
 
 // Deep nesting
 type DeeplyNested<Levels extends number, Value = 1, Counter extends unknown[] = []> = Counter['length'] extends Levels ? Value : DeeplyNested<Levels, [Value], [...Counter, unknown]>;

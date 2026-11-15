@@ -23,7 +23,7 @@ type Shorter = ArrayZip<[1, 2, 3], ['a', 'b']>;
 //=> [[1, 'a'], [2, 'b']]
 ```
 
-The tuples are consumed together, appending one pair at a time.
+The shorter tuple supplies the result's positions, with each position pairing elements at the same index.
 
 @category Array
 */
@@ -46,17 +46,15 @@ type ReadonlyPairs<Pairs extends UnknownArray> = Readonly<{[Index in keyof Pairs
 
 /**
 Pairs fixed positions and widens inputs of unknown length.
+
+The first tuple is shorter when the second has an element at the first tuple's length. Mapping the shorter tuple avoids repeated tail inference and accumulator copies.
 */
-type Zip<First extends UnknownArray, Second extends UnknownArray, Result extends unknown[] = []> = First extends readonly []
-	? Result
+type Zip<First extends UnknownArray, Second extends UnknownArray, Shorter extends UnknownArray = `${First['length']}` extends keyof Second ? First : Second> = First extends readonly []
+	? []
 	: Second extends readonly []
-		? Result
+		? []
 		: number extends First['length'] | Second['length']
 			? Array<[First[number], Second[number]]>
-			: First extends readonly [infer FirstItem, ...infer FirstRest]
-				? Second extends readonly [infer SecondItem, ...infer SecondRest]
-					? Zip<FirstRest, SecondRest, [...Result, [FirstItem, SecondItem]]>
-					: never
-				: never;
+			: {-readonly [Index in keyof Shorter]: Index extends keyof First & keyof Second ? [First[Index], Second[Index]] : never};
 
 export {};
