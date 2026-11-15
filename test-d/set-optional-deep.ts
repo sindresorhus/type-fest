@@ -70,6 +70,7 @@ expectTypeOf(variation17).toBe<{a: number; readonly b: {c: string}}>();
 // Calls `PartialDeep` when `KeyPaths` is `any`
 declare const variation18: SetOptionalDeep<{a: number; readonly b: {c: string}}, any>;
 expectTypeOf(variation18).toBe<{a?: number; readonly b?: {c?: string}}>();
+expectTypeOf<SetOptionalDeep<{a: Array<{b: number}>; c: [string]}, any>>().toBe<{a?: Array<{b?: number}>; c?: [string?]}>();
 
 // Preserves union in nested keys
 declare const variation19: SetOptionalDeep<{a: number; b: {c: number} | {d: string}}, 'b' | 'b.d'>;

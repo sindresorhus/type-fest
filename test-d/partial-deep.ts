@@ -75,10 +75,10 @@ type RecurseObject = {value: Recurse};
 const recurseObject: RecurseObject = {value: null};
 expectTypeOf(recurseObject).toBeAssignableTo<PartialDeep<RecurseObject>>();
 
-// Check that `{recurseIntoArrays: false}` is the default
-const partialDeepNoRecurseIntoArraysFoo: PartialDeep<typeof foo> = foo;
-// Check that `{recurseIntoArrays: true}` behaves as intended
-expectTypeOf(partialDeepFoo).toBe<PartialDeep<typeof foo, {recurseIntoArrays: true}>>();
+// Check that `{recurseIntoArrays: true}` is the default
+expectTypeOf(partialDeepFoo).toBe<PartialDeep<typeof foo>>();
+expectTypeOf<PartialDeep<typeof foo>['bar']>().toBe<typeof partialDeepBar | undefined>();
+const partialDeepNoRecurseIntoArraysFoo: PartialDeep<typeof foo, {recurseIntoArrays: false}> = foo;
 
 // Check that `{allowUndefinedInNonTupleArrays: false}` is the default
 const partialDeepAllowUndefinedInNonTupleArraysFoo: PartialDeep<typeof foo, {recurseIntoArrays: true}> = foo;
@@ -118,8 +118,14 @@ expectTypeOf<PartialDeep<ObjectArrays, {recurseIntoArrays: true; allowUndefinedI
 	optional?: Array<{id?: number} | undefined>;
 }>();
 
-// Without `recurseIntoArrays`, arrays are kept as is.
-expectTypeOf<PartialDeep<ObjectArrays>>().toBe<Partial<ObjectArrays>>();
+// By default, the elements of arrays and tuples are made deeply partial too.
+expectTypeOf<PartialDeep<ObjectArrays>>().toBe<PartialDeep<ObjectArrays, {recurseIntoArrays: true}>>();
+expectTypeOf<PartialDeep<ObjectArrays>['items']>().toBe<Array<{id?: number; tags?: string[]}> | undefined>();
+expectTypeOf<PartialDeep<[{id: number}, string]>>().toBe<[{id?: number}?, string?]>();
+
+// With `{recurseIntoArrays: false}`, arrays are kept as is.
+expectTypeOf<PartialDeep<ObjectArrays, {recurseIntoArrays: false}>>().toBe<Partial<ObjectArrays>>();
+expectTypeOf<PartialDeep<[{id: number}, string], {recurseIntoArrays: false}>>().toBe<[{id: number}, string]>();
 
 // The elements of an array of `any`, `unknown`, or `never` are kept as is.
 expectTypeOf<PartialDeep<{any: any[]; unknown: unknown[]; never: never[]}, {recurseIntoArrays: true}>>().toBe<{any?: any[]; unknown?: unknown[]; never?: never[]}>();
@@ -164,7 +170,8 @@ expectTypeOf(functionWithProperties3()).toBe<void>();
 expectTypeOf<Omit<typeof functionWithProperties3, never>>().toBe<{p1?: {p2?: string; p3?: [{p4?: number}?, string?]}}>();
 
 expectTypeOf<Omit<PartialDeep<{(): void; p1: string[]}, {allowUndefinedInNonTupleArrays: false}>, never>>().toBe<{p1?: string[]}>();
-expectTypeOf<Omit<PartialDeep<{(): void; p1: string[]}, {allowUndefinedInNonTupleArrays: true}>, never>>().toBe<{p1?: string[]}>();
+expectTypeOf<Omit<PartialDeep<{(): void; p1: string[]}, {allowUndefinedInNonTupleArrays: true}>, never>>().toBe<{p1?: Array<string | undefined>}>();
+expectTypeOf<Omit<PartialDeep<{(): void; p1: string[]}, {recurseIntoArrays: false; allowUndefinedInNonTupleArrays: true}>, never>>().toBe<{p1?: string[]}>();
 
 // Properties within functions containing multiple call signatures are not made partial due to TS limitations, refer https://github.com/microsoft/TypeScript/issues/29732
 type FunctionWithProperties4 = {(a1: number): string; (a1: string, a2: number): number; p1: string};
@@ -266,10 +273,6 @@ function _partialPromiseInput<Value, Options extends PartialDeepOptions>(value: 
 	return {value};
 }
 
-function _partialShallowArrayInput<Options extends {recurseIntoArrays: false}>(value: string[]): PartialDeep<string[], Options> {
-	return value;
-}
-
 function _partialCallbackInput<Options extends PartialDeepOptions>(value: () => string): PartialDeep<() => string, Options> {
 	return value;
 }
@@ -284,16 +287,16 @@ function _readPartialPromise<Value, Options extends PartialDeepOptions>(value: P
 
 type RecursionModeRows = {rows: Array<{name: string; enabled: boolean}>};
 expectTypeOf<{rows: [{}]}>().not.toBeAssignableTo<PartialDeep<RecursionModeRows, {recurseIntoArrays: false}>>();
-expectTypeOf<{rows: [{}]}>().not.toBeAssignableTo<PartialDeep<RecursionModeRows, {recurseIntoArrays?: boolean}>>();
+expectTypeOf<{rows: [{}]}>().toBeAssignableTo<PartialDeep<RecursionModeRows, {recurseIntoArrays?: boolean}>>();
 expectTypeOf<{rows: [undefined]}>().not.toBeAssignableTo<PartialDeep<RecursionModeRows, {recurseIntoArrays: true}>>();
 // A non-literal recursion flag resolves like the default.
 type BooleanRecursionMode = PartialDeep<{a: Array<{b: string}>}, {recurseIntoArrays: boolean}>;
-type TrueRecursionMode = PartialDeep<{a: Array<{b: string}>}, {recurseIntoArrays: true}>;
+type FalseRecursionMode = PartialDeep<{a: Array<{b: string}>}, {recurseIntoArrays: false}>;
 expectTypeOf<BooleanRecursionMode>().toBe<PartialDeep<{a: Array<{b: string}>}>>();
 // TypeScript 7.1 reports two `PartialDeep` instantiations that differ only in their options as identical, so compare the recursed member instead.
-expectTypeOf<BooleanRecursionMode['a']>().not.toBe<TrueRecursionMode['a']>();
-expectTypeOf<PartialDeep<RecursionModeRows, any>>().toBe<Partial<RecursionModeRows>>();
-expectTypeOf<PartialDeep<RecursionModeRows, never>>().toBe<Partial<RecursionModeRows>>();
+expectTypeOf<BooleanRecursionMode['a']>().not.toBe<FalseRecursionMode['a']>();
+expectTypeOf<PartialDeep<RecursionModeRows, any>>().toBe<{rows?: Array<{name?: string; enabled?: boolean}>}>();
+expectTypeOf<PartialDeep<RecursionModeRows, never>>().toBe<{rows?: Array<{name?: string; enabled?: boolean}>}>();
 
 declare const readonlyRecursiveRows: PartialDeep<{readonly rows: ReadonlyArray<{readonly name: string}>}, {recurseIntoArrays: true}>;
 const readonlyRecursiveRow = readonlyRecursiveRows.rows?.[0];
@@ -347,11 +350,11 @@ expectTypeOf<PartialDeep<KeptColor, {keep: KeptColor}>>().toBe<KeptColor>();
 expectTypeOf<PartialDeep<KeptColor | {other: number}, {keep: KeptColor}>>().toBe<KeptColor | {other?: number}>();
 
 // Without `recurseIntoArrays`, an array of kept elements is used as is.
-expectTypeOf<PartialDeep<{colors: KeptColor[]}, {keep: KeptColor}>['colors']>().toBe<KeptColor[] | undefined>();
+expectTypeOf<PartialDeep<{colors: KeptColor[]}, {keep: KeptColor; recurseIntoArrays: false}>['colors']>().toBe<KeptColor[] | undefined>();
 
-// With `recurseIntoArrays`, kept elements survive the recursion of the array itself.
-expectTypeOf<PartialDeep<{colors: KeptColor[]}, {keep: KeptColor; recurseIntoArrays: true}>['colors']>().toBe<KeptColor[] | undefined>();
-expectTypeOf<PartialDeep<{colors: KeptColor[]}, {recurseIntoArrays: true}>['colors']>().toBe<Array<PartialDeep<KeptColor>> | undefined>();
+// With `recurseIntoArrays`, the default, kept elements survive the recursion of the array itself.
+expectTypeOf<PartialDeep<{colors: KeptColor[]}, {keep: KeptColor}>['colors']>().toBe<KeptColor[] | undefined>();
+expectTypeOf<PartialDeep<{colors: KeptColor[]}>['colors']>().toBe<Array<PartialDeep<KeptColor>> | undefined>();
 
 // A kept collection is returned as is, instead of being rebuilt around its items. `toBe` accepts the rebuilt `{} &` form too, so compare with `IsEqual`.
 const keptSetIsUntouched: IsEqual<PartialDeep<Set<KeptColor>, {keep: Set<KeptColor>}>, Set<KeptColor>> = true;

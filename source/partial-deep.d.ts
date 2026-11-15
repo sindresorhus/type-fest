@@ -12,7 +12,9 @@ export type PartialDeepOptions = {
 
 	When `true`, the elements of arrays and tuples are made deeply partial too, and the fixed elements of tuples become optional. `undefined` is not added to the elements of non-tuple arrays, unless `allowUndefinedInNonTupleArrays` is also `true`.
 
-	@default false
+	When `false`, arrays and tuples are kept as is.
+
+	@default true
 	*/
 	readonly recurseIntoArrays?: boolean;
 
@@ -25,7 +27,7 @@ export type PartialDeepOptions = {
 	@default false
 
 	@example
-	You can allow `undefined` values in non-tuple arrays by passing `{recurseIntoArrays: true; allowUndefinedInNonTupleArrays: true}` as the second type argument:
+	You can allow `undefined` values in non-tuple arrays by passing `{allowUndefinedInNonTupleArrays: true}` as the second type argument:
 
 	```
 	import type {PartialDeep} from 'type-fest';
@@ -34,7 +36,7 @@ export type PartialDeepOptions = {
 		languages: string[];
 	};
 
-	declare const partialSettings: PartialDeep<Settings, {recurseIntoArrays: true; allowUndefinedInNonTupleArrays: true}>;
+	declare const partialSettings: PartialDeep<Settings, {allowUndefinedInNonTupleArrays: true}>;
 
 	partialSettings.languages = [undefined]; // OK
 	```
@@ -74,7 +76,7 @@ export type PartialDeepOptions = {
 };
 
 type DefaultPartialDeepOptions = {
-	recurseIntoArrays: false;
+	recurseIntoArrays: true;
 	allowUndefinedInNonTupleArrays: false;
 	keep: never;
 };
@@ -109,7 +111,7 @@ const applySavedSettings = (savedSettings: PartialDeep<typeof settings>) => (
 settings = applySavedSettings({textEditor: {fontWeight: 500}});
 ```
 
-By default, this does not affect elements in array and tuple types. You can change this by passing `{recurseIntoArrays: true}` as the second type argument:
+The elements of arrays and tuples are made deeply partial too, and the fixed elements of tuples become optional. You can keep arrays and tuples as is by passing `{recurseIntoArrays: false}` as the second type argument:
 
 ```
 import type {PartialDeep} from 'type-fest';
@@ -119,7 +121,7 @@ type Shape = {
 	layers: Array<{name: string; visible: boolean}>;
 };
 
-const partialShape: PartialDeep<Shape, {recurseIntoArrays: true}> = {
+const partialShape: PartialDeep<Shape> = {
 	dimensions: [], // OK
 	layers: [{name: 'Background'}], // OK
 };
@@ -128,6 +130,11 @@ partialShape.dimensions = [15]; // OK
 
 // @ts-expect-error
 partialShape.layers = [undefined]; // The elements of a non-tuple array cannot be `undefined`
+
+const exactShape: PartialDeep<Shape, {recurseIntoArrays: false}> = {
+	// @ts-expect-error
+	dimensions: [15], // The tuple is kept as is
+};
 ```
 
 Class instances are made deeply partial too, which turns their properties and methods optional. Pass the types to keep as is through the `keep` option:
@@ -195,15 +202,15 @@ type _PartialDeep<T, Options extends Required<PartialDeepOptions>> =
 								? T
 								: T extends object
 									? T extends ReadonlyArray<infer ItemType> // Test for arrays/tuples, per https://github.com/microsoft/TypeScript/issues/35156
-										? Options['recurseIntoArrays'] extends true
-											? T extends Options['keep']
+										? Options['recurseIntoArrays'] extends false
+											? T // If they opt out of array testing, just use the original type
+											: T extends Options['keep']
 												? T // A kept array is returned as is, including its elements, instead of being rebuilt around them.
 												: ItemType[] extends T // Test for arrays (non-tuples) specifically
 													? readonly ItemType[] extends T // Differentiate readonly and mutable arrays
 														? ReadonlyArray<_PartialDeep<Options['allowUndefinedInNonTupleArrays'] extends false ? ItemType : ItemType | undefined, Options>>
 														: Array<_PartialDeep<Options['allowUndefinedInNonTupleArrays'] extends false ? ItemType : ItemType | undefined, Options>>
 													: PartialObjectDeep<T, Options> // Tuples behave properly
-											: T // If they don't opt into array testing, just use the original type
 										: PartialObjectDeep<T, Options>
 									: unknown;
 
@@ -242,7 +249,7 @@ type PartialReadonlySetDeep<SetType, ItemType, Options extends Required<PartialD
 /**
 Same as `PartialDeep`, but accepts only `object`s as inputs. Internal helper for `PartialDeep`.
 
-The kept types are matched in the helpers and in the recursed branches of `_PartialDeep`, rather than at the top, so a generic `Options` still resolves every branch that does not recurse into members, like a leaf or a non-recursed array.
+The kept types are matched in the helpers and in the recursed branches of `_PartialDeep`, rather than at the top, so a generic `Options` still resolves every branch that does not recurse into members, like a leaf.
 */
 type PartialObjectDeep<ObjectType extends object, Options extends Required<PartialDeepOptions>> =
 	// A kept object is returned as is, including everything inside it, so its properties are not made optional either.
