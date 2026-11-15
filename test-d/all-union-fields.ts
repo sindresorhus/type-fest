@@ -399,7 +399,7 @@ expectTypeOf<NumberIndexedFields[0]>().toBe<string | number>();
 expectTypeOf<{label: true}>().not.toBeAssignableTo<NumberIndexedFields>();
 expectTypeOf<{0: 'zero'}>().toBeAssignableTo<NumberIndexedFields>();
 
-// Separate index domains keep their own values when the non-shared fields use `ValuesOfUnion`.
+// Separate index domains keep their own values in the non-shared fields.
 type SeparateIndexFields = AllUnionFields<{[key: number]: string; label: true} | {[key: symbol]: boolean; label: false}>;
 expectTypeOf<SeparateIndexFields[number]>().toBe<string | undefined>();
 expectTypeOf<SeparateIndexFields[symbol]>().toBe<boolean | undefined>();

@@ -173,7 +173,6 @@ Click the type names for complete docs.
 - [`NonNullableDeep`](source/non-nullable-deep.d.ts) - Recursively removes `null` and `undefined` from the specified type.
 - [`ValueOf`](source/value-of.d.ts) - Create a union of the given object's values, and optionally specify which keys to get the values from.
 - [`ObjectToUnion`](source/object-to-union.d.ts) - Create a union of single-property objects, one for each property of the given object.
-- [`ValuesOfUnion`](source/values-of-union.d.ts) - Extract all possible values for the given keys from a union of types.
 - [`ValueOfDeep`](source/value-of-deep.d.ts) - Create a union of all leaf values in the given object, including values in nested objects and arrays.
 - [`ConditionalKeys`](source/conditional-keys.d.ts) - Extract the keys from a type where the value type of the key extends the given `Condition`.
 - [`IncompatibleKeys`](source/incompatible-keys.d.ts) - Get the keys that both types have, where the property in `Source` is not assignable to the property in `Target`.
@@ -511,7 +510,7 @@ Click the type names for complete docs.
 - `SetElement` - See [`IterableElement`](source/iterable-element.d.ts)
 - `SetEntry` - See [`IterableElement`](source/iterable-element.d.ts)
 - `SetValues` - See [`IterableElement`](source/iterable-element.d.ts)
-- `$Values`, `ValuesType` - See [`ValueOf`](source/value-of.d.ts)
+- `$Values`, `ValuesType`, `ValuesOfUnion` - See [`ValueOf`](source/value-of.d.ts)
 - `DeepValueOf`, `DeepValuesOf` - See [`ValueOfDeep`](source/value-of-deep.d.ts)
 - `$PropertyType`, `$ElementType`, `PropertyType` - See [`PropertyValue`](source/property-value.d.ts)
 - `KeyOfMap` - See [`MapKey`](source/map-key.d.ts)

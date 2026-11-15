@@ -1,6 +1,5 @@
 import type {UnknownCollection} from './unknown-collection.d.ts';
 import type {NonRecursiveType, SimplifyObject} from './internal/index.d.ts';
-import type {ValuesOfUnion} from './values-of-union.d.ts';
 import type {ReadonlyKeysOf} from './readonly-keys-of.d.ts';
 import type {KeysOfUnion} from './keys-of-union.d.ts';
 import type {SharedUnionFields} from './shared-union-fields.d.ts';
@@ -101,14 +100,22 @@ export type AllUnionFields<Union> =
 				SharedUnionFields<RelevantMembers>
 				// Include readonly fields present in any union member
 				& {
-					readonly [P in ReadonlyKeysOf<Extract<RelevantMembers, object>>]?: ValuesOfUnion<RelevantMembers, P & KeysOfUnion<RelevantMembers>>
+					readonly [P in ReadonlyKeysOf<Extract<RelevantMembers, object>>]?: FieldValue<RelevantMembers, P>
 				}
 				// Include remaining fields that are neither common nor readonly
 				& {
-					[P in Exclude<KeysOfUnion<RelevantMembers>, ReadonlyKeysOf<Extract<RelevantMembers, object>> | keyof RelevantMembers>]?: ValuesOfUnion<RelevantMembers, P>
+					[P in Exclude<KeysOfUnion<RelevantMembers>, ReadonlyKeysOf<Extract<RelevantMembers, object>> | keyof RelevantMembers>]?: FieldValue<RelevantMembers, P>
 				}
 			>
 			: never
+		: never;
+
+/**
+Get the values of the members that have the given key. Unlike `ValueOf`, a broad key, like `string`, reads only the members whose index signatures cover it and not the named properties it covers, so each index signature of the result keeps the values of its own index domain.
+*/
+type FieldValue<Union, Key extends PropertyKey> =
+	Union extends unknown
+		? Key extends keyof Union ? Union[Key] : never
 		: never;
 
 /**
