@@ -168,38 +168,6 @@ export namespace TsConfigJson {
 			name: string;
 		};
 
-		/**
-		@deprecated The compiler only reads this option under `watchOptions`. Use `WatchOptions.PollingWatchKind` instead.
-		*/
-		type FallbackPolling =
-			| 'fixedPollingInterval'
-			| 'priorityPollingInterval'
-			| 'dynamicPriorityPolling'
-			| 'fixedInterval'
-			| 'priorityInterval'
-			| 'dynamicPriority'
-			| 'fixedChunkSize';
-
-		/**
-		@deprecated The compiler only reads this option under `watchOptions`. Use `WatchOptions.WatchDirectoryKind` instead.
-		*/
-		type WatchDirectory =
-			| 'useFsEvents'
-			| 'fixedPollingInterval'
-			| 'dynamicPriorityPolling'
-			| 'fixedChunkSizePolling';
-
-		/**
-		@deprecated The compiler only reads this option under `watchOptions`. Use `WatchOptions.WatchFileKind` instead.
-		*/
-		type WatchFile =
-			| 'fixedPollingInterval'
-			| 'priorityPollingInterval'
-			| 'dynamicPriorityPolling'
-			| 'useFsEvents'
-			| 'useFsEventsOnParentDirectory'
-			| 'fixedChunkSizePolling';
-
 		type ModuleResolution =
 			| 'node16'
 			| 'nodenext'

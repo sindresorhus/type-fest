@@ -61,11 +61,6 @@ expectTypeOf<'not-a-real-lib'>().toBeAssignableTo<Lib>();
 // @ts-expect-error
 ({compilerOptions: {listFilesOnly: true}}) satisfies TsConfigJson;
 
-// The watch options are only read under `watchOptions`, but their old value types stay available, deprecated.
-expectTypeOf<'useFsEvents'>().toBeAssignableTo<TsConfigJson.CompilerOptions.WatchFile>();
-expectTypeOf<'useFsEvents'>().toBeAssignableTo<TsConfigJson.CompilerOptions.WatchDirectory>();
-expectTypeOf<'fixedInterval'>().toBeAssignableTo<TsConfigJson.CompilerOptions.FallbackPolling>();
-
 // Every accepted compiler spelling has a lowercase counterpart, while arbitrary names stay rejected.
 expectTypeOf<Lowercase<TsConfigJson.CompilerOptions.Module>>().toBeAssignableTo<TsConfigJson.CompilerOptions.Module>();
 expectTypeOf<Lowercase<TsConfigJson.CompilerOptions.NewLine>>().toBeAssignableTo<TsConfigJson.CompilerOptions.NewLine>();
