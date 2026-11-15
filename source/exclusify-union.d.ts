@@ -1,5 +1,5 @@
 import type {UnknownCollection} from './unknown-collection.d.ts';
-import type {ExactKey} from './exact-key.d.ts';
+import type {MatchingKey} from './matching-key.d.ts';
 import type {DeduplicatedKeys, NormalizedKeys, SimplifyObject, KeyToString} from './internal/index.d.ts';
 import type {RequireNone} from './require-none.d.ts';
 import type {If} from './if.d.ts';
@@ -176,7 +176,7 @@ type _ExclusifyUnion<
 	? SimplifyObject<
 		Union & RequireNone<
 			// Forbid keys outside this member's declared and indexed domains, including canonical spellings and the string spellings of its enum keys.
-			Exclude<AllKeys, NormalizedKeys<ExactKey<Record<keyof Union | KeyToString<keyof OmitIndexSignature<Union>>, never>, AllKeys | KeyToString<AllKeys>>>>
+			Exclude<AllKeys, NormalizedKeys<MatchingKey<Record<keyof Union | KeyToString<keyof OmitIndexSignature<Union>>, never>, AllKeys | KeyToString<AllKeys>>>>
 		>
 	>
 	: never; // Should never happen

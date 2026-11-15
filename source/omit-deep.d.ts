@@ -1,4 +1,4 @@
-import type {ExactKey} from './exact-key.d.ts';
+import type {MatchingKey} from './matching-key.d.ts';
 import type {ArraySplice} from './array-splice.d.ts';
 import type {Except} from './except.d.ts';
 import type {NonRecursiveType, SetArrayAccess, KeyToString, UnwrapPathBrand} from './internal/index.d.ts';
@@ -121,16 +121,16 @@ type OmitDeepObjectWithOnePath<ObjectT extends object, P extends string | number
 			[Key in keyof ObjectT]:
 			IsEqual<RecordKeyInPath, KeyToString<Key>> extends true
 				? OmitDeepWithOnePath<ObjectT[Key], SubPath>
-				// `Paths` emits `${string}` for a signature, so matching segments transform its value type. Resolve the current key with `ExactKey` to reject alternate numeric spellings.
-				: RecordKeyInPath extends KeyToString<Key> & KeyToString<ExactKey<Record<Key, unknown>, RecordKeyInPath>>
+				// `Paths` emits `${string}` for a signature, so matching segments transform its value type. Resolve the current key with `MatchingKey` to reject alternate numeric spellings.
+				: RecordKeyInPath extends KeyToString<Key> & KeyToString<MatchingKey<Record<Key, unknown>, RecordKeyInPath>>
 					// A member that names the key outright is what the key reads, so the signature is left alone.
 					? RecordKeyInPath extends KeyToString<keyof OmitIndexSignature<ObjectT>>
 						? ObjectT[Key]
 						: OmitDeepWithOnePath<ObjectT[Key], SubPath>
 					: ObjectT[Key]
 		}
-		// Match declared terminal keys by their spelling, including enums; leave index signatures to ExactKey.
-		: (ExactKey<ObjectT, P> | keyof {[Key in keyof OmitIndexSignature<ObjectT> as IsEqual<KeyToString<Key>, KeyToString<P>> extends true ? Key : never]: never}) extends infer Key
+		// Match declared terminal keys by their spelling, including enums; leave index signatures to MatchingKey.
+		: (MatchingKey<ObjectT, P> | keyof {[Key in keyof OmitIndexSignature<ObjectT> as IsEqual<KeyToString<Key>, KeyToString<P>> extends true ? Key : never]: never}) extends infer Key
 			? IsNever<Key> extends true
 				? ObjectT
 				: Except<ObjectT, Extract<Key, keyof ObjectT>> // Keep unrelated declared fields covered by an index signature.

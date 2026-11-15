@@ -1,4 +1,4 @@
-import type {ExactKey} from './exact-key.d.ts';
+import type {MatchingKey} from './matching-key.d.ts';
 import type {ConsistsOnlyOf} from './consists-only-of.d.ts';
 import type {IsAny} from './is-any.d.ts';
 import type {DigitCharacter} from './characters.d.ts';
@@ -11,19 +11,19 @@ import type {IsReadonlyArray} from './is-readonly-array.d.ts';
 /**
 The declared spelling of `Key` in `BaseType`, or `never` when no member declares it. An index signature declares no keys, so `OmitIndexSignature` keeps it from shadowing the literal ones.
 */
-type DeclaredKey<BaseType extends object, Key extends PropertyKey> = ExactKey<OmitIndexSignature<BaseType>, Key>;
+type DeclaredKey<BaseType extends object, Key extends PropertyKey> = MatchingKey<OmitIndexSignature<BaseType>, Key>;
 
 /**
 The spelling of `Key` covered by an index signature in `BaseType`, or `never`. Matching uses TypeScript's own key rules, including template index signatures.
 */
-type CoveringSignature<BaseType extends object, Key extends PropertyKey> = ExactKey<PickIndexSignature<BaseType>, Key>;
+type CoveringSignature<BaseType extends object, Key extends PropertyKey> = MatchingKey<PickIndexSignature<BaseType>, Key>;
 
 /**
 The member that reading `Key` resolves through: a declared key or an index signature that covers it.
 
 Check each member independently so overlapping index signatures all admit the new value.
 */
-type KeyMatch<Key extends PropertyKey, Member extends PropertyKey> = [ExactKey<Record<Member, unknown>, Key>] extends [never] ? never : Member;
+type KeyMatch<Key extends PropertyKey, Member extends PropertyKey> = [MatchingKey<Record<Member, unknown>, Key>] extends [never] ? never : Member;
 
 /**
 Walk `Path` one key at a time, and place `Value` at the end of the path. Each union member is walked independently, creating a container when necessary.

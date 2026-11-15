@@ -4,7 +4,7 @@ import type {_Merge} from './merge.d.ts';
 import type {IsAny} from './is-any.d.ts';
 import type {If} from './if.d.ts';
 import type {IsNever} from './is-never.d.ts';
-import type {ExactKey} from './exact-key.d.ts';
+import type {MatchingKey} from './matching-key.d.ts';
 import type {DefaultsFor} from './defaults-for.d.ts'; // For `@link`
 
 /**
@@ -73,7 +73,7 @@ type _ApplyDefaultOptions<
 			_Merge<Defaults, {
 				// The first `as` branch keeps the key of an option whose declared type admits `undefined`, like `unknown`, because `undefined` is one of its valid values. `-?` then strips the optional modifier, so an unnarrowed options type still resolves instead of failing the `Required<Options>` guard above.
 				[Key in keyof SpecifiedOptions
-				as undefined extends Required<Options>[ExactKey<Options, Key>] ? Key : undefined extends SpecifiedOptions[Key] ? never : Key
+				as undefined extends Required<Options>[MatchingKey<Options, Key>] ? Key : undefined extends SpecifiedOptions[Key] ? never : Key
 				]-?: SpecifiedOptions[Key]
 			}>>>;
 

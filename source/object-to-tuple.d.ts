@@ -1,4 +1,4 @@
-import type {ExactKey} from './exact-key.d.ts';
+import type {MatchingKey} from './matching-key.d.ts';
 import type {IsAny} from './is-any.d.ts';
 import type {TupleToObject} from './tuple-to-object.d.ts'; // For `@link`
 
@@ -37,7 +37,7 @@ export type ObjectToTuple<ObjectType extends object> = IsAny<ObjectType> extends
 		: never;
 
 // Consume the next required position until no keys remain. A missing position or an extra key rejects the whole object.
-type ObjectToTupleHelper<ObjectType extends object, Result extends unknown[] = [], Key extends keyof ObjectType = ExactKey<ObjectType, Result['length']>> =
+type ObjectToTupleHelper<ObjectType extends object, Result extends unknown[] = [], Key extends keyof ObjectType = MatchingKey<ObjectType, Result['length']>> =
 	[keyof ObjectType] extends [never]
 		? Result
 		: [Key] extends [never]

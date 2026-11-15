@@ -1,4 +1,4 @@
-import type {ExactKey} from './exact-key.d.ts';
+import type {MatchingKey} from './matching-key.d.ts';
 import type {OmitIndexSignature} from './omit-index-signature.d.ts';
 import type {TupleOf} from './tuple-of.d.ts';
 import type {ExcludeRestElement} from './exclude-rest-element.d.ts';
@@ -276,7 +276,7 @@ Use a named property's declared key when its spelling matches, otherwise retain 
 */
 type PickedKey<RecordType extends object, Key extends string | number, Named extends object = OmitIndexSignature<RecordType>> =
 	Extract<keyof Named, Extract<Key, KeyToString<keyof Named>>> extends infer Actual extends keyof RecordType
-		? [Actual] extends [never] ? ExactKey<RecordType, Key> : Actual
+		? [Actual] extends [never] ? MatchingKey<RecordType, Key> : Actual
 		: never;
 
 export {};

@@ -1,4 +1,4 @@
-import type {ExactKey} from './exact-key.d.ts';
+import type {MatchingKey} from './matching-key.d.ts';
 import type {PropertyValue} from './property-value.d.ts';
 import type {IsRecordLike} from './is-record-like.d.ts';
 import type {Not} from './not.d.ts';
@@ -99,7 +99,7 @@ Find the declared key of `Original` that `Key` names, including a canonical nume
 */
 type DeclaredKeyOf<Original, Key extends PropertyKey> =
 	[Original] extends [object]
-		? ExactKey<Original, Key>
+		? MatchingKey<Original, Key>
 		: never;
 
 /**

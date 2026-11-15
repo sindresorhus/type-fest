@@ -155,7 +155,7 @@ export type {UnionMax} from './source/union-max.d.ts';
 export type {UnionMin} from './source/union-min.d.ts';
 export type {TupleMax} from './source/tuple-max.d.ts';
 export type {TupleMin} from './source/tuple-min.d.ts';
-export type {ExactKey} from './source/exact-key.d.ts';
+export type {MatchingKey} from './source/matching-key.d.ts';
 export type {PropertyValue} from './source/property-value.d.ts';
 export type {KeyAsString} from './source/key-as-string.d.ts';
 export type {Exact} from './source/exact.d.ts';

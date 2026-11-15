@@ -1,4 +1,4 @@
-import type {ExactKey} from './exact-key.d.ts';
+import type {MatchingKey} from './matching-key.d.ts';
 import type {DeduplicatedKeys} from './internal/keys.d.ts';
 import type {IfNotAnyOrNever} from './internal/type.d.ts';
 import type {IsLiteral} from './is-literal.d.ts';
@@ -31,7 +31,7 @@ type GetRoutes = ArrayGroupBy<Routes, 'method'>['GET'];
 //=> [{method: 'GET'; path: '/users'}, {method: 'GET'; path: '/health'}]
 ```
 
-The group keys are mapped once, and each group collects its items in input order. `ExactKey` resolves group membership, so numeric and string forms of the same key share one tuple without building nested mapped accumulators.
+The group keys are mapped once, and each group collects its items in input order. `MatchingKey` resolves group membership, so numeric and string forms of the same key share one tuple without building nested mapped accumulators.
 
 @category Array
 */
@@ -58,7 +58,7 @@ type HasGroupKey<Item extends object, Key extends keyof Item> = [Item] extends [
 Consumes required tuple positions, rejecting uncertain group keys and unknown-length inputs.
 */
 type HasGroupKeys<Items extends readonly object[], Key extends PropertyKey> = Items extends readonly [infer First extends object, ...infer Rest extends object[]]
-	? ExactKey<First, Key> extends infer ItemKey extends keyof First
+	? MatchingKey<First, Key> extends infer ItemKey extends keyof First
 		? HasGroupKey<First, ItemKey> extends true
 			? HasGroupKeys<Rest, Key>
 			: false
@@ -77,7 +77,7 @@ type GroupItems<Items extends readonly object[], Key extends PropertyKey> = {
 /**
 Reads the selected property on each item before combining the group values.
 */
-type GroupKeyValues<Item extends object, Key extends PropertyKey> = Item extends unknown ? Item[ExactKey<Item, Key>] & PropertyKey : never;
+type GroupKeyValues<Item extends object, Key extends PropertyKey> = Item extends unknown ? Item[MatchingKey<Item, Key>] & PropertyKey : never;
 
 /**
 Appends matching items to one group, using the native key resolver for numeric and string aliases.
@@ -88,7 +88,7 @@ type CollectGroup<
 	Group extends PropertyKey,
 	Result extends object[] = [],
 > = Items extends readonly [infer Item extends object, ...infer Rest extends object[]]
-	? ExactKey<Record<Group, unknown>, Item[ExactKey<Item, Key>] & PropertyKey> extends never
+	? MatchingKey<Record<Group, unknown>, Item[MatchingKey<Item, Key>] & PropertyKey> extends never
 		? CollectGroup<Rest, Key, Group, Result>
 		: CollectGroup<Rest, Key, Group, [...Result, Item]>
 	: Result;

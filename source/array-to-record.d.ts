@@ -1,7 +1,7 @@
 import type {If} from './if.d.ts';
 import type {IsAny} from './is-any.d.ts';
 import type {IsLiteral} from './is-literal.d.ts';
-import type {ExactKey} from './exact-key.d.ts';
+import type {MatchingKey} from './matching-key.d.ts';
 import type {UnwrapBrandedPrimitive} from './unwrap-branded-primitive.d.ts';
 import type {Tagged} from './tagged.d.ts'; // For `@link`
 import type {TupleToObject} from './tuple-to-object.d.ts'; // For `@link`
@@ -66,7 +66,7 @@ export type ArrayToRecord<
 		? never
 		: UnwrapBrandedPrimitive<KeyValues<ArrayType[number], KeyProperty>> & (string | number) extends infer Keys extends string | number
 			? IsLiteral<Keys> extends true
-				? {[Item in ArrayType[number] as UnwrapBrandedPrimitive<Item[ExactKey<Item, KeyProperty>]> & (string | number)]: Item}
+				? {[Item in ArrayType[number] as UnwrapBrandedPrimitive<Item[MatchingKey<Item, KeyProperty>]> & (string | number)]: Item}
 				: Record<Keys, ArrayType[number]>
 			: never>;
 
@@ -74,21 +74,21 @@ export type ArrayToRecord<
 Checks each element separately so an `any` key value cannot erase invalid key values on other elements.
 */
 type HasValidKey<Item extends object, KeyProperty extends PropertyKey> = Item extends unknown
-	? [Item[ExactKey<Item, KeyProperty>]] extends [string | number] ? true : false
+	? [Item[MatchingKey<Item, KeyProperty>]] extends [string | number] ? true : false
 	: never;
 
 /**
 Adds numeric key aliases to each element before finding the common keys of their union.
 */
 type WithKeyAliases<Item extends object> = Item extends unknown
-	? {[Key in keyof Item | `${keyof Item & number}` | ExactKey<Record<number, unknown>, keyof Item & string>]: unknown}
+	? {[Key in keyof Item | `${keyof Item & number}` | MatchingKey<Record<number, unknown>, keyof Item & string>]: unknown}
 	: never;
 
 /**
 Reads the selected property on each element before combining its values.
 */
 type KeyValues<Item extends object, KeyProperty extends PropertyKey> = Item extends unknown
-	? Item[ExactKey<Item, KeyProperty>]
+	? Item[MatchingKey<Item, KeyProperty>]
 	: never;
 
 export {};

@@ -12,20 +12,20 @@ Distributes over a union of keys. For a union of objects, only keys in `keyof Ob
 
 @example
 ```
-import type {ExactKey} from 'type-fest';
+import type {MatchingKey} from 'type-fest';
 
 type StatusMessages = {
 	200: 'OK';
 	'404': 'Not found';
 };
 
-type SuccessKey = ExactKey<StatusMessages, '200'>;
+type SuccessKey = MatchingKey<StatusMessages, '200'>;
 //=> 200
 
-type NotFoundKey = ExactKey<StatusMessages, 404>;
+type NotFoundKey = MatchingKey<StatusMessages, 404>;
 //=> '404'
 
-type PickByKey<ObjectType extends object, Key extends PropertyKey> = Pick<ObjectType, ExactKey<ObjectType, Key>>;
+type PickByKey<ObjectType extends object, Key extends PropertyKey> = Pick<ObjectType, MatchingKey<ObjectType, Key>>;
 
 type Success = PickByKey<StatusMessages, '200'>;
 //=> {200: 'OK'}
@@ -35,7 +35,7 @@ type Success = PickByKey<StatusMessages, '200'>;
 
 @category Object
 */
-export type ExactKey<ObjectType extends object, Key extends PropertyKey> =
+export type MatchingKey<ObjectType extends object, Key extends PropertyKey> =
 	Key extends keyof ObjectType
 		? Key
 		: KeyToString<Key> extends keyof ObjectType

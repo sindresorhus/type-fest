@@ -1,7 +1,7 @@
 import {expectTypeOf} from 'nz';
 import type {
 	AllUnionFields,
-	ExactKey,
+	MatchingKey,
 	Except,
 	Get,
 	KeysOfUnion,
@@ -276,17 +276,17 @@ type InvalidUnknownKey = PropertyValue<ObjectT, unknown>;
 // @ts-expect-error The key is required.
 type MissingKey = PropertyValue<ObjectT>;
 
-// It agrees with `ExactKey` for object types, and a missing key is `never` on both sides.
-type ViaExactKey<ObjectType extends object, Key extends PropertyKey> =
+// It agrees with `MatchingKey` for object types, and a missing key is `never` on both sides.
+type ViaMatchingKey<ObjectType extends object, Key extends PropertyKey> =
 	Key extends unknown
-		? [ExactKey<ObjectType, Key>] extends [never]
+		? [MatchingKey<ObjectType, Key>] extends [never]
 			? never
-			: ObjectType[ExactKey<ObjectType, Key>]
+			: ObjectType[MatchingKey<ObjectType, Key>]
 		: never;
 type AgreementKeys = 'string' | 0 | '0' | 1 | '1' | '00' | 'missing' | typeof symbolKey;
-expectTypeOf<PropertyValue<ObjectT, AgreementKeys>>().toBe<ViaExactKey<ObjectT, AgreementKeys>>();
-expectTypeOf<PropertyValue<NumberRecord, AgreementKeys>>().toBe<ViaExactKey<NumberRecord, AgreementKeys>>();
-expectTypeOf<PropertyValue<Tuple, AgreementKeys | 2 | 5>>().toBe<ViaExactKey<Tuple, AgreementKeys | 2 | 5>>();
+expectTypeOf<PropertyValue<ObjectT, AgreementKeys>>().toBe<ViaMatchingKey<ObjectT, AgreementKeys>>();
+expectTypeOf<PropertyValue<NumberRecord, AgreementKeys>>().toBe<ViaMatchingKey<NumberRecord, AgreementKeys>>();
+expectTypeOf<PropertyValue<Tuple, AgreementKeys | 2 | 5>>().toBe<ViaMatchingKey<Tuple, AgreementKeys | 2 | 5>>();
 
 // It works in a generic type without a constraint on the base type.
 type ErrorCode<ErrorType> = PropertyValue<ErrorType, 'code'>;

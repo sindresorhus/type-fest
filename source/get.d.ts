@@ -1,4 +1,4 @@
-import type {ExactKey} from './exact-key.d.ts';
+import type {MatchingKey} from './matching-key.d.ts';
 import type {ConsistsOnlyOf} from './consists-only-of.d.ts';
 import type {ParsePathToStringSegments, KeyToString, UnwrapPathBrand} from './internal/index.d.ts';
 import type {ApplyDefaultOptions} from './apply-default-options.d.ts';
@@ -99,7 +99,7 @@ type MemberPropertyOf<BaseType, Key extends string, Options extends Required<Get
 		? NullishMember
 		// Normalize declared numeric and enum members before the array-like fallback, so its index signature does not hide their more precise types. Read the declared keys, because an enum key and its literal spelling are distinct types.
 		: Key extends keyof BaseType | (BaseType extends object ? KeyAsString<OmitIndexSignature<BaseType>> : never)
-			? StrictPropertyOf<BaseType, (Key | Extract<keyof OmitIndexSignature<BaseType>, Key | ExactKey<OmitIndexSignature<BaseType>, Key>>) & keyof BaseType, Options>
+			? StrictPropertyOf<BaseType, (Key | Extract<keyof OmitIndexSignature<BaseType>, Key | MatchingKey<OmitIndexSignature<BaseType>, Key>>) & keyof BaseType, Options>
 			// Handle arrays and tuples. A numeric string must round-trip to the same property name.
 			: BaseType extends readonly unknown[]
 				? Key extends `${infer Index extends number}`
@@ -138,7 +138,7 @@ type MemberPropertyOf<BaseType, Key extends string, Options extends Required<Get
 						: MissingKey
 					// A key that names a member of the subject is read from the subject, not from its string keys: a number index signature covers every numeric key, so `'0' extends keyof` is false for `{[k: number]: string; 0: 'x'}` even though the member is right there.
 					: BaseType extends object
-						? ExactKey<BaseType, Key> extends infer Exact extends keyof BaseType
+						? MatchingKey<BaseType, Key> extends infer Exact extends keyof BaseType
 							? IsNever<Exact> extends true
 								// `never` is assignable to every key set, so it has to be told apart from a key that was found, or a key the subject does not have answers `never`.
 								? MissingKey

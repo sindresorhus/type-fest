@@ -202,7 +202,7 @@ Click the type names for complete docs.
 - [`Get`](source/get.d.ts) - Get a deeply-nested property from an object using a key path, like [Lodash's `.get()`](https://lodash.com/docs#get) function.
 - [`SetProperty`](source/set-property.d.ts) - Set a deeply-nested property on an object using a key path, like [Lodash's `.set()`](https://lodash.com/docs#set) function.
 - [`PropertyValue`](source/property-value.d.ts) - Get the type of a property, or `never` if the key does not exist.
-- [`ExactKey`](source/exact-key.d.ts) - Resolve a property key to the matching key type in an object, converting between numeric and string forms when needed.
+- [`MatchingKey`](source/matching-key.d.ts) - Resolve a property key to the matching key type in an object, converting between numeric and string forms when needed.
 - [`KeyAsString`](source/key-as-string.d.ts) - Get keys of the given type as strings.
 - [`Schema`](source/schema.d.ts) - Create a deep version of another object type where property values are recursively replaced with a given value type.
 - [`Exact`](source/exact.d.ts) - Create a type that does not allow extra properties, meaning it only allows properties that are explicitly declared.

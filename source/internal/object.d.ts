@@ -1,4 +1,4 @@
-import type {ExactKey} from '../exact-key.d.ts';
+import type {MatchingKey} from '../matching-key.d.ts';
 import type {IsEqual} from '../is-equal.d.ts';
 import type {IsNever} from '../is-never.d.ts';
 import type {StringToNumber} from '../string-to-number.d.ts';
@@ -32,9 +32,9 @@ type B = BuildObject<'a', string, {readonly a?: any}>;
 export type BuildObject<Key extends PropertyKey, Value, CopiedFrom extends object = {}> =
 	Key extends unknown // Keep separate objects for a union of keys.
 		// Look up both forms of a numeric key before copying its modifiers.
-		? IsNever<ExactKey<CopiedFrom, Key>> extends true
+		? IsNever<MatchingKey<CopiedFrom, Key>> extends true
 			? {[_ in Key]: Value}
-			: Pick<{[_ in keyof CopiedFrom]: Value}, ExactKey<CopiedFrom, Key>>
+			: Pick<{[_ in keyof CopiedFrom]: Value}, MatchingKey<CopiedFrom, Key>>
 		: never;
 
 /**
@@ -131,7 +131,7 @@ Finds the subpaths whose first property matches `Key` in `BaseType`. A declared 
 */
 export type DeepSubPaths<KeyPaths, Key, BaseType> = KeyPaths extends `${infer Property}.${infer RestPath}`
 	// A noncanonical numeric segment, such as `01`, does not name a number key or an array index.
-	? Property extends KeyToString<(Key & string) | ExactKey<Record<Key & number, unknown>, Property>>
+	? Property extends KeyToString<(Key & string) | MatchingKey<Record<Key & number, unknown>, Property>>
 		? Property extends `${keyof OmitIndexSignature<BaseType> & (string | number)}`
 			? `${Key & (string | number)}` extends Property
 				? RestPath

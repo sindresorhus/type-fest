@@ -1,4 +1,4 @@
-import type {ExactKey} from './exact-key.d.ts';
+import type {MatchingKey} from './matching-key.d.ts';
 import type {IsLiteral} from './is-literal.d.ts';
 import type {IsNever} from './is-never.d.ts';
 import type {IsEqual} from './is-equal.d.ts';
@@ -178,9 +178,9 @@ type NormalizeMap<RenameMap extends Record<PropertyKey, PropertyKey>> = {
 // Numeric keys and their canonical string forms name the same property, so `{'0': 'x'}` also renames `{0: …}`. Other numeric-looking strings, like `'01'`, stay distinct.
 type TargetOf<SourceKey extends PropertyKey, RenameMap extends Record<PropertyKey, PropertyKey>> =
 	SourceKey extends unknown
-		? IsNever<ExactKey<RenameMap, SourceKey>> extends true
+		? IsNever<MatchingKey<RenameMap, SourceKey>> extends true
 			? SourceKey
-			: RenameMap[ExactKey<RenameMap, SourceKey>]
+			: RenameMap[MatchingKey<RenameMap, SourceKey>]
 		: never;
 
 export {};

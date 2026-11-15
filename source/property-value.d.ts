@@ -1,4 +1,4 @@
-import type {ExactKey} from './exact-key.d.ts'; // For `@link`
+import type {MatchingKey} from './matching-key.d.ts'; // For `@link`
 import type {Get} from './get.d.ts'; // For `@link`
 import type {ValueOf} from './value-of.d.ts'; // For `@link`
 
@@ -7,7 +7,7 @@ Get the type of a property, or `never` if the key does not exist.
 
 Useful for safe indexed access in a generic type, where `BaseType[Key]` is an error because the key may not exist. `BaseType` can be any type, including primitives and `unknown`.
 
-A numeric key matches in both its number and string form, like in {@link ExactKey}. For example, `'0'` reads a `0` key, but `'00'` does not. The type of an optional property includes `undefined`.
+A numeric key matches in both its number and string form, like in {@link MatchingKey}. For example, `'0'` reads a `0` key, but `'00'` does not. The type of an optional property includes `undefined`.
 
 A union of keys returns a union of the values, and keys that do not exist are ignored. For a union of base types, the key must exist in every member with the same spelling, otherwise the result is `never`. Use {@link ValueOf} to read a key that exists in only some members, and {@link Get} for key paths.
 
@@ -56,7 +56,7 @@ type SuccessData = ValueOf<ApiResponse, 'data'>;
 //=> string[]
 ```
 
-@see {@link ExactKey}
+@see {@link MatchingKey}
 @see {@link ValueOf}
 @see {@link Get}
 

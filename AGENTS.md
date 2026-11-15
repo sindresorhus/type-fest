@@ -128,7 +128,7 @@ Study: `source/tuple-of.d.ts`, `is-equal.d.ts`, `literal-union.d.ts`, `internal/
 
 These cases cost performance and consistency for few users. Do not add handling for them. Document them as limitations instead.
 
-- Key matching beyond TypeScript's own rules (`keyof`, `Pick`, `Omit`): enum fields selected by plain strings, noncanonical numeric strings (`'00'`, `'1e3'`), and reading every union member at the keys of all members. The one supported alias is `0` vs `'0'`. Use `ExactKey` from `source/internal/keys.d.ts` for it. `KeySelector` also maps enum members to their values, and some existing types match more (for example through `KeyAliases` or `NormalizedKeys`). Do not grow that or extend it to other types, and do not add another matcher.
+- Key matching beyond TypeScript's own rules (`keyof`, `Pick`, `Omit`): enum fields selected by plain strings, noncanonical numeric strings (`'00'`, `'1e3'`), and reading every union member at the keys of all members. The one supported alias is `0` vs `'0'`. Use `MatchingKey` from `source/matching-key.d.ts` for it. `KeySelector` also maps enum members to their values, and some existing types match more (for example through `KeyAliases` or `NormalizedKeys`). Do not grow that or extend it to other types, and do not add another matcher.
 - A union of option values (for example `{recurseIntoArrays: boolean}`), a union of option objects, or a `never` option value. Do not compute a union of strategies. The result uses one strategy, usually the default.
 - Extreme edge cases that real code does not hit, such as exponent-notation numbers (`1e21`), huge lengths, or fractional indexes. Handling one usually breaks another.
 

@@ -1,4 +1,4 @@
-import type {ExactKey} from '../exact-key.d.ts';
+import type {MatchingKey} from '../matching-key.d.ts';
 import type {UnknownArray} from '../unknown-array.d.ts';
 import type {KeyToString} from './string.d.ts';
 
@@ -87,7 +87,7 @@ Returns the canonical numeric spelling of the mapped `Key` when the selector `Ke
 
 A mapped type hands tuple elements over under their string form, so `'0'` must match a selector of `0`. Other numeric-looking names, such as `'01'`, stay distinct.
 */
-export type SelectedKeyAlias<Keys, Key> = ExactKey<Record<Keys & PropertyKey, never>, Extract<Key, number | `${number}`>>;
+export type SelectedKeyAlias<Keys, Key> = MatchingKey<Record<Keys & PropertyKey, never>, Extract<Key, number | `${number}`>>;
 
 /**
 Returns the keys of `Type` that the given `Keys` select.
