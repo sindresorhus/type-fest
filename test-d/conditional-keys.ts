@@ -121,6 +121,8 @@ expectTypeOf<ConditionalKeys<{date?: Date}, Date, {strict: boolean}>>().toBe<nev
 
 // Loose mode keeps the existing `any`/`unknown`/`never` behavior, except that `never` has no members
 expectTypeOf<ConditionalKeys<{a: any; b: unknown; c: never; d: string}, string, {strict: false}>>().toBe<'a' | 'd'>();
+// Strict mode also matches an `any` value, like the built-in `extends`
+expectTypeOf<ConditionalKeys<{a: any; b: unknown; c: never; d: string}, string>>().toBe<'a' | 'd'>();
 expectTypeOf<ConditionalKeys<{a: never; b: never}, never, {strict: false}>>().toBe<never>();
 expectTypeOf<ConditionalKeys<{a: never; b: never}, any, {strict: false}>>().toBe<never>();
 expectTypeOf<ConditionalKeys<{a: unknown; b: string}, string, {strict: false}>>().toBe<'b'>();

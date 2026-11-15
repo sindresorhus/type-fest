@@ -141,11 +141,11 @@ export type CallSignatureOf<Type> = Type extends (this: infer Receiver, ...argum
 /**
 Returns a boolean for whether `Type` extends `Condition`, using either strict or loose comparison.
 
-- In strict mode, {@link ExtendsStrict `ExtendsStrict`} is used, so the whole union must extend `Condition`.
+- In strict mode, {@link ExtendsStrict `ExtendsStrict`} is used, so the whole union must extend `Condition`. An `any` type matches every condition, like with the built-in `extends`.
 - In loose mode, {@link ExtendsLoose `ExtendsLoose`} is used, so any member of the union can extend `Condition`.
 */
 export type Extends<Type, Condition, Strict extends boolean = false> = {
-	true: ExtendsStrict<Type, Condition>;
+	true: ExtendsStrict<Type, Condition, {strictAny: false}>;
 	false: ExtendsLoose<Type, Condition>;
 }[`${Strict}`];
 

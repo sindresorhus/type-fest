@@ -25,7 +25,7 @@ expectTypeOf<ExtendsStrict<string, never>>().toBe<false>();
 expectTypeOf<ExtendsStrict<any, any>>().toBe<true>();
 expectTypeOf<ExtendsStrict<any, never>>().toBe<false>();
 expectTypeOf<ExtendsStrict<never, any>>().toBe<true>();
-expectTypeOf<ExtendsStrict<any, number>>().toBe<true>();
+expectTypeOf<ExtendsStrict<any, number>>().toBe<false>(); // `strictAny` is enabled by default
 expectTypeOf<ExtendsStrict<any, unknown>>().toBe<true>(); // `any` is assignable to `unknown`
 expectTypeOf<ExtendsStrict<unknown, any>>().toBe<true>(); // `unknown` is assignable to `any`
 expectTypeOf<ExtendsStrict<unknown, unknown>>().toBe<true>();
@@ -126,17 +126,25 @@ function _constructKnownAssignable<Options extends ExtendsStrictOptions>(): Exte
 	return true;
 }
 
-function _constructLooseAny<Options extends {strictAny: false; distributiveUnions: false}>(): ExtendsStrict<any, string, Options> {
-	return true;
+function _constructStrictAny<Options extends {strictAny: true; distributiveUnions: false}>(): ExtendsStrict<any, string, Options> {
+	return false;
 }
 
 // Optional flags still use their defaults when absent, as do whole `any` and `never` option objects.
-expectTypeOf<ExtendsStrict<any, string, {strictAny?: boolean}>>().toBe<true>();
+expectTypeOf<ExtendsStrict<any, string, {strictAny?: boolean}>>().toBe<false>();
 // Non-literal flags resolve like the defaults.
-expectTypeOf<ExtendsStrict<any, string, {strictAny: boolean}>>().toBe<true>();
+expectTypeOf<ExtendsStrict<any, string, {strictAny: boolean}>>().toBe<false>();
+expectTypeOf<ExtendsStrict<never, string, {strictNever: boolean}>>().toBe<false>();
 expectTypeOf<ExtendsStrict<1 | 'a', number, {distributiveUnions: boolean}>>().toBe<false>();
 expectTypeOf<ExtendsStrict<never, string, any>>().toBe<false>();
-expectTypeOf<ExtendsStrict<any, string, never>>().toBe<true>();
+expectTypeOf<ExtendsStrict<any, string, never>>().toBe<false>();
+
+// `any` is strict by default, but only at the top level (limitation).
+expectTypeOf<ExtendsStrict<any, number, {distributiveUnions: true}>>().toBe<false>();
+expectTypeOf<ExtendsStrict<any, {} | null | undefined>>().toBe<true>();
+expectTypeOf<ExtendsStrict<number, any>>().toBe<true>();
+expectTypeOf<ExtendsStrict<any[], string[]>>().toBe<true>();
+expectTypeOf<ExtendsStrict<{a: any}, {a: string}>>().toBe<true>();
 // @ts-expect-error Unknown does not describe comparison options.
 type UnknownComparisonOptions = ExtendsStrict<string, string, unknown>;
 

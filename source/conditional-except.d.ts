@@ -60,7 +60,7 @@ export type ConditionalExcept<Base, Condition, Options extends ConditionalKeysOp
 				? IsNever<Keys> extends true
 					? Base
 					// Preserve the primitive/any property view, and check each object value before a matching index signature can swallow its named fields.
-					: ExtendsStrict<Base, object, {strictAny: true}> extends true
+					: ExtendsStrict<Base, object> extends true
 						? {[Key in keyof Base as Key extends Keys
 							? Extends<Base[Key], Condition, ResolvedOptions['strict'] extends false ? false : true> extends true ? never : Key
 							: Key]: Base[Key]}

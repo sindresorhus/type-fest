@@ -66,7 +66,7 @@ type _ConditionalPick<Base, Condition, Keys, Strict extends boolean> =
 	IsNever<Keys> extends true
 		? Base extends object ? {} : never
 		// Preserve Pick's existing property view for primitive and any inputs.
-		: ExtendsStrict<Base, object, {strictAny: true}> extends true
+		: ExtendsStrict<Base, object> extends true
 			? {
 				// ConditionalKeys excludes array methods; test each value because a matching signature can subsume a nonmatching declared key.
 				[Key in keyof Base as Key extends Keys

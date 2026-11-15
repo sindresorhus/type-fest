@@ -58,7 +58,9 @@ export type ExtendsStrictOptions = {
 
 	When enabled, `any` does not extend every other type, it only extends itself (or `unknown`).
 
-	@default false
+	Disable it to get the built-in behavior, where `any` extends every type except `never`.
+
+	@default true
 
 	@example
 	```
@@ -77,7 +79,7 @@ export type ExtendsStrictOptions = {
 	//=> true
 	```
 
-	Note: If `strictAny` is `false` and `distributiveUnions` is `true`, then `any` would distribute and the result would be the `boolean` type, except when checking assignability to `any` or `unknown`.
+	Note: If `strictAny` is `false` and `distributiveUnions` is `true`, then `any` distributes and the result is the `boolean` type, except when checking assignability to `any` or `unknown`.
 
 	@example
 	```
@@ -93,7 +95,7 @@ export type ExtendsStrictOptions = {
 	//=> true
 	```
 
-	Note: This option only has an effect when checking assignability from `any` (`ExtendsStrict<any, ...>`), and not when checking assignability to `any` (`ExtendsStrict<..., any>`).
+	Note: This option only has an effect when checking assignability from `any` (`ExtendsStrict<any, ...>`), and not when checking assignability to `any` (`ExtendsStrict<..., any>`). It also only checks the top level, so `ExtendsStrict<any[], string[]>` and `ExtendsStrict<{a: any}, {a: string}>` are `true`.
 	*/
 	strictAny?: boolean;
 };
@@ -101,7 +103,7 @@ export type ExtendsStrictOptions = {
 type DefaultExtendsStrictOptions = {
 	distributiveUnions: false;
 	strictNever: true;
-	strictAny: false;
+	strictAny: true;
 };
 
 /**
@@ -119,11 +121,11 @@ type T1 = ExtendsStrict<number | string, string, {distributiveUnions: false}>;
 type T2 = ExtendsStrict<never, number, {strictNever: true}>;
 //=> false
 
-type T3 = ExtendsStrict<any, number, {strictAny: true}>;
+type T3 = ExtendsStrict<any, number>;
 //=> false
 ```
 
-Note: This type checks one direction. For both directions with the default options, use {@link IsMutuallyAssignable}.
+Note: This type checks one direction. For both directions, use {@link IsMutuallyAssignable}, which treats `never` like the default options, but `any` like the built-in `extends`.
 
 @see {@link ExtendsStrictOptions}
 
@@ -133,20 +135,21 @@ export type ExtendsStrict<Left, Right, Options extends ExtendsStrictOptions = {}
 	_ExtendsStrict<Left, Right, ApplyDefaultOptions<ExtendsStrictOptions, DefaultExtendsStrictOptions, Options>>;
 
 type _ExtendsStrict<Left, Right, Options extends Required<ExtendsStrictOptions>> =
-	(IsAny<Left> extends true ? Options['strictAny'] : false) extends true
-		// `unknown` is assignable to exactly the top targets accepted by strict `any`.
-		? unknown extends Right ? true : false
-		: IsNever<Left> extends true
-			? Options['strictNever'] extends true
+	// Only a literal `false` turns a strict flag off, so a non-literal flag resolves like the default.
+	(IsAny<Left> extends true ? Options['strictAny'] : false) extends false
+		? IsNever<Left> extends true
+			? Options['strictNever'] extends false
+				? true
 				// `unknown` is assignable to both `any` and `unknown`, so one check covers both.
-				? unknown extends Right ? true : IsNever<Right>
-				: true
+				: unknown extends Right ? true : IsNever<Right>
 			: Options['distributiveUnions'] extends true
 				? Left extends Right
 					? true
 					: false
 				: [Left] extends [Right]
 					? true
-					: false;
+					: false
+		// `unknown` is assignable to exactly the top targets accepted by strict `any`.
+		: unknown extends Right ? true : false;
 
 export {};

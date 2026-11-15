@@ -40,6 +40,7 @@ expectTypeOf<ConditionalExcept<{[x: string]: unknown; a: string | number; b: boo
 // Loose mode keeps the existing `any`/`unknown`/`never` behavior for each value
 expectTypeOf<ConditionalExcept<{a: any; b: unknown; c: never; d: string}, string, {strict: false}>>()
 	.toBe<{b: unknown; c: never}>();
+expectTypeOf<ConditionalExcept<{a: any; b: unknown; c: never; d: string}, string>>().toBe<{b: unknown; c: never}>();
 expectTypeOf<ConditionalExcept<{a: never; b: string}, never, {strict: false}>>()
 	.toBe<{a: never; b: string}>();
 

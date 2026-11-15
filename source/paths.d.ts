@@ -474,7 +474,8 @@ type InternalPaths<T, Options extends Required<PathsOptions>, CurrentDepth exten
 					// The default matcher accepts every value. This branch is required, not just faster: reading `T[Key]` for a generic `T` makes the result irreducible, which breaks constraints like `ParsePath<Paths<T>>`.
 					? unknown extends Options['valueType']
 						? _TransformedKey
-						: ExtendsStrict<T[Key], Options['valueType']> extends true
+						// An `any` value matches every matcher, like with `ConditionalKeys`.
+						: ExtendsStrict<T[Key], Options['valueType'], {strictAny: false}> extends true
 							? _TransformedKey
 							: never
 					: never

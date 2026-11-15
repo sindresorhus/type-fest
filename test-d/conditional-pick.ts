@@ -47,6 +47,7 @@ expectTypeOf<ConditionalPick<{[x: string]: unknown; a: string | number; b: boole
 // Loose mode keeps the existing `any`/`unknown`/`never` behavior for each value
 expectTypeOf<ConditionalPick<{a: any; b: unknown; c: never; d: string}, string, {strict: false}>>()
 	.toBe<{a: any; d: string}>();
+expectTypeOf<ConditionalPick<{a: any; b: unknown; c: never; d: string}, string>>().toBe<{a: any; d: string}>();
 expectTypeOf<ConditionalPick<{a: never; b: string}, never, {strict: false}>>().toBe<never>();
 
 // The default and explicit strict options keep the whole-value rule
