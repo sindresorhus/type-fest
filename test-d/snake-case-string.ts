@@ -32,9 +32,9 @@ expectTypeOf<SnakeCaseString<'foo\tbar'>>().toBe<never>();
 expectTypeOf<SnakeCaseString<''>>().toBe<never>();
 
 // Punctuation is not part of any case, even when the transformer keeps it
-expectTypeOf<SnakeCaseString<'foo.bar'>>().toBe<never>();
-expectTypeOf<SnakeCaseString<'foo+bar'>>().toBe<never>();
-expectTypeOf<SnakeCaseString<'foo/bar'>>().toBe<never>();
+expectTypeOf<SnakeCaseString<'foo.bar', {splitOnPunctuation: false}>>().toBe<never>();
+expectTypeOf<SnakeCaseString<'foo+bar', {splitOnPunctuation: false}>>().toBe<never>();
+expectTypeOf<SnakeCaseString<'foo/bar', {splitOnPunctuation: false}>>().toBe<never>();
 
 // A union is kept only when every member is valid
 expectTypeOf<SnakeCaseString<'foo_bar' | 'baz_qux'>>().toBe<'foo_bar' | 'baz_qux'>();
@@ -82,11 +82,11 @@ expectTypeOf(defineColumns(columns)).toBe<'user_id' | 'display_name'>();
 defineColumns([{name: 'user_id'}, {name: 'displayName'}] as const);
 
 // Every ASCII punctuation character is checked at each position, including characters the case transform preserves.
-expectTypeOf<{[Character in Exclude<AsciiPunctuationCharacter, '_'>]: SnakeCaseString<`${Character}foo_bar`>}>()
+expectTypeOf<{[Character in Exclude<AsciiPunctuationCharacter, '_'>]: SnakeCaseString<`${Character}foo_bar`, {splitOnPunctuation: false}>}>()
 	.toBe<{[Character in Exclude<AsciiPunctuationCharacter, '_'>]: never}>();
-expectTypeOf<{[Character in Exclude<AsciiPunctuationCharacter, '_'>]: SnakeCaseString<`foo_bar${Character}foo_bar`>}>()
+expectTypeOf<{[Character in Exclude<AsciiPunctuationCharacter, '_'>]: SnakeCaseString<`foo_bar${Character}foo_bar`, {splitOnPunctuation: false}>}>()
 	.toBe<{[Character in Exclude<AsciiPunctuationCharacter, '_'>]: never}>();
-expectTypeOf<{[Character in Exclude<AsciiPunctuationCharacter, '_'>]: SnakeCaseString<`foo_bar${Character}`>}>()
+expectTypeOf<{[Character in Exclude<AsciiPunctuationCharacter, '_'>]: SnakeCaseString<`foo_bar${Character}`, {splitOnPunctuation: false}>}>()
 	.toBe<{[Character in Exclude<AsciiPunctuationCharacter, '_'>]: never}>();
 
 // Splitting punctuation, adding a brand, or including a valid union member cannot bypass validation.

@@ -80,55 +80,55 @@ const kebabFromNumberInTheMiddleNoSplitOnNumbersEdgeCase3: KebabCase<'FOO22Bar'>
 expectTypeOf(kebabFromNumberInTheMiddleNoSplitOnNumbersEdgeCase3).toBe<'foo22-bar'>();
 
 // Punctuation
-declare const withPunctuation: KebabCase<'onDialog:close'>;
+declare const withPunctuation: KebabCase<'onDialog:close', {splitOnPunctuation: false}>;
 expectTypeOf(withPunctuation).toBe<'on-dialog:close'>();
 
-declare const withPunctuationAndSplit: KebabCase<'onDialog:close', {splitOnPunctuation: true}>;
+declare const withPunctuationAndSplit: KebabCase<'onDialog:close'>;
 expectTypeOf(withPunctuationAndSplit).toBe<'on-dialog-close'>();
 
-declare const withPunctuation2: KebabCase<'foo-bar>>baz'>;
+declare const withPunctuation2: KebabCase<'foo-bar>>baz', {splitOnPunctuation: false}>;
 expectTypeOf(withPunctuation2).toBe<'foo-bar>>baz'>();
 
-declare const withPunctuationAndSplit2: KebabCase<'foo-bar>>baz', {splitOnPunctuation: true}>;
+declare const withPunctuationAndSplit2: KebabCase<'foo-bar>>baz'>;
 expectTypeOf(withPunctuationAndSplit2).toBe<'foo-bar-baz'>();
 
-declare const withPunctuation3: KebabCase<'card::after'>;
+declare const withPunctuation3: KebabCase<'card::after', {splitOnPunctuation: false}>;
 expectTypeOf(withPunctuation3).toBe<'card::after'>();
 
-declare const withPunctuationAndSplit3: KebabCase<'card::after', {splitOnPunctuation: true}>;
+declare const withPunctuationAndSplit3: KebabCase<'card::after'>;
 expectTypeOf(withPunctuationAndSplit3).toBe<'card-after'>();
 
-declare const withPunctuation4: KebabCase<'div.card::after'>;
+declare const withPunctuation4: KebabCase<'div.card::after', {splitOnPunctuation: false}>;
 expectTypeOf(withPunctuation4).toBe<'div.card::after'>();
 
-declare const withPunctuationAndSplit4: KebabCase<'div.card::after', {splitOnPunctuation: true}>;
+declare const withPunctuationAndSplit4: KebabCase<'div.card::after'>;
 expectTypeOf(withPunctuationAndSplit4).toBe<'div-card-after'>();
 
-declare const withPunctuationAndNumber: KebabCase<'foo-bar::01'>;
+declare const withPunctuationAndNumber: KebabCase<'foo-bar::01', {splitOnPunctuation: false}>;
 expectTypeOf(withPunctuationAndNumber).toBe<'foo-bar::01'>();
 
-declare const withPunctuationSplitAndNumber: KebabCase<'foo-bar::01', {splitOnPunctuation: true}>;
+declare const withPunctuationSplitAndNumber: KebabCase<'foo-bar::01'>;
 expectTypeOf(withPunctuationSplitAndNumber).toBe<'foo-bar-01'>();
 
 declare const withPunctuationSplitAndNumberSplit: KebabCase<'foo-bar::01', {splitOnPunctuation: true; splitOnNumbers: true}>;
 expectTypeOf(withPunctuationSplitAndNumberSplit).toBe<'foo-bar-01'>();
 
-declare const withPunctuationAndNumberSplit2: KebabCase<'foo-bar::01', {splitOnNumbers: true}>;
+declare const withPunctuationAndNumberSplit2: KebabCase<'foo-bar::01', {splitOnNumbers: true; splitOnPunctuation: false}>;
 expectTypeOf(withPunctuationAndNumberSplit2).toBe<'foo-bar::01'>();
 
 declare const withPunctuationSplitAndNumberSplit2: KebabCase<'foo-bar::01', {splitOnNumbers: true; splitOnPunctuation: true}>;
 expectTypeOf(withPunctuationSplitAndNumberSplit2).toBe<'foo-bar-01'>();
 
-// A delimiter is not emitted next to punctuation, so the two never double up. The case where the next word begins with punctuation was already handled; the case where the previous word ends with one produced `foo.-bar`.
-expectTypeOf<KebabCase<'foo.Bar'>>().toBe<'foo.bar'>();
-expectTypeOf<KebabCase<'foo .bar'>>().toBe<'foo.bar'>();
-expectTypeOf<KebabCase<'a.b.c'>>().toBe<'a.b.c'>();
-expectTypeOf<KebabCase<'a-b.c'>>().toBe<'a-b.c'>();
+// With `splitOnPunctuation: false`, a delimiter is not emitted next to punctuation, so the two never double up. The case where the next word begins with punctuation was already handled; the case where the previous word ends with one produced `foo.-bar`.
+expectTypeOf<KebabCase<'foo.Bar', {splitOnPunctuation: false}>>().toBe<'foo.bar'>();
+expectTypeOf<KebabCase<'foo .bar', {splitOnPunctuation: false}>>().toBe<'foo.bar'>();
+expectTypeOf<KebabCase<'a.b.c', {splitOnPunctuation: false}>>().toBe<'a.b.c'>();
+expectTypeOf<KebabCase<'a-b.c', {splitOnPunctuation: false}>>().toBe<'a-b.c'>();
 
 expectTypeOf<KebabCase<'a\u{85}b'>>().toBe<'a-b'>();
 
 // An acronym keeps its last capital when the next character is not a lowercase letter, such as punctuation or a character with no case.
-expectTypeOf<KebabCase<'userID?'>>().toBe<'user-id?'>();
+expectTypeOf<KebabCase<'userID?', {splitOnPunctuation: false}>>().toBe<'user-id?'>();
 expectTypeOf<KebabCase<'parseJSON😀'>>().toBe<'parse-json😀'>();
 
 // Wrappers share the delimiter transform's defaults and preserve untransformed values.

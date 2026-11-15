@@ -14,7 +14,8 @@ import type {PascalCase} from 'type-fest';
 
 const someVariable: PascalCase<'foo-bar'> = 'FooBar';
 const preserveConsecutiveUppercase: PascalCase<'foo-BAR-baz', {preserveConsecutiveUppercase: true}> = 'FooBARBaz';
-const splitOnPunctuation: PascalCase<'foo-bar>>baz', {splitOnPunctuation: true}> = 'FooBarBaz';
+const splitOnPunctuation: PascalCase<'foo-bar>>baz'> = 'FooBarBaz';
+const noSplitOnPunctuation: PascalCase<'foo-bar>>baz', {splitOnPunctuation: false}> = 'FooBar>>baz';
 
 // Advanced
 

@@ -28,8 +28,8 @@ const splitOnNumbers: ScreamingSnakeCasedProperties<{line1: string}, {splitOnNum
 	LINE_1: 'string',
 };
 
-const splitOnPunctuation: ScreamingSnakeCasedProperties<{'foo::bar': string}, {splitOnPunctuation: true}> = {
-	FOO_BAR: 'string',
+const noSplitOnPunctuation: ScreamingSnakeCasedProperties<{'foo::bar': string}, {splitOnPunctuation: false}> = {
+	'FOO::BAR': 'string',
 };
 ```
 

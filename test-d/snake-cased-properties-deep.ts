@@ -68,8 +68,9 @@ expectTypeOf<SnakeCasedPropertiesDeep<{Identifiers: {MarketplaceASIN: {Marketpla
 expectTypeOf<SnakeCasedPropertiesDeep<{fooBar: any}>>().toBe<{foo_bar: any}>();
 expectTypeOf<SnakeCasedPropertiesDeep<{fooBar: {barBaz: any}; biz: any}>>().toBe<{foo_bar: {bar_baz: any}; biz: any}>();
 
-expectTypeOf<SnakeCasedPropertiesDeep<{'foo::bar': unknown}, {splitOnPunctuation: true}>>().toBe<{'foo_bar': unknown}>();
+expectTypeOf<SnakeCasedPropertiesDeep<{'foo::bar': unknown}>>().toBe<{'foo_bar': unknown}>();
 expectTypeOf<SnakeCasedPropertiesDeep<{'foo::bar': {'bar@baz': unknown}; biz: unknown}, {splitOnPunctuation: true}>>().toBe<{'foo_bar': {'bar_baz': unknown}; biz: unknown}>();
+expectTypeOf<SnakeCasedPropertiesDeep<{'foo::bar': {'bar@baz': unknown}}, {splitOnPunctuation: false}>>().toBe<{'foo::bar': {'bar@baz': unknown}}>();
 
 // Resolving options in the scalar transform keeps selected fields' modifiers and values intact.
 expectTypeOf<SnakeCasedPropertiesDeep<{readonly userId2?: {nestedValue: 1}; mutableValue?: string}, {splitOnNumbers: true; splitOnPunctuation: true}>>()

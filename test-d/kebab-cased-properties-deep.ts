@@ -67,8 +67,9 @@ expectTypeOf<KebabCasedPropertiesDeep<{foo_bar: {bar_baz: unknown}; biz: unknown
 expectTypeOf<KebabCasedPropertiesDeep<{foo_bar: any}>>().toBe<{'foo-bar': any}>();
 expectTypeOf<KebabCasedPropertiesDeep<{foo_bar: {bar_baz: any}; biz: any}>>().toBe<{'foo-bar': {'bar-baz': any}; biz: any}>();
 
-expectTypeOf<KebabCasedPropertiesDeep<{'foo::bar': unknown}, {splitOnPunctuation: true}>>().toBe<{'foo-bar': unknown}>();
+expectTypeOf<KebabCasedPropertiesDeep<{'foo::bar': unknown}>>().toBe<{'foo-bar': unknown}>();
 expectTypeOf<KebabCasedPropertiesDeep<{'foo::bar': {'bar@baz': unknown}; biz: unknown}, {splitOnPunctuation: true}>>().toBe<{'foo-bar': {'bar-baz': unknown}; biz: unknown}>();
+expectTypeOf<KebabCasedPropertiesDeep<{'foo::bar': {'bar@baz': unknown}}, {splitOnPunctuation: false}>>().toBe<{'foo::bar': {'bar@baz': unknown}}>();
 
 // Map, Set, and their readonly and weak variants are preserved, with their contents recursed into.
 declare const readonlySet: KebabCasedPropertiesDeep<ReadonlySet<{fooBar: number}>>;

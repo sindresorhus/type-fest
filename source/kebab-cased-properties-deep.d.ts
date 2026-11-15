@@ -52,10 +52,10 @@ const splitOnNumbers: KebabCasedPropertiesDeep<{line1: {line2: [{line3: string}]
 	},
 };
 
-const splitOnPunctuation: KebabCasedPropertiesDeep<{'user@info': {'user::id': number; 'user::name': string}}, {splitOnPunctuation: true}> = {
-	'user-info': {
-		'user-id': 1,
-		'user-name': 'Tom',
+const noSplitOnPunctuation: KebabCasedPropertiesDeep<{'user@info': {'user::id': number; 'user::name': string}}, {splitOnPunctuation: false}> = {
+	'user@info': {
+		'user::id': 1,
+		'user::name': 'Tom',
 	},
 };
 ```

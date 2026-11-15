@@ -53,10 +53,10 @@ const splitOnNumbers: DelimiterCasedPropertiesDeep<{line1: {line2: [{line3: stri
 	},
 };
 
-const splitOnPunctuation: DelimiterCasedPropertiesDeep<{'user@info': {'user::id': number; 'user::name': string}}, '-', {splitOnPunctuation: true}> = {
-	'user-info': {
-		'user-id': 1,
-		'user-name': 'Tom',
+const noSplitOnPunctuation: DelimiterCasedPropertiesDeep<{'user@info': {'user::id': number; 'user::name': string}}, '-', {splitOnPunctuation: false}> = {
+	'user@info': {
+		'user::id': 1,
+		'user::name': 'Tom',
 	},
 };
 ```

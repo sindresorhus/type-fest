@@ -17,10 +17,10 @@ expectTypeOf(baz).toBe<{fooBAR: number; bARFoo: string}>();
 declare const biz: CamelCasedProperties<{fooBAR: number; BARFoo: string}>;
 expectTypeOf(biz).toBe<{fooBar: number; barFoo: string}>();
 
-declare const fooBarPunctuated: CamelCasedProperties<{'hello@world1': {'foo::bar': string}}>;
+declare const fooBarPunctuated: CamelCasedProperties<{'hello@world1': {'foo::bar': string}}, {splitOnPunctuation: false}>;
 expectTypeOf(fooBarPunctuated).toBe<{'hello@world1': {'foo::bar': string}}>();
 
-declare const fooBarPunctuatedSplit: CamelCasedProperties<{'hello@world1': {'foo::bar': string}}, {splitOnPunctuation: true}>;
+declare const fooBarPunctuatedSplit: CamelCasedProperties<{'hello@world1': {'foo::bar': string}}>;
 expectTypeOf(fooBarPunctuatedSplit).toBe<{'helloWorld1': {'foo::bar': string}}>();
 
 declare const fooBarPunctuatedSplitNumberSplit: CamelCasedProperties<{'hello@world1': {'foo::bar': string}}, {splitOnPunctuation: true; splitOnNumbers: true}>;

@@ -118,46 +118,49 @@ expectTypeOf(unionValueAndDelimiter).toBe<'foo#bar#baz' | 'bar#baz#foo' | 'foo$b
 const stringPart: DelimiterCase<`foo${string}`, '#'> = 'fooSomeString';
 expectTypeOf(stringPart).toBe<`foo${string}`>();
 
-declare const withPunctuation: DelimiterCase<'onDialog:close', '#'>;
+declare const withPunctuation: DelimiterCase<'onDialog:close', '#', {splitOnPunctuation: false}>;
 expectTypeOf(withPunctuation).toBe<'on#dialog:close'>();
 
-declare const withPunctuationAndSplit: DelimiterCase<'onDialog:close', '#', {splitOnPunctuation: true}>;
+declare const withPunctuationAndSplit: DelimiterCase<'onDialog:close', '#'>;
 expectTypeOf(withPunctuationAndSplit).toBe<'on#dialog#close'>();
 
-declare const withPunctuation2: DelimiterCase<'foo-bar>>baz', '#'>;
+declare const withPunctuation2: DelimiterCase<'foo-bar>>baz', '#', {splitOnPunctuation: false}>;
 expectTypeOf(withPunctuation2).toBe<'foo#bar>>baz'>();
 
-declare const withPunctuationAndSplit2: DelimiterCase<'foo-bar>>baz', '#', {splitOnPunctuation: true}>;
+declare const withPunctuationAndSplit2: DelimiterCase<'foo-bar>>baz', '#'>;
 expectTypeOf(withPunctuationAndSplit2).toBe<'foo#bar#baz'>();
 
-declare const withPunctuation3: DelimiterCase<'card::after', '#'>;
+declare const withPunctuation3: DelimiterCase<'card::after', '#', {splitOnPunctuation: false}>;
 expectTypeOf(withPunctuation3).toBe<'card::after'>();
 
-declare const withPunctuationAndSplit3: DelimiterCase<'card::after', '#', {splitOnPunctuation: true}>;
+declare const withPunctuationAndSplit3: DelimiterCase<'card::after', '#'>;
 expectTypeOf(withPunctuationAndSplit3).toBe<'card#after'>();
 
-declare const withPunctuation4: DelimiterCase<'div.card::after', '#'>;
+declare const withPunctuation4: DelimiterCase<'div.card::after', '#', {splitOnPunctuation: false}>;
 expectTypeOf(withPunctuation4).toBe<'div.card::after'>();
 
-declare const withPunctuationAndSplit4: DelimiterCase<'div.card::after', '#', {splitOnPunctuation: true}>;
+declare const withPunctuationAndSplit4: DelimiterCase<'div.card::after', '#'>;
 expectTypeOf(withPunctuationAndSplit4).toBe<'div#card#after'>();
 
-declare const withPunctuationAndNumber: DelimiterCase<'foo-bar::01', '#'>;
+declare const withPunctuationAndNumber: DelimiterCase<'foo-bar::01', '#', {splitOnPunctuation: false}>;
 expectTypeOf(withPunctuationAndNumber).toBe<'foo#bar::01'>();
 
-declare const withPunctuationAndNumber2: DelimiterCase<'foo-bar::01', '#', {splitOnNumbers: true}>;
+declare const withPunctuationAndNumber2: DelimiterCase<'foo-bar::01', '#', {splitOnNumbers: true; splitOnPunctuation: false}>;
 expectTypeOf(withPunctuationAndNumber2).toBe<'foo#bar::01'>();
 
-declare const withPunctuationSplitAndNumber: DelimiterCase<'foo-bar::01', '#', {splitOnPunctuation: true}>;
+declare const withPunctuationSplitAndNumber: DelimiterCase<'foo-bar::01', '#'>;
 expectTypeOf(withPunctuationSplitAndNumber).toBe<'foo#bar#01'>();
 
 declare const withPunctuationSplitAndNumberSplit: DelimiterCase<'foo-bar::01', '#', {splitOnPunctuation: true; splitOnNumbers: true}>;
 expectTypeOf(withPunctuationSplitAndNumberSplit).toBe<'foo#bar#01'>();
 
-declare const startsWithPunctuation: DelimiterCase<'^fooBarBaz', ':'>;
+declare const startsWithPunctuation: DelimiterCase<'^fooBarBaz', ':', {splitOnPunctuation: false}>;
 expectTypeOf(startsWithPunctuation).toBe<'^foo:bar:baz'>();
 
-declare const startsWithPunctuationSameAsDelimiter: DelimiterCase<'#fooBarBaz', '#'>;
+declare const startsWithPunctuationSplit: DelimiterCase<'^fooBarBaz', ':'>;
+expectTypeOf(startsWithPunctuationSplit).toBe<'foo:bar:baz'>();
+
+declare const startsWithPunctuationSameAsDelimiter: DelimiterCase<'#fooBarBaz', '#', {splitOnPunctuation: false}>;
 expectTypeOf(startsWithPunctuationSameAsDelimiter).toBe<'#foo#bar#baz'>();
 
 declare const emptyStringDelimiter: DelimiterCase<'fooBarBaz', ''>;
@@ -210,9 +213,9 @@ type CliOptions = {
 	foo: 123,
 }) satisfies OddCasedProperties<CliOptions>;
 
-// A delimiter is not emitted next to punctuation, so the two never double up. The case where the next word begins with punctuation was already handled; the case where the previous word ends with one produced `foo#-bar`.
-expectTypeOf<DelimiterCase<'foo.Bar', '#'>>().toBe<'foo.bar'>();
-expectTypeOf<DelimiterCase<'foo .bar', '#'>>().toBe<'foo.bar'>();
+// With `splitOnPunctuation: false`, a delimiter is not emitted next to punctuation, so the two never double up. The case where the next word begins with punctuation was already handled; the case where the previous word ends with one produced `foo#-bar`.
+expectTypeOf<DelimiterCase<'foo.Bar', '#', {splitOnPunctuation: false}>>().toBe<'foo.bar'>();
+expectTypeOf<DelimiterCase<'foo .bar', '#', {splitOnPunctuation: false}>>().toBe<'foo.bar'>();
 
 // Only words are lowercased; a custom delimiter keeps its own casing.
 expectTypeOf<DelimiterCase<'fooBar', 'X'>>().toBe<'fooXbar'>();
@@ -220,7 +223,7 @@ expectTypeOf<DelimiterCase<'FooBarBaz', '[SEP]'>>().toBe<'foo[SEP]bar[SEP]baz'>(
 expectTypeOf<DelimiterCase<'fooBar', Uppercase<string>>>().toBe<`foo${Uppercase<string>}bar`>();
 expectTypeOf<DelimiterCase<'FOO_BAR_BAZ', 'X' | 'Y'>>().toBe<'fooXbarXbaz' | 'fooYbarYbaz'>();
 expectTypeOf<DelimiterCase<'ÄpfelStraße', 'SEP'>>().toBe<'äpfelSEPstraße'>();
-expectTypeOf<DelimiterCase<'foo.BarBaz', 'SEP'>>().toBe<'foo.barSEPbaz'>();
+expectTypeOf<DelimiterCase<'foo.BarBaz', 'SEP', {splitOnPunctuation: false}>>().toBe<'foo.barSEPbaz'>();
 expectTypeOf<DelimiterCase<'FOO', 'SEP'>>().toBe<'foo'>();
 expectTypeOf<DelimiterCase<'', 'SEP'>>().toBe<''>();
 expectTypeOf<DelimiterCase<unknown, 'SEP'>>().toBe<unknown>();
@@ -245,7 +248,7 @@ expectTypeOf<DelimiterCase<'fooBar' | 'barBaz', Tagged<'-', 'Delimiter'>>>().toB
 expectTypeOf<DelimiterCase<'fooBar', Tagged<'', 'Delimiter'>>>().toBe<'foobar'>();
 expectTypeOf<DelimiterCase<'foo', Tagged<'-', 'Delimiter'>>>().toBe<'foo'>();
 expectTypeOf<DelimiterCase<'', Tagged<'-', 'Delimiter'>>>().toBe<''>();
-expectTypeOf<DelimiterCase<'foo.BarBaz', Tagged<'SEP', 'Delimiter'>>>().toBe<'foo.barSEPbaz'>();
+expectTypeOf<DelimiterCase<'foo.BarBaz', Tagged<'SEP', 'Delimiter'>, {splitOnPunctuation: false}>>().toBe<'foo.barSEPbaz'>();
 expectTypeOf<DelimiterCase<'foo:bar', Tagged<'SEP', 'Delimiter'>, {splitOnPunctuation: true}>>().toBe<'fooSEPbar'>();
 expectTypeOf<DelimiterCase<'version2Path', Tagged<'SEP', 'Delimiter'>, {splitOnNumbers: true}>>().toBe<'versionSEP2SEPpath'>();
 expectTypeOf<DelimiterCase<'fooBar', Tagged<string, 'Delimiter'>>>().toBe<`foo${string}bar`>();
@@ -276,28 +279,28 @@ expectTypeOf<DelimiterCase<Tagged<FieldName.DisplayName, 'Field'>, '-'>>().toBe<
 // The public prefix predicate still suppresses delimiters on either side of every preserved punctuation character.
 type PreservedPunctuation = Exclude<AsciiPunctuationCharacter, '-' | '_'>;
 
-expectTypeOf<{[Punctuation in PreservedPunctuation]: DelimiterCase<`foo ${Punctuation}BarBaz`, '#'>}>()
+expectTypeOf<{[Punctuation in PreservedPunctuation]: DelimiterCase<`foo ${Punctuation}BarBaz`, '#', {splitOnPunctuation: false}>}>()
 	.toBe<{[Punctuation in PreservedPunctuation]: `foo${Punctuation}bar#baz`}>();
-expectTypeOf<{[Punctuation in PreservedPunctuation]: DelimiterCase<`foo${Punctuation} BarBaz`, '#'>}>()
+expectTypeOf<{[Punctuation in PreservedPunctuation]: DelimiterCase<`foo${Punctuation} BarBaz`, '#', {splitOnPunctuation: false}>}>()
 	.toBe<{[Punctuation in PreservedPunctuation]: `foo${Punctuation}bar#baz`}>();
-expectTypeOf<{[Punctuation in PreservedPunctuation]: DelimiterCase<`foo ${Punctuation} BarBaz`, '#'>}>()
+expectTypeOf<{[Punctuation in PreservedPunctuation]: DelimiterCase<`foo ${Punctuation} BarBaz`, '#', {splitOnPunctuation: false}>}>()
 	.toBe<{[Punctuation in PreservedPunctuation]: `foo${Punctuation}bar#baz`}>();
 expectTypeOf<{[Punctuation in AsciiPunctuationCharacter]: DelimiterCase<`foo${Punctuation}BarBaz`, '#', {splitOnPunctuation: true}>}>()
 	.toBe<{[Punctuation in AsciiPunctuationCharacter]: 'foo#bar#baz'}>();
 
 // Prefix matching stays correct when punctuation appears at multiple word boundaries.
-expectTypeOf<DelimiterCase<'foo .Bar :Baz', '#'>>().toBe<'foo.bar:baz'>();
-expectTypeOf<DelimiterCase<'fooBar .Baz', '#'>>().toBe<'foo#bar.baz'>();
-expectTypeOf<DelimiterCase<'foo .BarBaz' | 'fooBarBaz', '#'>>().toBe<'foo.bar#baz' | 'foo#bar#baz'>();
-expectTypeOf<DelimiterCase<'foo .BarBaz', 'X' | 'Y'>>().toBe<'foo.barXbaz' | 'foo.barYbaz'>();
-expectTypeOf<DelimiterCase<'foo .BarBaz', ''>>().toBe<'foo.barbaz'>();
-expectTypeOf<DelimiterCase<'foo .BarBaz', string>>().toBe<`foo.bar${string}baz`>();
-expectTypeOf<DelimiterCase<Tagged<'foo .BarBaz', 'Text'>, '#'>>().toBe<'foo.bar#baz'>();
-expectTypeOf<DelimiterCase<'foo .BarBaz', Tagged<'#', 'Delimiter'>>>().toBe<'foo.bar#baz'>();
-expectTypeOf<KebabCase<'foo .BarBaz'>>().toBe<'foo.bar-baz'>();
-expectTypeOf<SnakeCase<'foo .BarBaz'>>().toBe<'foo.bar_baz'>();
-expectTypeOf<DelimiterCasedProperties<{readonly 'foo .BarBaz'?: number}, '#'>>().toBe<{readonly 'foo.bar#baz'?: number}>();
-expectTypeOf<DelimiterCasedPropertiesDeep<{nested: Array<{'foo .BarBaz': string}>}, '#'>>().toBe<{nested: Array<{'foo.bar#baz': string}>}>();
+expectTypeOf<DelimiterCase<'foo .Bar :Baz', '#', {splitOnPunctuation: false}>>().toBe<'foo.bar:baz'>();
+expectTypeOf<DelimiterCase<'fooBar .Baz', '#', {splitOnPunctuation: false}>>().toBe<'foo#bar.baz'>();
+expectTypeOf<DelimiterCase<'foo .BarBaz' | 'fooBarBaz', '#', {splitOnPunctuation: false}>>().toBe<'foo.bar#baz' | 'foo#bar#baz'>();
+expectTypeOf<DelimiterCase<'foo .BarBaz', 'X' | 'Y', {splitOnPunctuation: false}>>().toBe<'foo.barXbaz' | 'foo.barYbaz'>();
+expectTypeOf<DelimiterCase<'foo .BarBaz', '', {splitOnPunctuation: false}>>().toBe<'foo.barbaz'>();
+expectTypeOf<DelimiterCase<'foo .BarBaz', string, {splitOnPunctuation: false}>>().toBe<`foo.bar${string}baz`>();
+expectTypeOf<DelimiterCase<Tagged<'foo .BarBaz', 'Text'>, '#', {splitOnPunctuation: false}>>().toBe<'foo.bar#baz'>();
+expectTypeOf<DelimiterCase<'foo .BarBaz', Tagged<'#', 'Delimiter'>, {splitOnPunctuation: false}>>().toBe<'foo.bar#baz'>();
+expectTypeOf<KebabCase<'foo .BarBaz', {splitOnPunctuation: false}>>().toBe<'foo.bar-baz'>();
+expectTypeOf<SnakeCase<'foo .BarBaz', {splitOnPunctuation: false}>>().toBe<'foo.bar_baz'>();
+expectTypeOf<DelimiterCasedProperties<{readonly 'foo .BarBaz'?: number}, '#', {splitOnPunctuation: false}>>().toBe<{readonly 'foo.bar#baz'?: number}>();
+expectTypeOf<DelimiterCasedPropertiesDeep<{nested: Array<{'foo .BarBaz': string}>}, '#', {splitOnPunctuation: false}>>().toBe<{nested: Array<{'foo.bar#baz': string}>}>();
 
 // The emitted delimiter may be any ASCII punctuation character, including word separators.
 expectTypeOf<{[Character in AsciiPunctuationCharacter]: DelimiterCase<'firstSecondThird', Character>}>()
@@ -320,15 +323,15 @@ expectTypeOf<{[Character in AsciiPunctuationCharacter]: DelimiterCase<`v2${Chara
 	.toBe<{[Character in AsciiPunctuationCharacter]: 'vSEP2SEPhttpSEP3SEPserver'}>();
 
 // Preserved punctuation suppresses an extra delimiter at both boundaries, including numeric boundaries.
-expectTypeOf<{[Character in PreservedPunctuation]: DelimiterCase<`first${Character} ${Character}Second`, 'SEP'>}>()
+expectTypeOf<{[Character in PreservedPunctuation]: DelimiterCase<`first${Character} ${Character}Second`, 'SEP', {splitOnPunctuation: false}>}>()
 	.toBe<{[Character in PreservedPunctuation]: `first${Character}${Character}second`}>();
-expectTypeOf<{[Character in PreservedPunctuation]: DelimiterCase<`first${Character}2Third`, 'SEP', {splitOnNumbers: true}>}>()
+expectTypeOf<{[Character in PreservedPunctuation]: DelimiterCase<`first${Character}2Third`, 'SEP', {splitOnNumbers: true; splitOnPunctuation: false}>}>()
 	.toBe<{[Character in PreservedPunctuation]: `first${Character}2SEPthird`}>();
-expectTypeOf<{[Character in PreservedPunctuation]: DelimiterCase<`first2${Character}Third`, 'SEP', {splitOnNumbers: true}>}>()
+expectTypeOf<{[Character in PreservedPunctuation]: DelimiterCase<`first2${Character}Third`, 'SEP', {splitOnNumbers: true; splitOnPunctuation: false}>}>()
 	.toBe<{[Character in PreservedPunctuation]: `firstSEP2${Character}third`}>();
-expectTypeOf<{[Character in PreservedPunctuation]: DelimiterCase<`API${Character}keyValue`, 'SEP'>}>()
+expectTypeOf<{[Character in PreservedPunctuation]: DelimiterCase<`API${Character}keyValue`, 'SEP', {splitOnPunctuation: false}>}>()
 	.toBe<{[Character in PreservedPunctuation]: `api${Character}keySEPvalue`}>();
-expectTypeOf<{[Character in PreservedPunctuation]: DelimiterCase<`${Character} ${Character}`, 'SEP'>}>()
+expectTypeOf<{[Character in PreservedPunctuation]: DelimiterCase<`${Character} ${Character}`, 'SEP', {splitOnPunctuation: false}>}>()
 	.toBe<{[Character in PreservedPunctuation]: `${Character}${Character}`}>();
 
 // Non-ASCII punctuation stays in the word and does not suppress delimiters at whitespace boundaries.

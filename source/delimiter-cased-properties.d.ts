@@ -29,8 +29,8 @@ const splitOnNumbers: DelimiterCasedProperties<{line1: string}, '-', {splitOnNum
 	'line-1': 'string',
 };
 
-const splitOnPunctuation: DelimiterCasedProperties<{'foo::bar': string}, '-', {splitOnPunctuation: true}> = {
-	'foo-bar': 'string',
+const noSplitOnPunctuation: DelimiterCasedProperties<{'foo::bar': string}, '-', {splitOnPunctuation: false}> = {
+	'foo::bar': 'string',
 };
 ```
 

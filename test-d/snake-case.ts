@@ -83,40 +83,40 @@ const snakeFromNumberInTheMiddleNoSplitOnNumbersEdgeCase3: SnakeCase<'FOO22Bar'>
 expectTypeOf(snakeFromNumberInTheMiddleNoSplitOnNumbersEdgeCase3).toBe<'foo22_bar'>();
 
 // Punctuation
-declare const withPunctuation: SnakeCase<'onDialog:close'>;
+declare const withPunctuation: SnakeCase<'onDialog:close', {splitOnPunctuation: false}>;
 expectTypeOf(withPunctuation).toBe<'on_dialog:close'>();
 
-declare const withPunctuationSplit: SnakeCase<'onDialog:close', {splitOnPunctuation: true}>;
+declare const withPunctuationSplit: SnakeCase<'onDialog:close'>;
 expectTypeOf(withPunctuationSplit).toBe<'on_dialog_close'>();
 
-declare const withPunctuation2: SnakeCase<'foo-bar>>baz'>;
+declare const withPunctuation2: SnakeCase<'foo-bar>>baz', {splitOnPunctuation: false}>;
 expectTypeOf(withPunctuation2).toBe<'foo_bar>>baz'>();
 
-declare const withPunctuationSplit2: SnakeCase<'foo-bar>>baz', {splitOnPunctuation: true}>;
+declare const withPunctuationSplit2: SnakeCase<'foo-bar>>baz'>;
 expectTypeOf(withPunctuationSplit2).toBe<'foo_bar_baz'>();
 
-declare const withPunctuation3: SnakeCase<'card::after'>;
+declare const withPunctuation3: SnakeCase<'card::after', {splitOnPunctuation: false}>;
 expectTypeOf(withPunctuation3).toBe<'card::after'>();
 
-declare const withPunctuationSplit3: SnakeCase<'card::after', {splitOnPunctuation: true}>;
+declare const withPunctuationSplit3: SnakeCase<'card::after'>;
 expectTypeOf(withPunctuationSplit3).toBe<'card_after'>();
 
-declare const withPunctuation4: SnakeCase<'div.card::after'>;
+declare const withPunctuation4: SnakeCase<'div.card::after', {splitOnPunctuation: false}>;
 expectTypeOf(withPunctuation4).toBe<'div.card::after'>();
 
-declare const withPunctuationSplit4: SnakeCase<'div.card::after', {splitOnPunctuation: true}>;
+declare const withPunctuationSplit4: SnakeCase<'div.card::after'>;
 expectTypeOf(withPunctuationSplit4).toBe<'div_card_after'>();
 
-declare const withPunctuationAndNumber: SnakeCase<'foo-bar::01'>;
+declare const withPunctuationAndNumber: SnakeCase<'foo-bar::01', {splitOnPunctuation: false}>;
 expectTypeOf(withPunctuationAndNumber).toBe<'foo_bar::01'>();
 
-declare const withPunctuationSplitAndNumber: SnakeCase<'foo-bar::01', {splitOnPunctuation: true}>;
+declare const withPunctuationSplitAndNumber: SnakeCase<'foo-bar::01'>;
 expectTypeOf(withPunctuationSplitAndNumber).toBe<'foo_bar_01'>();
 
 declare const withPunctuationSplitAndNumberSplit: SnakeCase<'foo-bar::01', {splitOnPunctuation: true; splitOnNumbers: true}>;
 expectTypeOf(withPunctuationSplitAndNumberSplit).toBe<'foo_bar_01'>();
 
-declare const withPunctuationAndNumberSplit2: SnakeCase<'foo-bar::01', {splitOnNumbers: true}>;
+declare const withPunctuationAndNumberSplit2: SnakeCase<'foo-bar::01', {splitOnNumbers: true; splitOnPunctuation: false}>;
 expectTypeOf(withPunctuationAndNumberSplit2).toBe<'foo_bar::01'>();
 
 declare const withPunctuationSplitAndNumberSplit2: SnakeCase<'foo-bar::01', {splitOnNumbers: true; splitOnPunctuation: true}>;
@@ -125,11 +125,11 @@ expectTypeOf(withPunctuationSplitAndNumberSplit2).toBe<'foo_bar_01'>();
 declare const withPunctuationSplitAndNumber2: SnakeCase<'foo-bar::01', {splitOnNumbers: true; splitOnPunctuation: true}>;
 expectTypeOf(withPunctuationSplitAndNumber2).toBe<'foo_bar_01'>();
 
-// A delimiter is not emitted next to punctuation, so the two never double up. See the note in `DelimiterCase`.
-expectTypeOf<SnakeCase<'foo.Bar'>>().toBe<'foo.bar'>();
+// With `splitOnPunctuation: false`, a delimiter is not emitted next to punctuation, so the two never double up. See the note in `DelimiterCase`.
+expectTypeOf<SnakeCase<'foo.Bar', {splitOnPunctuation: false}>>().toBe<'foo.bar'>();
 
 // An acronym keeps its last capital when the next character is not a lowercase letter, such as punctuation or a character with no case.
-expectTypeOf<SnakeCase<'getURL!'>>().toBe<'get_url!'>();
+expectTypeOf<SnakeCase<'getURL!', {splitOnPunctuation: false}>>().toBe<'get_url!'>();
 
 // Wrappers share the delimiter transform's defaults and preserve untransformed values.
 expectTypeOf<SnakeCase<'apiV2Response', {splitOnNumbers: true; splitOnPunctuation: true}>>().toBe<'api_v_2_response'>();

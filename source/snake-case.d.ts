@@ -15,7 +15,8 @@ import type {SnakeCase} from 'type-fest';
 const someVariable: SnakeCase<'fooBar'> = 'foo_bar';
 const noSplitOnNumbers: SnakeCase<'p2pNetwork'> = 'p2p_network';
 const splitOnNumbers: SnakeCase<'p2pNetwork', {splitOnNumbers: true}> = 'p_2_p_network';
-const splitOnPunctuation: SnakeCase<'div.card::after', {splitOnPunctuation: true}> = 'div_card_after';
+const splitOnPunctuation: SnakeCase<'div.card::after'> = 'div_card_after';
+const noSplitOnPunctuation: SnakeCase<'div.card::after', {splitOnPunctuation: false}> = 'div.card::after';
 
 // Advanced
 

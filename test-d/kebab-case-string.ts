@@ -39,11 +39,11 @@ expectTypeOf<KebabCaseString<'foo\nbar'>>().toBe<never>();
 expectTypeOf<KebabCaseString<'foo\u{A0}bar'>>().toBe<never>();
 
 // Punctuation is not part of any case, even when the transformer keeps it
-expectTypeOf<KebabCaseString<'div.card'>>().toBe<never>();
-expectTypeOf<KebabCaseString<'foo.bar'>>().toBe<never>();
-expectTypeOf<KebabCaseString<'foo+bar'>>().toBe<never>();
-expectTypeOf<KebabCaseString<'foo/bar'>>().toBe<never>();
-expectTypeOf<KebabCaseString<'a-b.c'>>().toBe<never>();
+expectTypeOf<KebabCaseString<'div.card', {splitOnPunctuation: false}>>().toBe<never>();
+expectTypeOf<KebabCaseString<'foo.bar', {splitOnPunctuation: false}>>().toBe<never>();
+expectTypeOf<KebabCaseString<'foo+bar', {splitOnPunctuation: false}>>().toBe<never>();
+expectTypeOf<KebabCaseString<'foo/bar', {splitOnPunctuation: false}>>().toBe<never>();
+expectTypeOf<KebabCaseString<'a-b.c', {splitOnPunctuation: false}>>().toBe<never>();
 
 // Only ASCII punctuation is checked, so a character that the transformer keeps is accepted
 expectTypeOf<KebabCaseString<'foo—bar'>>().toBe<'foo—bar'>();
@@ -121,11 +121,11 @@ declare const emptyClassName: Tagged<'', 'ClassName'>;
 addClass(emptyClassName);
 
 // Every ASCII punctuation character is checked at each position, including characters the case transform preserves.
-expectTypeOf<{[Character in Exclude<AsciiPunctuationCharacter, '-'>]: KebabCaseString<`${Character}foo-bar`>}>()
+expectTypeOf<{[Character in Exclude<AsciiPunctuationCharacter, '-'>]: KebabCaseString<`${Character}foo-bar`, {splitOnPunctuation: false}>}>()
 	.toBe<{[Character in Exclude<AsciiPunctuationCharacter, '-'>]: never}>();
-expectTypeOf<{[Character in Exclude<AsciiPunctuationCharacter, '-'>]: KebabCaseString<`foo-bar${Character}foo-bar`>}>()
+expectTypeOf<{[Character in Exclude<AsciiPunctuationCharacter, '-'>]: KebabCaseString<`foo-bar${Character}foo-bar`, {splitOnPunctuation: false}>}>()
 	.toBe<{[Character in Exclude<AsciiPunctuationCharacter, '-'>]: never}>();
-expectTypeOf<{[Character in Exclude<AsciiPunctuationCharacter, '-'>]: KebabCaseString<`foo-bar${Character}`>}>()
+expectTypeOf<{[Character in Exclude<AsciiPunctuationCharacter, '-'>]: KebabCaseString<`foo-bar${Character}`, {splitOnPunctuation: false}>}>()
 	.toBe<{[Character in Exclude<AsciiPunctuationCharacter, '-'>]: never}>();
 
 // Splitting punctuation, adding a brand, or including a valid union member cannot bypass validation.

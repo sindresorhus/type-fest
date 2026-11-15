@@ -66,8 +66,9 @@ expectTypeOf<ScreamingSnakeCasedPropertiesDeep<{fooBar: {barBaz: unknown}; biz: 
 expectTypeOf<ScreamingSnakeCasedPropertiesDeep<{fooBar: any}>>().toBe<{FOO_BAR: any}>();
 expectTypeOf<ScreamingSnakeCasedPropertiesDeep<{fooBar: {barBaz: any}; biz: any}>>().toBe<{FOO_BAR: {BAR_BAZ: any}; BIZ: any}>();
 
-expectTypeOf<ScreamingSnakeCasedPropertiesDeep<{'foo::bar': unknown}, {splitOnPunctuation: true}>>().toBe<{'FOO_BAR': unknown}>();
+expectTypeOf<ScreamingSnakeCasedPropertiesDeep<{'foo::bar': unknown}>>().toBe<{'FOO_BAR': unknown}>();
 expectTypeOf<ScreamingSnakeCasedPropertiesDeep<{'foo::bar': {'bar@baz': unknown}; biz: unknown}, {splitOnPunctuation: true}>>().toBe<{'FOO_BAR': {'BAR_BAZ': unknown}; BIZ: unknown}>();
+expectTypeOf<ScreamingSnakeCasedPropertiesDeep<{'foo::bar': {'bar@baz': unknown}}, {splitOnPunctuation: false}>>().toBe<{'FOO::BAR': {'BAR@BAZ': unknown}}>();
 
 // Tuples keep their shape, their optional elements and their `readonly` modifier.
 declare const tuple: ScreamingSnakeCasedPropertiesDeep<{tuple: [number, string, {fooBar: 1}]}>;

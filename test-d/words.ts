@@ -106,13 +106,13 @@ expectTypeOf<Words<'v1e3'>>().toBe<['v', '1', 'e', '3']>();
 
 // SplitOnPunctuation
 
-// Without `splitOnPunctuation`, punctuation is not a word boundary, so it stays inside the word. Splitting on it there was a side effect of punctuation matching both case predicates, which also made every non-ASCII character start a new word.
-expectTypeOf<Words<':'>>().toBe<[':']>();
-expectTypeOf<Words<'::'>>().toBe<['::']>();
-expectTypeOf<Words<'hello::'>>().toBe<['hello::']>();
-expectTypeOf<Words<'hello:world'>>().toBe<['hello:world']>();
-expectTypeOf<Words<'hello::world'>>().toBe<['hello::world']>();
-expectTypeOf<Words<'hello-braveNew:world'>>().toBe<['hello', 'brave', 'New:world']>();
+// With `splitOnPunctuation: false`, punctuation is not a word boundary, so it stays inside the word. Splitting on it there was a side effect of punctuation matching both case predicates, which also made every non-ASCII character start a new word.
+expectTypeOf<Words<':', {splitOnPunctuation: false}>>().toBe<[':']>();
+expectTypeOf<Words<'::', {splitOnPunctuation: false}>>().toBe<['::']>();
+expectTypeOf<Words<'hello::', {splitOnPunctuation: false}>>().toBe<['hello::']>();
+expectTypeOf<Words<'hello:world', {splitOnPunctuation: false}>>().toBe<['hello:world']>();
+expectTypeOf<Words<'hello::world', {splitOnPunctuation: false}>>().toBe<['hello::world']>();
+expectTypeOf<Words<'hello-braveNew:world', {splitOnPunctuation: false}>>().toBe<['hello', 'brave', 'New:world']>();
 
 // A character with no case at all, such as a Han character or an emoji, is part of the surrounding word.
 expectTypeOf<Words<'日本語テキスト'>>().toBe<['日本語テキスト']>();
@@ -120,18 +120,19 @@ expectTypeOf<Words<'a日b'>>().toBe<['a日b']>();
 expectTypeOf<Words<'Hello世界'>>().toBe<['Hello世界']>();
 
 // An acronym keeps its last capital when the next character is not a lowercase letter, such as punctuation or a character with no case.
-expectTypeOf<Words<'FOO:bar'>>().toBe<['FOO:bar']>();
-expectTypeOf<Words<'FOO:bar', {splitOnPunctuation: true}>>().toBe<['FOO', 'bar']>();
+expectTypeOf<Words<'FOO:bar', {splitOnPunctuation: false}>>().toBe<['FOO:bar']>();
+expectTypeOf<Words<'FOO:bar'>>().toBe<['FOO', 'bar']>();
 expectTypeOf<Words<'HELLO世界'>>().toBe<['HELLO世界']>();
 expectTypeOf<Words<'parseJSON😀'>>().toBe<['parse', 'JSON😀']>();
-expectTypeOf<Words<'userID?'>>().toBe<['user', 'ID?']>();
+expectTypeOf<Words<'userID?', {splitOnPunctuation: false}>>().toBe<['user', 'ID?']>();
 
-expectTypeOf<Words<':', {splitOnPunctuation: true}>>().toBe<[]>();
-expectTypeOf<Words<'::', {splitOnPunctuation: true}>>().toBe<[]>();
-expectTypeOf<Words<'hello::', {splitOnPunctuation: true}>>().toBe<['hello']>();
-expectTypeOf<Words<'hello:world', {splitOnPunctuation: true}>>().toBe<['hello', 'world']>();
+// Punctuation is a word boundary by default.
+expectTypeOf<Words<':'>>().toBe<[]>();
+expectTypeOf<Words<'::'>>().toBe<[]>();
+expectTypeOf<Words<'hello::'>>().toBe<['hello']>();
+expectTypeOf<Words<'hello:world'>>().toBe<['hello', 'world']>();
 expectTypeOf<Words<'hello::world', {splitOnPunctuation: true}>>().toBe<['hello', 'world']>();
-expectTypeOf<Words<'hello-braveNew:world', {splitOnPunctuation: true}>>().toBe<['hello', 'brave', 'New', 'world']>();
+expectTypeOf<Words<'hello-braveNew:world'>>().toBe<['hello', 'brave', 'New', 'world']>();
 expectTypeOf<Words<'item::01', {splitOnPunctuation: true; splitOnNumbers: false}>>().toBe<['item', '01']>();
 expectTypeOf<Words<'item::01', {splitOnPunctuation: true; splitOnNumbers: true}>>().toBe<['item', '01']>();
 
@@ -197,9 +198,9 @@ expectTypeOf<Words<'42HTTP2Server99'>>().toBe<['42', 'HTTP', '2', 'Server', '99'
 expectTypeOf<Words<'42HTTP2Server99', {splitOnNumbers: false}>>().toBe<['42HTTP2', 'Server99']>();
 expectTypeOf<Words<'猫42犬'>>().toBe<['猫', '42', '犬']>();
 expectTypeOf<Words<'猫42犬', {splitOnNumbers: false}>>().toBe<['猫42犬']>();
-expectTypeOf<Words<'version2.0'>>().toBe<['version', '2', '.', '0']>();
-expectTypeOf<Words<'version2.0', {splitOnNumbers: false}>>().toBe<['version2.0']>();
-expectTypeOf<Words<'version2.0', {splitOnPunctuation: true}>>().toBe<['version', '2', '0']>();
+expectTypeOf<Words<'version2.0', {splitOnPunctuation: false}>>().toBe<['version', '2', '.', '0']>();
+expectTypeOf<Words<'version2.0', {splitOnNumbers: false; splitOnPunctuation: false}>>().toBe<['version2.0']>();
+expectTypeOf<Words<'version2.0'>>().toBe<['version', '2', '0']>();
 expectTypeOf<Words<'version2.0', {splitOnNumbers: false; splitOnPunctuation: true}>>().toBe<['version2', '0']>();
 
 // Numeric transitions remain independent for each string in a union.
@@ -295,19 +296,19 @@ expectTypeOf<{[Character in '-' | '_']: Words<`first${Character}second`, {splitO
 	.toBe<{[Character in '-' | '_']: ['first', 'second']}>();
 expectTypeOf<{[Character in PreservedPunctuation]: Words<Character, {splitOnPunctuation: false}>}>()
 	.toBe<{[Character in PreservedPunctuation]: [Character]}>();
-expectTypeOf<{[Character in PreservedPunctuation]: Words<`first${Character}second`>}>()
+expectTypeOf<{[Character in PreservedPunctuation]: Words<`first${Character}second`, {splitOnPunctuation: false}>}>()
 	.toBe<{[Character in PreservedPunctuation]: [`first${Character}second`]}>();
-expectTypeOf<{[Character in PreservedPunctuation]: Words<`${Character}value${Character}`>}>()
+expectTypeOf<{[Character in PreservedPunctuation]: Words<`${Character}value${Character}`, {splitOnPunctuation: false}>}>()
 	.toBe<{[Character in PreservedPunctuation]: [`${Character}value${Character}`]}>();
-expectTypeOf<{[Character in PreservedPunctuation]: Words<`API${Character}key`>}>()
+expectTypeOf<{[Character in PreservedPunctuation]: Words<`API${Character}key`, {splitOnPunctuation: false}>}>()
 	.toBe<{[Character in PreservedPunctuation]: [`API${Character}key`]}>();
-expectTypeOf<{[Character in PreservedPunctuation]: Words<`foo${Character}Bar`>}>()
+expectTypeOf<{[Character in PreservedPunctuation]: Words<`foo${Character}Bar`, {splitOnPunctuation: false}>}>()
 	.toBe<{[Character in PreservedPunctuation]: [`foo${Character}`, 'Bar']}>();
-expectTypeOf<{[Character in PreservedPunctuation]: Words<`foo${Character}2`>}>()
+expectTypeOf<{[Character in PreservedPunctuation]: Words<`foo${Character}2`, {splitOnPunctuation: false}>}>()
 	.toBe<{[Character in PreservedPunctuation]: [`foo${Character}`, '2']}>();
-expectTypeOf<{[Character in PreservedPunctuation]: Words<`foo2${Character}bar`>}>()
+expectTypeOf<{[Character in PreservedPunctuation]: Words<`foo2${Character}bar`, {splitOnPunctuation: false}>}>()
 	.toBe<{[Character in PreservedPunctuation]: ['foo', '2', `${Character}bar`]}>();
-expectTypeOf<{[Character in PreservedPunctuation]: Words<`foo2${Character}bar`, {splitOnNumbers: false}>}>()
+expectTypeOf<{[Character in PreservedPunctuation]: Words<`foo2${Character}bar`, {splitOnNumbers: false; splitOnPunctuation: false}>}>()
 	.toBe<{[Character in PreservedPunctuation]: [`foo2${Character}bar`]}>();
 
 // Non-ASCII punctuation and symbols are preserved even when ASCII punctuation splitting is enabled.

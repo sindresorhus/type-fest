@@ -29,8 +29,8 @@ const splitOnNumbers: SnakeCasedProperties<{line1: string}, {splitOnNumbers: tru
 	'line_1': 'string',
 };
 
-const splitOnPunctuation: SnakeCasedProperties<{'foo::bar': string}, {splitOnPunctuation: true}> = {
-	'foo_bar': 'string',
+const noSplitOnPunctuation: SnakeCasedProperties<{'foo::bar': string}, {splitOnPunctuation: false}> = {
+	'foo::bar': 'string',
 };
 ```
 

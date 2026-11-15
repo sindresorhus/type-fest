@@ -50,10 +50,10 @@ const preserveConsecutiveUppercase: PascalCasedPropertiesDeep<{fooBAR: {fooBARBi
 	},
 };
 
-const splitOnPunctuation: PascalCasedPropertiesDeep<{'user@info': {'user::id': number; 'user::name': string}}, {splitOnPunctuation: true}> = {
-	UserInfo: {
-		UserId: 1,
-		UserName: 'Tom',
+const noSplitOnPunctuation: PascalCasedPropertiesDeep<{'user@info': {'user::id': number; 'user::name': string}}, {splitOnPunctuation: false}> = {
+	'User@info': {
+		'User::id': 1,
+		'User::name': 'Tom',
 	},
 };
 ```

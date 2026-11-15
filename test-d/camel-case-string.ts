@@ -39,9 +39,9 @@ expectTypeOf<CamelCaseString<'__foo', {preserveLeadingUnderscores: true}>>().toB
 expectTypeOf<CamelCaseString<'_foo_bar', {preserveLeadingUnderscores: true}>>().toBe<never>();
 
 // Punctuation is not part of any case, even when the transformer keeps it
-expectTypeOf<CamelCaseString<'foo.bar'>>().toBe<never>();
-expectTypeOf<CamelCaseString<'foo+bar'>>().toBe<never>();
-expectTypeOf<CamelCaseString<'foo/bar'>>().toBe<never>();
+expectTypeOf<CamelCaseString<'foo.bar', {splitOnPunctuation: false}>>().toBe<never>();
+expectTypeOf<CamelCaseString<'foo+bar', {splitOnPunctuation: false}>>().toBe<never>();
+expectTypeOf<CamelCaseString<'foo/bar', {splitOnPunctuation: false}>>().toBe<never>();
 
 // A union is kept only when every member is valid
 expectTypeOf<CamelCaseString<'fooBar' | 'bazQux'>>().toBe<'fooBar' | 'bazQux'>();
@@ -102,11 +102,11 @@ expectTypeOf(defineHandlerNames(handlerNames)).toBe<typeof handlerNames>();
 defineHandlerNames(['onSubmit', 'on-reset'] as const);
 
 // Every ASCII punctuation character is checked at each position, including characters the case transform preserves.
-expectTypeOf<{[Character in AsciiPunctuationCharacter]: CamelCaseString<`${Character}fooBar`>}>()
+expectTypeOf<{[Character in AsciiPunctuationCharacter]: CamelCaseString<`${Character}fooBar`, {splitOnPunctuation: false}>}>()
 	.toBe<{[Character in AsciiPunctuationCharacter]: never}>();
-expectTypeOf<{[Character in AsciiPunctuationCharacter]: CamelCaseString<`fooBar${Character}fooBar`>}>()
+expectTypeOf<{[Character in AsciiPunctuationCharacter]: CamelCaseString<`fooBar${Character}fooBar`, {splitOnPunctuation: false}>}>()
 	.toBe<{[Character in AsciiPunctuationCharacter]: never}>();
-expectTypeOf<{[Character in AsciiPunctuationCharacter]: CamelCaseString<`fooBar${Character}`>}>()
+expectTypeOf<{[Character in AsciiPunctuationCharacter]: CamelCaseString<`fooBar${Character}`, {splitOnPunctuation: false}>}>()
 	.toBe<{[Character in AsciiPunctuationCharacter]: never}>();
 
 // Splitting punctuation, adding a brand, or including a valid union member cannot bypass validation.

@@ -32,9 +32,9 @@ expectTypeOf<ScreamingSnakeCaseString<'FOO\tBAR'>>().toBe<never>();
 expectTypeOf<ScreamingSnakeCaseString<''>>().toBe<never>();
 
 // Punctuation is not part of any case, even when the transformer keeps it
-expectTypeOf<ScreamingSnakeCaseString<'FOO.BAR'>>().toBe<never>();
-expectTypeOf<ScreamingSnakeCaseString<'FOO+BAR'>>().toBe<never>();
-expectTypeOf<ScreamingSnakeCaseString<'FOO/BAR'>>().toBe<never>();
+expectTypeOf<ScreamingSnakeCaseString<'FOO.BAR', {splitOnPunctuation: false}>>().toBe<never>();
+expectTypeOf<ScreamingSnakeCaseString<'FOO+BAR', {splitOnPunctuation: false}>>().toBe<never>();
+expectTypeOf<ScreamingSnakeCaseString<'FOO/BAR', {splitOnPunctuation: false}>>().toBe<never>();
 
 // A union is kept only when every member is valid
 expectTypeOf<ScreamingSnakeCaseString<'FOO_BAR' | 'BAZ_QUX'>>().toBe<'FOO_BAR' | 'BAZ_QUX'>();
@@ -71,11 +71,11 @@ declare const wide: string;
 defineVariable({name: wide, value: 'debug'});
 
 // Every ASCII punctuation character is checked at each position, including characters the case transform preserves.
-expectTypeOf<{[Character in Exclude<AsciiPunctuationCharacter, '_'>]: ScreamingSnakeCaseString<`${Character}FOO_BAR`>}>()
+expectTypeOf<{[Character in Exclude<AsciiPunctuationCharacter, '_'>]: ScreamingSnakeCaseString<`${Character}FOO_BAR`, {splitOnPunctuation: false}>}>()
 	.toBe<{[Character in Exclude<AsciiPunctuationCharacter, '_'>]: never}>();
-expectTypeOf<{[Character in Exclude<AsciiPunctuationCharacter, '_'>]: ScreamingSnakeCaseString<`FOO_BAR${Character}FOO_BAR`>}>()
+expectTypeOf<{[Character in Exclude<AsciiPunctuationCharacter, '_'>]: ScreamingSnakeCaseString<`FOO_BAR${Character}FOO_BAR`, {splitOnPunctuation: false}>}>()
 	.toBe<{[Character in Exclude<AsciiPunctuationCharacter, '_'>]: never}>();
-expectTypeOf<{[Character in Exclude<AsciiPunctuationCharacter, '_'>]: ScreamingSnakeCaseString<`FOO_BAR${Character}`>}>()
+expectTypeOf<{[Character in Exclude<AsciiPunctuationCharacter, '_'>]: ScreamingSnakeCaseString<`FOO_BAR${Character}`, {splitOnPunctuation: false}>}>()
 	.toBe<{[Character in Exclude<AsciiPunctuationCharacter, '_'>]: never}>();
 
 // Splitting punctuation, adding a brand, or including a valid union member cannot bypass validation.

@@ -28,8 +28,8 @@ const preserveConsecutiveUppercase: PascalCasedProperties<{fooBAR: string}, {pre
 	FooBAR: 'string',
 };
 
-const splitOnPunctuation: PascalCasedProperties<{'foo::bar': string}, {splitOnPunctuation: true}> = {
-	FooBar: 'string',
+const noSplitOnPunctuation: PascalCasedProperties<{'foo::bar': string}, {splitOnPunctuation: false}> = {
+	'Foo::bar': 'string',
 };
 ```
 

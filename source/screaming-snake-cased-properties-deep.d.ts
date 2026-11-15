@@ -52,10 +52,10 @@ const splitOnNumbers: ScreamingSnakeCasedPropertiesDeep<{line1: {line2: [{line3:
 	},
 };
 
-const splitOnPunctuation: ScreamingSnakeCasedPropertiesDeep<{'user@info': {'user::id': number; 'user::name': string}}, {splitOnPunctuation: true}> = {
-	USER_INFO: {
-		USER_ID: 1,
-		USER_NAME: 'Tom',
+const noSplitOnPunctuation: ScreamingSnakeCasedPropertiesDeep<{'user@info': {'user::id': number; 'user::name': string}}, {splitOnPunctuation: false}> = {
+	'USER@INFO': {
+		'USER::ID': 1,
+		'USER::NAME': 'Tom',
 	},
 };
 ```

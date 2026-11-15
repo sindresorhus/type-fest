@@ -87,7 +87,8 @@ import type {CamelCase} from 'type-fest';
 
 const someVariable: CamelCase<'foo-bar'> = 'fooBar';
 const preserveConsecutiveUppercase: CamelCase<'foo-BAR-baz', {preserveConsecutiveUppercase: true}> = 'fooBARBaz';
-const splitOnPunctuation: CamelCase<'foo-bar:BAZ', {splitOnPunctuation: true}> = 'fooBarBaz';
+const splitOnPunctuation: CamelCase<'foo-bar:BAZ'> = 'fooBarBaz';
+const noSplitOnPunctuation: CamelCase<'foo-bar:baz', {splitOnPunctuation: false}> = 'fooBar:baz';
 const preserveLeadingUnderscores: CamelCase<'_foo_bar', {preserveLeadingUnderscores: true}> = '_fooBar';
 
 // Advanced

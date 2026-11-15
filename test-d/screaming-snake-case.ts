@@ -83,44 +83,44 @@ expectTypeOf(snakeFromNumberInTheMiddleNoSplitOnNumbersEdgeCase3).toBe<'FOO22_BA
 const nonStringFromNonString: ScreamingSnakeCase<[]> = [];
 expectTypeOf(nonStringFromNonString).toBe<[]>();
 
-declare const withPunctuation: ScreamingSnakeCase<'onDialog:close'>;
+declare const withPunctuation: ScreamingSnakeCase<'onDialog:close', {splitOnPunctuation: false}>;
 expectTypeOf(withPunctuation).toBe<'ON_DIALOG:CLOSE'>();
 
-declare const withPunctuationSplit: ScreamingSnakeCase<'onDialog:close', {splitOnPunctuation: true}>;
+declare const withPunctuationSplit: ScreamingSnakeCase<'onDialog:close'>;
 expectTypeOf(withPunctuationSplit).toBe<'ON_DIALOG_CLOSE'>();
 
-declare const withPunctuation2: ScreamingSnakeCase<'foo-bar>>baz'>;
+declare const withPunctuation2: ScreamingSnakeCase<'foo-bar>>baz', {splitOnPunctuation: false}>;
 expectTypeOf(withPunctuation2).toBe<'FOO_BAR>>BAZ'>();
 
-declare const withPunctuationSplit2: ScreamingSnakeCase<'foo-bar>>baz', {splitOnPunctuation: true}>;
+declare const withPunctuationSplit2: ScreamingSnakeCase<'foo-bar>>baz'>;
 expectTypeOf(withPunctuationSplit2).toBe<'FOO_BAR_BAZ'>();
 
-declare const withPunctuation3: ScreamingSnakeCase<'card::after'>;
+declare const withPunctuation3: ScreamingSnakeCase<'card::after', {splitOnPunctuation: false}>;
 expectTypeOf(withPunctuation3).toBe<'CARD::AFTER'>();
 
-declare const withPunctuationSplit3: ScreamingSnakeCase<'card::after', {splitOnPunctuation: true}>;
+declare const withPunctuationSplit3: ScreamingSnakeCase<'card::after'>;
 expectTypeOf(withPunctuationSplit3).toBe<'CARD_AFTER'>();
 
-declare const withPunctuation4: ScreamingSnakeCase<'div.card::after'>;
+declare const withPunctuation4: ScreamingSnakeCase<'div.card::after', {splitOnPunctuation: false}>;
 expectTypeOf(withPunctuation4).toBe<'DIV.CARD::AFTER'>();
 
-declare const withPunctuationSplit4: ScreamingSnakeCase<'div.card::after', {splitOnPunctuation: true}>;
+declare const withPunctuationSplit4: ScreamingSnakeCase<'div.card::after'>;
 expectTypeOf(withPunctuationSplit4).toBe<'DIV_CARD_AFTER'>();
 
-declare const withPunctuationAndNumber: ScreamingSnakeCase<'foo-bar::01'>;
+declare const withPunctuationAndNumber: ScreamingSnakeCase<'foo-bar::01', {splitOnPunctuation: false}>;
 expectTypeOf(withPunctuationAndNumber).toBe<'FOO_BAR::01'>();
 
-declare const withPunctuationAndNumber2: ScreamingSnakeCase<'foo-bar::01', {splitOnNumbers: true}>;
+declare const withPunctuationAndNumber2: ScreamingSnakeCase<'foo-bar::01', {splitOnNumbers: true; splitOnPunctuation: false}>;
 expectTypeOf(withPunctuationAndNumber2).toBe<'FOO_BAR::01'>();
 
-declare const withPunctuationSplitAndNumber: ScreamingSnakeCase<'foo-bar::01', {splitOnPunctuation: true}>;
+declare const withPunctuationSplitAndNumber: ScreamingSnakeCase<'foo-bar::01'>;
 expectTypeOf(withPunctuationSplitAndNumber).toBe<'FOO_BAR_01'>();
 
 declare const withPunctuationSplitAndNumberSplit: ScreamingSnakeCase<'foo-bar::01', {splitOnNumbers: true; splitOnPunctuation: true}>;
 expectTypeOf(withPunctuationSplitAndNumberSplit).toBe<'FOO_BAR_01'>();
 
-// A delimiter is not emitted next to punctuation, so the two never double up. See the note in `DelimiterCase`.
-expectTypeOf<ScreamingSnakeCase<'foo.Bar'>>().toBe<'FOO.BAR'>();
+// With `splitOnPunctuation: false`, a delimiter is not emitted next to punctuation, so the two never double up. See the note in `DelimiterCase`.
+expectTypeOf<ScreamingSnakeCase<'foo.Bar', {splitOnPunctuation: false}>>().toBe<'FOO.BAR'>();
 
 // Casing produces a new string, so a brand on an unknown input must not constrain the output.
 expectTypeOf<ScreamingSnakeCase<Tagged<string, 'Text'>>>().toBe<Uppercase<string>>();

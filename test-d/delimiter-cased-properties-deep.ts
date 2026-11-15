@@ -14,19 +14,19 @@ expectTypeOf(bar).toBe<Set<{'foo-bar': string}>>();
 declare const withOptions: DelimiterCasedPropertiesDeep<Set<{helloWorld: {p2p: Array<{addressLine1: string}>}}>, '.', {splitOnNumbers: true}>;
 expectTypeOf(withOptions).toBe<Set<{'hello.world': {'p.2.p': Array<{'address.line.1': string}>}}>>();
 
-declare const withPunctuation: DelimiterCasedPropertiesDeep<{'hello@World1': {'foo::Bar': string}}, '.'>;
+declare const withPunctuation: DelimiterCasedPropertiesDeep<{'hello@World1': {'foo::Bar': string}}, '.', {splitOnPunctuation: false}>;
 expectTypeOf(withPunctuation).toBe<{'hello@world1': {'foo::bar': string}}>();
 
-declare const withPunctuationSplit: DelimiterCasedPropertiesDeep<{'hello@World1': {'foo::Bar': string}}, '.', {splitOnPunctuation: true}>;
+declare const withPunctuationSplit: DelimiterCasedPropertiesDeep<{'hello@World1': {'foo::Bar': string}}, '.'>;
 expectTypeOf(withPunctuationSplit).toBe<{'hello.world1': {'foo.bar': string}}>();
 
 declare const withPunctuationSplitAndNumbers: DelimiterCasedPropertiesDeep<{'hello@World1': {'foo::Bar1': string}}, '.', {splitOnPunctuation: true; splitOnNumbers: true}>;
 expectTypeOf(withPunctuationSplitAndNumbers).toBe<{'hello.world.1': {'foo.bar.1': string}}>();
 
-declare const startsWithPunctuation: DelimiterCasedPropertiesDeep<{'^fooBarBaz': {'^foo_bar_baz': string}}, ':'>;
+declare const startsWithPunctuation: DelimiterCasedPropertiesDeep<{'^fooBarBaz': {'^foo_bar_baz': string}}, ':', {splitOnPunctuation: false}>;
 expectTypeOf(startsWithPunctuation).toBe<{'^foo:bar:baz': {'^foo:bar:baz': string}}>();
 
-declare const startsWithPunctuationSameAsDelimiter: DelimiterCasedPropertiesDeep<{'#fooBarBaz': {'#foo_bar_baz': string}}, '#'>;
+declare const startsWithPunctuationSameAsDelimiter: DelimiterCasedPropertiesDeep<{'#fooBarBaz': {'#foo_bar_baz': string}}, '#', {splitOnPunctuation: false}>;
 expectTypeOf(startsWithPunctuationSameAsDelimiter).toBe<{'#foo#bar#baz': {'#foo#bar#baz': string}}>();
 
 declare const emptyStringDelimiter: DelimiterCasedPropertiesDeep<{'fooBarBaz': {'foo_bar_baz': string}}, ''>;

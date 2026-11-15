@@ -42,7 +42,7 @@ export type WordsOptions = {
 	/**
 	Split on {@link AsciiPunctuationCharacter | ASCII punctuation characters} (for example, `#`, `&`, `*`, `:`, `?`, `@`, `~`). Hyphens and underscores always separate words, regardless of this option.
 
-	@default false
+	@default true
 
 	@example
 	```
@@ -60,7 +60,7 @@ export type WordsOptions = {
 
 export type _DefaultWordsOptions = {
 	splitOnNumbers: true;
-	splitOnPunctuation: false;
+	splitOnPunctuation: true;
 };
 
 /**
@@ -68,7 +68,7 @@ Split a string similar to Lodash's `_.words()` function.
 
 - Split on each word that begins with a capital letter.
 - Split on each {@link WordSeparators}.
-- Split on each {@link AsciiPunctuationCharacter} (if {@link WordsOptions.splitOnPunctuation} is enabled).
+- Split on each {@link AsciiPunctuationCharacter} (unless {@link WordsOptions.splitOnPunctuation} is disabled).
 - Split on numeric sequence.
 
 @example
@@ -93,13 +93,13 @@ type Words4 = Words<'lifeIs42'>;
 type Words5 = Words<'p2pNetwork', {splitOnNumbers: false}>;
 //=> ['p2p', 'Network']
 
-type Words6 = Words<'hello:world', {splitOnPunctuation: true}>;
+type Words6 = Words<'hello:world'>;
 //=> ['hello', 'world']
 
 type Words7 = Words<'hello:world', {splitOnPunctuation: false}>;
 //=> ['hello:world']
 
-type Words8 = Words<'hello::world', {splitOnPunctuation: true}>;
+type Words8 = Words<'hello::world'>;
 //=> ['hello', 'world']
 ```
 

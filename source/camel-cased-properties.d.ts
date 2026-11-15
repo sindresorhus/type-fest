@@ -27,8 +27,8 @@ const preserveConsecutiveUppercase: CamelCasedProperties<{fooBAR: string}, {pres
 	fooBAR: 'string',
 };
 
-const splitOnPunctuation: CamelCasedProperties<{'foo::bar': string}, {splitOnPunctuation: true}> = {
-	fooBar: 'string',
+const noSplitOnPunctuation: CamelCasedProperties<{'foo::bar': string}, {splitOnPunctuation: false}> = {
+	'foo::bar': 'string',
 };
 ```
 

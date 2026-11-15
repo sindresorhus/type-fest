@@ -89,14 +89,14 @@ expectTypeOf('' as CamelCase<'p2pNetwork', {splitOnNumbers: false}>).toBe<'p2pNe
 expectTypeOf('' as CamelCase<'p2pNetwork', {splitOnNumbers: true}>).toBe<'p2PNetwork'>();
 
 // Punctuation
-expectTypeOf<CamelCase<'onDialog:close'>>().toBe<'onDialog:close'>();
-expectTypeOf<CamelCase<'foo-bar>>baz'>>().toBe<'fooBar>>baz'>();
-expectTypeOf<CamelCase<'foo-bar::01'>>().toBe<'fooBar::01'>();
+expectTypeOf<CamelCase<'onDialog:close', {splitOnPunctuation: false}>>().toBe<'onDialog:close'>();
+expectTypeOf<CamelCase<'foo-bar>>baz', {splitOnPunctuation: false}>>().toBe<'fooBar>>baz'>();
+expectTypeOf<CamelCase<'foo-bar::01', {splitOnPunctuation: false}>>().toBe<'fooBar::01'>();
 
-expectTypeOf<CamelCase<'onDialog:close', {splitOnPunctuation: true}>>().toBe<'onDialogClose'>();
-expectTypeOf<CamelCase<'foo-bar>>baz', {splitOnPunctuation: true}>>().toBe<'fooBarBaz'>();
+expectTypeOf<CamelCase<'onDialog:close'>>().toBe<'onDialogClose'>();
+expectTypeOf<CamelCase<'foo-bar>>baz'>>().toBe<'fooBarBaz'>();
 expectTypeOf<CamelCase<'fooBAR:biz', {splitOnPunctuation: true; preserveConsecutiveUppercase: true}>>().toBe<'fooBARBiz'>();
-expectTypeOf<CamelCase<'foo-bar::01', {splitOnPunctuation: true}>>().toBe<'fooBar01'>();
+expectTypeOf<CamelCase<'foo-bar::01'>>().toBe<'fooBar01'>();
 expectTypeOf<CamelCase<'foo-bar::01', {splitOnPunctuation: true; splitOnNumbers: false}>>().toBe<'fooBar01'>();
 expectTypeOf<CamelCase<'foo-bar::01', {splitOnPunctuation: true; splitOnNumbers: true}>>().toBe<'fooBar01'>();
 

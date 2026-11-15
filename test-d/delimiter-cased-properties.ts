@@ -14,19 +14,19 @@ expectTypeOf(fooBar).toBe<() => {a: string}>();
 declare const withOptions: DelimiterCasedProperties<{helloWorld1: {fooBar: string}}, '.', {splitOnNumbers: true}>;
 expectTypeOf(withOptions).toBe<{'hello.world.1': {fooBar: string}}>();
 
-declare const withPunctuation: DelimiterCasedProperties<{'hello@World1': {'foo::Bar': string}}, '.'>;
+declare const withPunctuation: DelimiterCasedProperties<{'hello@World1': {'foo::Bar': string}}, '.', {splitOnPunctuation: false}>;
 expectTypeOf(withPunctuation).toBe<{'hello@world1': {'foo::Bar': string}}>();
 
-declare const withPunctuationSplit: DelimiterCasedProperties<{'hello@World1': {'foo::Bar': string}}, '.', {splitOnPunctuation: true}>;
+declare const withPunctuationSplit: DelimiterCasedProperties<{'hello@World1': {'foo::Bar': string}}, '.'>;
 expectTypeOf(withPunctuationSplit).toBe<{'hello.world1': {'foo::Bar': string}}>();
 
 declare const withPunctuationSplitAndNumbers: DelimiterCasedProperties<{'hello@World1': {'foo::Bar': string}}, '.', {splitOnPunctuation: true; splitOnNumbers: true}>;
 expectTypeOf(withPunctuationSplitAndNumbers).toBe<{'hello.world.1': {'foo::Bar': string}}>();
 
-declare const startsWithPunctuation: DelimiterCasedProperties<{'^fooBarBaz': {'^foo_bar_baz': string}}, ':'>;
+declare const startsWithPunctuation: DelimiterCasedProperties<{'^fooBarBaz': {'^foo_bar_baz': string}}, ':', {splitOnPunctuation: false}>;
 expectTypeOf(startsWithPunctuation).toBe<{'^foo:bar:baz': {'^foo_bar_baz': string}}>();
 
-declare const startsWithPunctuationSameAsDelimiter: DelimiterCasedProperties<{'#fooBarBaz': {'#foo_bar_baz': string}}, '#'>;
+declare const startsWithPunctuationSameAsDelimiter: DelimiterCasedProperties<{'#fooBarBaz': {'#foo_bar_baz': string}}, '#', {splitOnPunctuation: false}>;
 expectTypeOf(startsWithPunctuationSameAsDelimiter).toBe<{'#foo#bar#baz': {'#foo_bar_baz': string}}>();
 
 declare const emptyStringDelimiter: DelimiterCasedProperties<{'fooBarBaz': {'foo_bar_baz': string}}, ''>;

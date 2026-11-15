@@ -23,7 +23,7 @@ type DelimiterCaseFromArray<
 	...infer RemainingWords extends string[],
 ]
 	? DelimiterCaseFromArray<RemainingWords, Delimiter, OutputString extends '' ? Lowercase<FirstWord> : `${OutputString}${
-		// A delimiter is not emitted next to punctuation, or the two double up. `OutputString` ends with the last character of the previous word, so testing it covers the word that ends in punctuation, and `FirstWord` covers the one that begins with it.
+		// With `splitOnPunctuation: false`, a delimiter is not emitted next to punctuation, or the two double up. `OutputString` ends with the last character of the previous word, so testing it covers the word that ends in punctuation, and `FirstWord` covers the one that begins with it.
 		Or<StartsWith<FirstWord, AsciiPunctuationCharacter>, EndsWithPunctuation<OutputString>> extends true
 			? ''
 			: Delimiter
@@ -51,7 +51,8 @@ import type {DelimiterCase} from 'type-fest';
 
 const someVariable: DelimiterCase<'fooBar', '#'> = 'foo#bar';
 const someVariableNoSplitOnNumbers: DelimiterCase<'p2pNetwork', '#', {splitOnNumbers: false}> = 'p2p#network';
-const someVariableWithPunctuation: DelimiterCase<'div.card::after', '#', {splitOnPunctuation: true}> = 'div#card#after';
+const someVariableWithPunctuation: DelimiterCase<'div.card::after', '#'> = 'div#card#after';
+const someVariableNoSplitOnPunctuation: DelimiterCase<'div.card::after', '#', {splitOnPunctuation: false}> = 'div.card::after';
 
 // Advanced
 

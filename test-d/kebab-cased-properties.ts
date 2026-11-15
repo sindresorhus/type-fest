@@ -11,10 +11,10 @@ expectTypeOf(foo).toBe<{'hello-world1': {fooBar: string}}>();
 declare const bar: KebabCasedProperties<Foobar, {splitOnNumbers: true}>;
 expectTypeOf(bar).toBe<{'hello-world-1': {fooBar: string}}>();
 
-declare const fooBarPunctuated: KebabCasedProperties<FoobarPunctuated>;
+declare const fooBarPunctuated: KebabCasedProperties<FoobarPunctuated, {splitOnPunctuation: false}>;
 expectTypeOf(fooBarPunctuated).toBe<{'hello@world1': {'foo::Bar': string}}>();
 
-declare const fooBarPunctuatedSplit: KebabCasedProperties<FoobarPunctuated, {splitOnPunctuation: true}>;
+declare const fooBarPunctuatedSplit: KebabCasedProperties<FoobarPunctuated>;
 expectTypeOf(fooBarPunctuatedSplit).toBe<{'hello-world1': {'foo::Bar': string}}>();
 
 declare const fooBarPunctuatedSplitNumberSplit: KebabCasedProperties<FoobarPunctuated, {splitOnPunctuation: true; splitOnNumbers: true}>;

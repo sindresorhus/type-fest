@@ -13,10 +13,10 @@ expectTypeOf(bar).toBe<Array<{helloWorld: string}>>();
 declare const fooBar: PascalCasedProperties<() => {a: string}>;
 expectTypeOf(fooBar).toBe<() => {a: string}>();
 
-declare const fooBarPunctuated: PascalCasedProperties<FoobarPunctuated>;
+declare const fooBarPunctuated: PascalCasedProperties<FoobarPunctuated, {splitOnPunctuation: false}>;
 expectTypeOf(fooBarPunctuated).toBe<{'Hello@World1': {'foo::Bar': string}}>();
 
-declare const fooBarPunctuatedSplit: PascalCasedProperties<FoobarPunctuated, {splitOnPunctuation: true}>;
+declare const fooBarPunctuatedSplit: PascalCasedProperties<FoobarPunctuated>;
 expectTypeOf(fooBarPunctuatedSplit).toBe<{'HelloWorld1': {'foo::Bar': string}}>();
 
 declare const fooBarPunctuatedSplitNumberSplit: PascalCasedProperties<FoobarPunctuated, {splitOnPunctuation: true; splitOnNumbers: true}>;

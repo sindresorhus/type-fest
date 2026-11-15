@@ -11,10 +11,10 @@ expectTypeOf(foo).toBe<{HELLO_WORLD1: {fooBar: string}}>();
 declare const bar: ScreamingSnakeCasedProperties<Foobar, {splitOnNumbers: true}>;
 expectTypeOf(bar).toBe<{HELLO_WORLD_1: {fooBar: string}}>();
 
-declare const fooBarPunctuated: ScreamingSnakeCasedProperties<FoobarPunctuated>;
+declare const fooBarPunctuated: ScreamingSnakeCasedProperties<FoobarPunctuated, {splitOnPunctuation: false}>;
 expectTypeOf(fooBarPunctuated).toBe<{'HELLO@WORLD1': {'foo::Bar': string}}>();
 
-declare const fooBarPunctuatedSplit: ScreamingSnakeCasedProperties<FoobarPunctuated, {splitOnPunctuation: true}>;
+declare const fooBarPunctuatedSplit: ScreamingSnakeCasedProperties<FoobarPunctuated>;
 expectTypeOf(fooBarPunctuatedSplit).toBe<{HELLO_WORLD1: {'foo::Bar': string}}>();
 
 declare const fooBarPunctuatedSplitNumberSplit: ScreamingSnakeCasedProperties<FoobarPunctuated, {splitOnPunctuation: true; splitOnNumbers: true}>;
@@ -80,9 +80,9 @@ expectTypeOf<ScreamingSnakeCasedProperties<{fooBAR: number; XMLHttpRequest: stri
 // Keys in other casings are converted, and keys that collide produce a union of their values.
 expectTypeOf<ScreamingSnakeCasedProperties<{USER_ID: 1; user_id: 2; userId: 3}>>().toBe<{USER_ID: 1 | 2 | 3}>();
 
-// A hyphen separates words by default, while a dot separates them only with `splitOnPunctuation`.
-expectTypeOf<ScreamingSnakeCasedProperties<{'foo-bar': 1; 'foo.bar': 2}>>().toBe<{FOO_BAR: 1; 'FOO.BAR': 2}>();
-expectTypeOf<ScreamingSnakeCasedProperties<{'foo-bar': 1; 'foo.bar': 2}, {splitOnPunctuation: true}>>()
+// A hyphen always separates words, while a dot separates them only with `splitOnPunctuation`, which is the default.
+expectTypeOf<ScreamingSnakeCasedProperties<{'foo-bar': 1; 'foo.bar': 2}, {splitOnPunctuation: false}>>().toBe<{FOO_BAR: 1; 'FOO.BAR': 2}>();
+expectTypeOf<ScreamingSnakeCasedProperties<{'foo-bar': 1; 'foo.bar': 2}>>()
 	.toBe<{FOO_BAR: 1 | 2}>();
 
 // Nullish values keep their converted keys.

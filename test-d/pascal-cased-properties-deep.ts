@@ -67,8 +67,9 @@ expectTypeOf<PascalCasedPropertiesDeep<{foo_bar: {bar_baz: unknown}; biz: unknow
 expectTypeOf<PascalCasedPropertiesDeep<{foo_bar: any}>>().toBe<{'FooBar': any}>();
 expectTypeOf<PascalCasedPropertiesDeep<{foo_bar: {bar_baz: any}; biz: any}>>().toBe<{'FooBar': {'BarBaz': any}; Biz: any}>();
 
-expectTypeOf<PascalCasedPropertiesDeep<{'foo::bar': unknown}, {splitOnPunctuation: true}>>().toBe<{'FooBar': unknown}>();
+expectTypeOf<PascalCasedPropertiesDeep<{'foo::bar': unknown}>>().toBe<{'FooBar': unknown}>();
 expectTypeOf<PascalCasedPropertiesDeep<{'foo::bar': {'bar@baz': unknown}; biz: unknown}, {splitOnPunctuation: true}>>().toBe<{'FooBar': {'BarBaz': unknown}; Biz: unknown}>();
+expectTypeOf<PascalCasedPropertiesDeep<{'foo::bar': {'bar@baz': unknown}}, {splitOnPunctuation: false}>>().toBe<{'Foo::bar': {'Bar@baz': unknown}}>();
 
 type bazBizDeep = {fooBAR: number; baz: {fooBAR: Array<{BARFoo: string}>}};
 

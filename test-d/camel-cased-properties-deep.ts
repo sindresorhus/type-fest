@@ -101,8 +101,9 @@ expectTypeOf<CamelCasedPropertiesDeep<{foo_bar: {bar_baz: unknown}; biz: unknown
 expectTypeOf<CamelCasedPropertiesDeep<{foo_bar: any}>>().toBe<{fooBar: any}>();
 expectTypeOf<CamelCasedPropertiesDeep<{foo_bar: {bar_baz: any}; biz: any}>>().toBe<{fooBar: {barBaz: any}; biz: any}>();
 
-expectTypeOf<CamelCasedPropertiesDeep<{'foo::bar': unknown}, {splitOnPunctuation: true}>>().toBe<{'fooBar': unknown}>();
+expectTypeOf<CamelCasedPropertiesDeep<{'foo::bar': unknown}>>().toBe<{'fooBar': unknown}>();
 expectTypeOf<CamelCasedPropertiesDeep<{'foo::bar': {'bar@baz': unknown}; biz: unknown}, {splitOnPunctuation: true}>>().toBe<{'fooBar': {'barBaz': unknown}; biz: unknown}>();
+expectTypeOf<CamelCasedPropertiesDeep<{'foo::bar': {'bar@baz': unknown}}, {splitOnPunctuation: false}>>().toBe<{'foo::bar': {'bar@baz': unknown}}>();
 
 expectTypeOf<CamelCasedPropertiesDeep<{_foo_bar: {_baz_qux: string}}, {preserveLeadingUnderscores: true}>>().toBe<{_fooBar: {_bazQux: string}}>();
 expectTypeOf<CamelCasedPropertiesDeep<{__foo_bar: string}, {preserveLeadingUnderscores: true}>>().toBe<{__fooBar: string}>();

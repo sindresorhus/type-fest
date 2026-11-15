@@ -26,8 +26,8 @@ expectTypeOf<PascalCaseString<'Foo bar'>>().toBe<never>();
 expectTypeOf<PascalCaseString<''>>().toBe<never>();
 
 // Punctuation is not part of any case, even when the transformer keeps it
-expectTypeOf<PascalCaseString<'Foo.Bar'>>().toBe<never>();
-expectTypeOf<PascalCaseString<'Foo+Bar'>>().toBe<never>();
+expectTypeOf<PascalCaseString<'Foo.Bar', {splitOnPunctuation: false}>>().toBe<never>();
+expectTypeOf<PascalCaseString<'Foo+Bar', {splitOnPunctuation: false}>>().toBe<never>();
 
 // A leading underscore is only part of the case when the transformer is told to keep it, and the first letter is never capitalized then
 expectTypeOf<PascalCaseString<'_fooBar'>>().toBe<never>();
@@ -68,11 +68,11 @@ declare const wide: string;
 defineComponent({name: wide});
 
 // Every ASCII punctuation character is checked at each position, including characters the case transform preserves.
-expectTypeOf<{[Character in AsciiPunctuationCharacter]: PascalCaseString<`${Character}FooBar`>}>()
+expectTypeOf<{[Character in AsciiPunctuationCharacter]: PascalCaseString<`${Character}FooBar`, {splitOnPunctuation: false}>}>()
 	.toBe<{[Character in AsciiPunctuationCharacter]: never}>();
-expectTypeOf<{[Character in AsciiPunctuationCharacter]: PascalCaseString<`FooBar${Character}FooBar`>}>()
+expectTypeOf<{[Character in AsciiPunctuationCharacter]: PascalCaseString<`FooBar${Character}FooBar`, {splitOnPunctuation: false}>}>()
 	.toBe<{[Character in AsciiPunctuationCharacter]: never}>();
-expectTypeOf<{[Character in AsciiPunctuationCharacter]: PascalCaseString<`FooBar${Character}`>}>()
+expectTypeOf<{[Character in AsciiPunctuationCharacter]: PascalCaseString<`FooBar${Character}`, {splitOnPunctuation: false}>}>()
 	.toBe<{[Character in AsciiPunctuationCharacter]: never}>();
 
 // Splitting punctuation, adding a brand, or including a valid union member cannot bypass validation.

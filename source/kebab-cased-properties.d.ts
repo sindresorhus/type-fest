@@ -29,8 +29,8 @@ const splitOnNumbers: KebabCasedProperties<{line1: string}, {splitOnNumbers: tru
 	'line-1': 'string',
 };
 
-const splitOnPunctuation: KebabCasedProperties<{'foo::bar': string}, {splitOnPunctuation: true}> = {
-	'foo-bar': 'string',
+const noSplitOnPunctuation: KebabCasedProperties<{'foo::bar': string}, {splitOnPunctuation: false}> = {
+	'foo::bar': 'string',
 };
 ```
 

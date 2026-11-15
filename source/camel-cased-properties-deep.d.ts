@@ -49,10 +49,10 @@ const preserveConsecutiveUppercase: CamelCasedPropertiesDeep<{fooBAR: {fooBARBiz
 	},
 };
 
-const splitOnPunctuation: CamelCasedPropertiesDeep<{'user@info': {'user::id': number; 'user::name': string}}, {splitOnPunctuation: true}> = {
-	userInfo: {
-		userId: 1,
-		userName: 'Tom',
+const noSplitOnPunctuation: CamelCasedPropertiesDeep<{'user@info': {'user::id': number; 'user::name': string}}, {splitOnPunctuation: false}> = {
+	'user@info': {
+		'user::id': 1,
+		'user::name': 'Tom',
 	},
 };
 ```

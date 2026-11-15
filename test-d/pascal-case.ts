@@ -25,14 +25,14 @@ expectTypeOf<string>().toBe<PascalCase<string, {preserveConsecutiveUppercase: tr
 expectTypeOf<string>().toBe<PascalCase<string>>();
 
 // Punctuation
-expectTypeOf<PascalCase<'onDialog:close'>>().toBe<'OnDialog:close'>();
-expectTypeOf<PascalCase<'foo-bar>>baz'>>().toBe<'FooBar>>baz'>();
-expectTypeOf<PascalCase<'foo-bar::01'>>().toBe<'FooBar::01'>();
+expectTypeOf<PascalCase<'onDialog:close', {splitOnPunctuation: false}>>().toBe<'OnDialog:close'>();
+expectTypeOf<PascalCase<'foo-bar>>baz', {splitOnPunctuation: false}>>().toBe<'FooBar>>baz'>();
+expectTypeOf<PascalCase<'foo-bar::01', {splitOnPunctuation: false}>>().toBe<'FooBar::01'>();
 
-expectTypeOf<PascalCase<'onDialog:close', {splitOnPunctuation: true}>>().toBe<'OnDialogClose'>();
-expectTypeOf<PascalCase<'foo-bar>>baz', {splitOnPunctuation: true}>>().toBe<'FooBarBaz'>();
+expectTypeOf<PascalCase<'onDialog:close'>>().toBe<'OnDialogClose'>();
+expectTypeOf<PascalCase<'foo-bar>>baz'>>().toBe<'FooBarBaz'>();
 expectTypeOf<PascalCase<'fooBAR:biz', {splitOnPunctuation: true; preserveConsecutiveUppercase: true}>>().toBe<'FooBARBiz'>();
-expectTypeOf<PascalCase<'foo-bar::01', {splitOnPunctuation: true}>>().toBe<'FooBar01'>();
+expectTypeOf<PascalCase<'foo-bar::01'>>().toBe<'FooBar01'>();
 expectTypeOf<PascalCase<'foo-bar::01', {splitOnPunctuation: true; splitOnNumbers: false}>>().toBe<'FooBar01'>();
 expectTypeOf<PascalCase<'foo-bar::01', {splitOnPunctuation: true; splitOnNumbers: true}>>().toBe<'FooBar01'>();
 
