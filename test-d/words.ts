@@ -321,3 +321,6 @@ expectTypeOf<Words<'foo：bar:baz！qux', {splitOnPunctuation: true}>>().toBe<['
 expectTypeOf<Words<'hello:World' | 'HTTP/server', {splitOnPunctuation: true}>>().toBe<['hello', 'World'] | ['HTTP', 'server']>();
 expectTypeOf<Words<Tagged<'API:key2Value', 'Text'>, {splitOnPunctuation: true}>>().toBe<['API', 'key', '2', 'Value']>();
 expectTypeOf<Words<Tagged<'API:key2Value', 'Text'>, {splitOnPunctuation: true; splitOnNumbers: false}>>().toBe<['API', 'key2', 'Value']>();
+
+// A non-literal flag resolves like the default
+expectTypeOf<Words<'hello.world', {splitOnPunctuation: boolean}>>().toBe<['hello', 'world']>();

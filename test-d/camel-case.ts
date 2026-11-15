@@ -259,3 +259,9 @@ expectTypeOf<CamelCase<Tagged<FieldName.DisplayName, 'Field'>>>().toBe<'displayN
 
 // Long identifiers keep the word splitter within its recursion budget.
 expectTypeOf<CamelCase<StringRepeat<'ab_', 300>>>().toBe<`ab${StringRepeat<'Ab', 299>}`>();
+
+// A non-literal flag resolves like the default, also for generic options
+expectTypeOf<CamelCase<'foo.bar', {splitOnPunctuation: boolean}>>().toBe<'fooBar'>();
+function _genericCamelCaseOptions<Options extends CamelCaseOptions>(value: CamelCase<'foo.bar', Options>): 'fooBar' {
+	return value;
+}

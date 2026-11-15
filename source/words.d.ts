@@ -110,7 +110,7 @@ export type Words<Sentence extends string, Options extends WordsOptions = {}> = 
 	// A branded or tagged string can be a literal, so remove the brand once before classification and walking; an intersection with a non-empty object type does not match a template literal pattern.
 	? (Sentence extends object ? UnwrapBrandedPrimitive<Sentence> : Sentence) extends infer Input extends string
 		? IsStringLiteral<Input> extends true // A string type with an infinite set of possible values cannot be walked character by character, so only the element type survives.
-			// Option objects are not distributed, so for a union of option objects, an option that differs between the members reads as `boolean` and acts as disabled.
+			// Option objects are not distributed, so for a union of option objects, an option that differs between the members reads as `boolean`, which is unsupported.
 			? _Words<Input, ApplyDefaultOptions<WordsOptions, _DefaultWordsOptions, Options>>
 			: string[]
 		: never
@@ -127,7 +127,7 @@ export type _Words<
 	// The words found so far are kept in `Result`, so the recursion is in tail position and a long sentence does not hit the recursion limit.
 	Result extends string[] = [],
 > = Sentence extends `${infer FirstCharacter}${infer RemainingCharacters}`
-	? FirstCharacter extends WordSeparators | (Options['splitOnPunctuation'] extends true ? AsciiPunctuationCharacter : never)
+	? FirstCharacter extends WordSeparators | (Options['splitOnPunctuation'] extends false ? never : AsciiPunctuationCharacter)
 		// Skip word separator
 		? _Words<RemainingCharacters, Options, '', '', [...Result, ...SkipEmptyWord<CurrentWord>]>
 		: LastCharacter extends ''
