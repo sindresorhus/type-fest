@@ -39,7 +39,6 @@ export namespace TsConfigJson {
 
 		// Lowercase alternatives are derived from these spellings.
 		type Target = WithLowercase<
-			| 'ES3'
 			| 'ES5'
 			| 'ES6'
 			| 'ES2015'
@@ -174,11 +173,6 @@ export namespace TsConfigJson {
 			name: string;
 		};
 
-		type ImportsNotUsedAsValues =
-			| 'remove'
-			| 'preserve'
-			| 'error';
-
 		/**
 		@deprecated The compiler only reads this option under `watchOptions`. Use `WatchOptions.PollingWatchKind` instead.
 		*/
@@ -235,14 +229,6 @@ export namespace TsConfigJson {
 	}
 
 	type CompilerOptions = {
-		/**
-		The character set of the input files.
-
-		@default 'utf8'
-		@deprecated This option will be removed in TypeScript 5.5.
-		*/
-		charset?: string;
-
 		/**
 		Enables building for project references.
 
@@ -473,14 +459,6 @@ export namespace TsConfigJson {
 		noResolve?: boolean;
 
 		/**
-		Disable strict checking of generic signatures in function types.
-
-		@default false
-		@deprecated This option will be removed in TypeScript 5.5.
-		*/
-		noStrictGenericChecks?: boolean;
-
-		/**
 		@deprecated use `skipLibCheck` instead.
 		*/
 		skipDefaultLibCheck?: boolean;
@@ -585,22 +563,6 @@ export namespace TsConfigJson {
 		Specifies the location where debugger should locate TypeScript files instead of source locations.
 		*/
 		sourceRoot?: string;
-
-		/**
-		Suppress excess property checks for object literals.
-
-		@default false
-		@deprecated This option will be removed in TypeScript 5.5.
-		*/
-		suppressExcessPropertyErrors?: boolean;
-
-		/**
-		Suppress noImplicitAny errors for indexing objects lacking index signatures.
-
-		@default false
-		@deprecated This option will be removed in TypeScript 5.5.
-		*/
-		suppressImplicitAnyIndexErrors?: boolean;
 
 		/**
 		Do not emit declarations for code that has an `@internal` annotation.
@@ -766,14 +728,6 @@ export namespace TsConfigJson {
 		allowSyntheticDefaultImports?: boolean;
 
 		/**
-		Do not emit `'use strict'` directives in module output.
-
-		@default false
-		@deprecated This option will be removed in TypeScript 5.5.
-		*/
-		noImplicitUseStrict?: boolean;
-
-		/**
 		Enable to list all emitted files.
 
 		@default false
@@ -814,14 +768,6 @@ export namespace TsConfigJson {
 		importHelpers?: boolean;
 
 		/**
-		Specify emit/checking behavior for imports that are only used for types.
-
-		@default 'remove'
-		@deprecated Use `verbatimModuleSyntax` instead.
-		*/
-		importsNotUsedAsValues?: CompilerOptions.ImportsNotUsedAsValues;
-
-		/**
 		Parse in strict mode and emit `'use strict'` for each source file.
 
 		@default false
@@ -843,7 +789,7 @@ export namespace TsConfigJson {
 		strictBindCallApply?: boolean;
 
 		/**
-		Provide full support for iterables in `for-of`, spread, and destructuring when targeting `ES5` or `ES3`.
+		Provide full support for iterables in `for-of`, spread, and destructuring when targeting `ES5`.
 
 		@default false
 		@deprecated since TypeScript 6.0.
@@ -891,14 +837,6 @@ export namespace TsConfigJson {
 		@default false
 		*/
 		allowUmdGlobalAccess?: boolean;
-
-		/**
-		Resolve `keyof` to string valued property names only (no numbers or symbols).
-
-		@default false
-		@deprecated This option will be removed in TypeScript 5.5.
-		*/
-		keyofStringsOnly?: boolean;
 
 		/**
 		Emit ECMAScript standard class fields.
@@ -955,14 +893,6 @@ export namespace TsConfigJson {
 		@default false
 		*/
 		explainFiles?: boolean;
-
-		/**
-		Preserve unused imported values in the JavaScript output that would otherwise be removed.
-
-		@default true
-		@deprecated Use `verbatimModuleSyntax` instead.
-		*/
-		preserveValueImports?: boolean;
 
 		/**
 		List of file name suffixes to search when resolving a module.
@@ -1131,14 +1061,6 @@ export namespace TsConfigJson {
 		The path as the user originally wrote it.
 		*/
 		originalPath?: string;
-
-		/**
-		True if the output of this reference should be prepended to the output of this project.
-
-		Only valid for `--outFile` compilations.
-		@deprecated This option will be removed in TypeScript 5.5.
-		*/
-		prepend?: boolean;
 
 		/**
 		True if it is intended that this reference form a circularity.
