@@ -15,9 +15,6 @@ export namespace TsConfigJson {
 		// Lowercase alternatives are derived from these spellings.
 		type Module = WithLowercase<
 			| 'CommonJS'
-			| 'AMD'
-			| 'System'
-			| 'UMD'
 			| 'ES6'
 			| 'ES2015'
 			| 'ES2020'
@@ -28,7 +25,6 @@ export namespace TsConfigJson {
 			| 'Node20'
 			| 'NodeNext'
 			| 'Preserve'
-			| 'None'
 		>;
 
 		// Lowercase alternatives are derived from these spellings.
@@ -39,7 +35,6 @@ export namespace TsConfigJson {
 
 		// Lowercase alternatives are derived from these spellings.
 		type Target = WithLowercase<
-			| 'ES5'
 			| 'ES6'
 			| 'ES2015'
 			| 'ES2016'
@@ -206,16 +201,10 @@ export namespace TsConfigJson {
 			| 'fixedChunkSizePolling';
 
 		type ModuleResolution =
-			| 'classic'
-			| 'node'
-			| 'node10'
 			| 'node16'
 			| 'nodenext'
 			| 'bundler'
 			// Pascal-cased alternatives
-			| 'Classic'
-			| 'Node'
-			| 'Node10'
 			| 'Node16'
 			| 'NodeNext'
 			| 'Bundler';
@@ -368,16 +357,16 @@ export namespace TsConfigJson {
 		mapRoot?: string;
 
 		/**
-		Specify module code generation: 'None', 'CommonJS', 'AMD', 'System', 'UMD', 'ES6', 'ES2015' or 'ESNext'. Only 'AMD' and 'System' can be used in conjunction with `--outFile`. 'ES6' and 'ES2015' values may be used when targeting 'ES5' or lower.
+		Specify module code generation.
 
-		Default: `'ESNext'` since TypeScript 6.0, `['ES3', 'ES5'].includes(target) ? 'CommonJS' : 'ES6'` before.
+		@default 'ESNext'
 		*/
 		module?: CompilerOptions.Module;
 
 		/**
-		Specifies module resolution strategy: 'node' (Node) or 'classic' (TypeScript pre 1.6).
+		Specifies module resolution strategy.
 
-		@default ['AMD', 'System', 'ES6'].includes(module) ? 'classic' : 'node'
+		Default: `'NodeNext'` when `module` is `'NodeNext'`, `'Node16'` when `module` is `'Node16'`, `'Node18'` or `'Node20'`, and `'Bundler'` otherwise.
 		*/
 		moduleResolution?: CompilerOptions.ModuleResolution;
 
@@ -478,13 +467,6 @@ export namespace TsConfigJson {
 		stableTypeOrdering?: boolean;
 
 		/**
-		Concatenate and emit output to single file.
-
-		@deprecated since TypeScript 6.0.
-		*/
-		outFile?: string;
-
-		/**
 		Redirect output structure to the directory.
 		*/
 		outDir?: string;
@@ -572,7 +554,7 @@ export namespace TsConfigJson {
 		/**
 		Specify ECMAScript target version.
 
-		Default: Current-year ES version since TypeScript 6.0, `'es3'` before.
+		Default: The current-year ES version.
 		*/
 		target?: CompilerOptions.Target;
 
@@ -668,14 +650,7 @@ export namespace TsConfigJson {
 		generateTrace?: string;
 
 		/**
-		Base directory to resolve non-relative module names.
-
-		@deprecated since TypeScript 6.0.
-		*/
-		baseUrl?: string;
-
-		/**
-		Specify path mapping to be computed relative to baseUrl option.
+		Specify path mapping, relative to the config file.
 		*/
 		paths?: Record<string, string[]>;
 
@@ -723,9 +698,11 @@ export namespace TsConfigJson {
 		/**
 		Allow default imports from modules with no default export. This does not affect code emit, just typechecking.
 
-		@default module === 'system' || esModuleInterop
+		TypeScript 6.0 deprecated `false`, and TypeScript 7.0 removed it.
+
+		@default true
 		*/
-		allowSyntheticDefaultImports?: boolean;
+		allowSyntheticDefaultImports?: true;
 
 		/**
 		Enable to list all emitted files.
@@ -770,9 +747,11 @@ export namespace TsConfigJson {
 		/**
 		Parse in strict mode and emit `'use strict'` for each source file.
 
-		@default false
+		TypeScript 6.0 deprecated `false`, and TypeScript 7.0 removed it.
+
+		@default true
 		*/
-		alwaysStrict?: boolean;
+		alwaysStrict?: true;
 
 		/**
 		Enable all strict type checking options.
@@ -787,14 +766,6 @@ export namespace TsConfigJson {
 		@default false
 		*/
 		strictBindCallApply?: boolean;
-
-		/**
-		Provide full support for iterables in `for-of`, spread, and destructuring when targeting `ES5`.
-
-		@default false
-		@deprecated since TypeScript 6.0.
-		*/
-		downlevelIteration?: boolean;
 
 		/**
 		Report errors in `.js` files.
@@ -827,9 +798,11 @@ export namespace TsConfigJson {
 		/**
 		Emit `__importStar` and `__importDefault` helpers for runtime Babel ecosystem compatibility and enable `--allowSyntheticDefaultImports` for typesystem compatibility.
 
-		@default false
+		TypeScript 6.0 deprecated `false`, and TypeScript 7.0 removed it.
+
+		@default true
 		*/
-		esModuleInterop?: boolean;
+		esModuleInterop?: true;
 
 		/**
 		Allow accessing UMD globals from modules.

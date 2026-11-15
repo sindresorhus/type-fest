@@ -79,3 +79,35 @@ expectTypeOf<'ES2100'>().not.toBeAssignableTo<TsConfigJson.CompilerOptions.Targe
 expectTypeOf<'CR'>().not.toBeAssignableTo<TsConfigJson.CompilerOptions.NewLine>();
 expectTypeOf<string>().not.toBeAssignableTo<Lib>();
 expectTypeOf<unknown>().not.toBeAssignableTo<TsConfigJson.CompilerOptions.Module>();
+
+// TypeScript 6.0 deprecated these options and values, and TypeScript 7.0 removed them.
+({compilerOptions: {alwaysStrict: true, esModuleInterop: true, allowSyntheticDefaultImports: true}}) satisfies TsConfigJson;
+({compilerOptions: {moduleResolution: 'bundler', paths: {'#/*': ['./source/*']}}}) satisfies TsConfigJson;
+// @ts-expect-error
+({compilerOptions: {baseUrl: '.'}}) satisfies TsConfigJson;
+// @ts-expect-error
+({compilerOptions: {outFile: 'out.js'}}) satisfies TsConfigJson;
+// @ts-expect-error
+({compilerOptions: {downlevelIteration: true}}) satisfies TsConfigJson;
+// @ts-expect-error
+({compilerOptions: {alwaysStrict: false}}) satisfies TsConfigJson;
+// @ts-expect-error
+({compilerOptions: {esModuleInterop: false}}) satisfies TsConfigJson;
+// @ts-expect-error
+({compilerOptions: {allowSyntheticDefaultImports: false}}) satisfies TsConfigJson;
+expectTypeOf<'ES5'>().not.toBeAssignableTo<TsConfigJson.CompilerOptions.Target>();
+expectTypeOf<'es5'>().not.toBeAssignableTo<TsConfigJson.CompilerOptions.Target>();
+expectTypeOf<'AMD'>().not.toBeAssignableTo<TsConfigJson.CompilerOptions.Module>();
+expectTypeOf<'UMD'>().not.toBeAssignableTo<TsConfigJson.CompilerOptions.Module>();
+expectTypeOf<'System'>().not.toBeAssignableTo<TsConfigJson.CompilerOptions.Module>();
+expectTypeOf<'None'>().not.toBeAssignableTo<TsConfigJson.CompilerOptions.Module>();
+expectTypeOf<'amd'>().not.toBeAssignableTo<TsConfigJson.CompilerOptions.Module>();
+expectTypeOf<'umd'>().not.toBeAssignableTo<TsConfigJson.CompilerOptions.Module>();
+expectTypeOf<'system'>().not.toBeAssignableTo<TsConfigJson.CompilerOptions.Module>();
+expectTypeOf<'none'>().not.toBeAssignableTo<TsConfigJson.CompilerOptions.Module>();
+expectTypeOf<'classic'>().not.toBeAssignableTo<TsConfigJson.CompilerOptions.ModuleResolution>();
+expectTypeOf<'node'>().not.toBeAssignableTo<TsConfigJson.CompilerOptions.ModuleResolution>();
+expectTypeOf<'node10'>().not.toBeAssignableTo<TsConfigJson.CompilerOptions.ModuleResolution>();
+expectTypeOf<'Classic'>().not.toBeAssignableTo<TsConfigJson.CompilerOptions.ModuleResolution>();
+expectTypeOf<'Node'>().not.toBeAssignableTo<TsConfigJson.CompilerOptions.ModuleResolution>();
+expectTypeOf<'Node10'>().not.toBeAssignableTo<TsConfigJson.CompilerOptions.ModuleResolution>();
