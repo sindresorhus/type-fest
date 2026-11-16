@@ -464,8 +464,8 @@ Click the type names for complete docs.
 
 *If you know one of our types by a different name, add it here for discovery.*
 
-- `Prettify`- See [`Simplify`](source/simplify.d.ts)
-- `Expand`- See [`Simplify`](source/simplify.d.ts)
+- `Prettify` - See [`Simplify`](source/simplify.d.ts)
+- `Expand` - See [`Simplify`](source/simplify.d.ts)
 - `Unionize` - See [`ObjectToUnion`](source/object-to-union.d.ts)
 - `PartialBy`, `MarkOptional` - See [`SetOptional`](source/set-optional.d.ts)
 - `MarkRequired`, `AugmentedRequired` - See [`SetRequired`](source/set-required.d.ts)
@@ -473,7 +473,7 @@ Click the type names for complete docs.
 - `PartialExcept`, `OptionalExcept`, `OptionalExceptFor`, `PartialOmit` - See [`SetOptionalExcept`](source/set-optional-except.d.ts)
 - `RequiredExcept`, `RequiredExceptFor`, `RequiredOmit` - See [`SetRequiredExcept`](source/set-required-except.d.ts)
 - `OptionalToExplicit`, `Explicit` - See [`RequiredKeepUndefined`](source/required-keep-undefined.d.ts)
-- `RecordDeep`- See [`Schema`](source/schema.d.ts)
+- `RecordDeep` - See [`Schema`](source/schema.d.ts)
 - `Mutable`, `MarkWritable`, `SetWritable` - See [`Writable`](source/writable.d.ts)
 - `RequireOnlyOne`, `OneOf` - See [`RequireExactlyOne`](source/require-exactly-one.d.ts)
 - `AtMostOne` - See [`RequireOneOrNone`](source/require-one-or-none.d.ts)
@@ -1115,7 +1115,7 @@ There are many advanced types most users don't know about.
 
 			instanceCounter.set(constructor, count + 1);
 
-			console.log(`Created ${count + 1} instances of ${Constr.name} class`);
+			console.log(`Created ${count + 1} instances of ${constructor.name} class`);
 
 			return instance;
 	}
