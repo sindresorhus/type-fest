@@ -183,7 +183,7 @@ function _keepLiteral<Options extends CamelCaseOptions>(value: 42): PascalCasedP
 
 // Every supported option reaches nested keys, while empty and nonrecursive values stay unchanged.
 expectTypeOf<PascalCasedPropertiesDeep<{_fooBAR: {'__baz::QUX2': 1}}, {preserveConsecutiveUppercase: true; preserveLeadingUnderscores: true; splitOnPunctuation: true; splitOnNumbers: true}>>()
-	.toBe<{_fooBAR: {__bazQUX2: 1}}>();
+	.toBe<{_FooBAR: {__BazQUX2: 1}}>();
 expectTypeOf<PascalCasedPropertiesDeep<{userInfo: {nestedValue: 1}}, any>>().toBe<{UserInfo: {NestedValue: 1}}>();
 expectTypeOf<PascalCasedPropertiesDeep<{userInfo: {nestedValue: 1}}, never>>().toBe<{UserInfo: {NestedValue: 1}}>();
 expectTypeOf<PascalCasedPropertiesDeep<unknown>>().toBe<unknown>();

@@ -52,7 +52,7 @@ declare const withLeadingUnderscores: CamelCasedProperties<{_foo_bar: string; __
 expectTypeOf(withLeadingUnderscores).toBe<{_fooBar: string; __bazQux: number}>();
 
 declare const withLeadingUnderscoresDefault: CamelCasedProperties<{_foo_bar: string}>;
-expectTypeOf(withLeadingUnderscoresDefault).toBe<{fooBar: string}>();
+expectTypeOf(withLeadingUnderscoresDefault).toBe<{_fooBar: string}>();
 
 // A readonly array has no properties to re-case, so it passes through unchanged, like it does for `PascalCasedProperties` and `DelimiterCasedProperties`. `IsEqual` is used because the flattened object the bug produced still satisfies `expectType<readonly string[]>`.
 expectTypeOf<IsEqual<CamelCasedProperties<readonly string[]>, readonly string[]>>().toBe<true>();
@@ -70,7 +70,7 @@ function _keepCallable<Options extends CamelCaseOptions>(value: () => number): C
 }
 
 // A non-literal preservation flag resolves like the default.
-expectTypeOf<CamelCasedProperties<{_foo_bar: 1}, {preserveLeadingUnderscores: boolean}>>().toBe<{fooBar: 1}>();
+expectTypeOf<CamelCasedProperties<{_foo_bar: 1}, {preserveLeadingUnderscores: boolean}>>().toBe<{_fooBar: 1}>();
 
 // Resolving options in the scalar transform keeps selected fields' modifiers and values intact.
 expectTypeOf<CamelCasedProperties<{readonly userId2?: {nestedValue: 1}; mutableValue?: string}, {splitOnNumbers: true; splitOnPunctuation: true}>>()

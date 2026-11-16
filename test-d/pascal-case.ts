@@ -41,12 +41,12 @@ expectTypeOf<Uppercase<string>>().toBe<PascalCase<Uppercase<string>>>();
 expectTypeOf<Lowercase<string>>().toBe<PascalCase<Lowercase<string>>>();
 expectTypeOf<`${string}abc`>().toBe<PascalCase<`${string}abc`>>();
 
-// `PascalCase` is `Capitalize<CamelCase<…>>`, and `Capitalize` does nothing when the first character has no uppercase form, which an underscore does not. So the `preserveLeadingUnderscores` option also turns off the Pascal casing, because the underscores come first. See the note in the docs.
+// The first letter after the leading underscores is capitalized, like `camelcase` with `pascalCase: true`.
 declare const preserveLeadingUnderscores: PascalCase<'_foo', {preserveLeadingUnderscores: true}>;
-expectTypeOf(preserveLeadingUnderscores).toBe<'_foo'>();
+expectTypeOf(preserveLeadingUnderscores).toBe<'_Foo'>();
 
 declare const multipleLeadingUnderscores: PascalCase<'__foo', {preserveLeadingUnderscores: true}>;
-expectTypeOf(multipleLeadingUnderscores).toBe<'__foo'>();
+expectTypeOf(multipleLeadingUnderscores).toBe<'__Foo'>();
 
 // `PascalCase` capitalizes the words of the camel-cased result, so it inherits the same fix.
 expectTypeOf<PascalCase<'a-à-vache'>>().toBe<'AÀVache'>();
@@ -57,32 +57,36 @@ expectTypeOf<PascalCase<'foo-bar' | 'baz_qux' | 42>>().toBe<'FooBar' | 'BazQux' 
 expectTypeOf<PascalCase<'foo-bar' | `prefix${string}` | undefined>>().toBe<'FooBar' | `prefix${string}` | undefined>();
 
 // Pascal casing delegates option defaults to the same transformation as camel casing.
-expectTypeOf<PascalCase<'_foo_bar', never>>().toBe<'FooBar'>();
-expectTypeOf<PascalCase<'_foo_bar', any>>().toBe<'FooBar'>();
-expectTypeOf<PascalCase<'__fooBAR_baz', {preserveLeadingUnderscores: true; preserveConsecutiveUppercase: true}>>().toBe<'__fooBARBaz'>();
+expectTypeOf<PascalCase<'_foo_bar', never>>().toBe<'_FooBar'>();
+expectTypeOf<PascalCase<'_foo_bar', any>>().toBe<'_FooBar'>();
+expectTypeOf<PascalCase<'__fooBAR_baz', {preserveLeadingUnderscores: true; preserveConsecutiveUppercase: true}>>().toBe<'__FooBARBaz'>();
 expectTypeOf<PascalCase<'__fooBAR_baz', {preserveLeadingUnderscores: false; preserveConsecutiveUppercase: true}>>().toBe<'FooBARBaz'>();
-expectTypeOf<PascalCase<'__p2p:network', {splitOnNumbers: true; splitOnPunctuation: true}>>().toBe<'P2PNetwork'>();
-expectTypeOf<PascalCase<'__p2p:network', {splitOnNumbers: false; splitOnPunctuation: true}>>().toBe<'P2pNetwork'>();
-expectTypeOf<PascalCase<'__p2p:network', {splitOnNumbers: true; splitOnPunctuation: false}>>().toBe<'P2P:network'>();
-expectTypeOf<PascalCase<'__p2p:network', {splitOnNumbers: false; splitOnPunctuation: false}>>().toBe<'P2p:network'>();
-expectTypeOf<PascalCase<'__p2p:network'>>().toBe<'P2pNetwork'>();
-expectTypeOf<PascalCase<Tagged<'__fooBAR', 'Text'>, {preserveLeadingUnderscores: true; preserveConsecutiveUppercase: true}>>().toBe<'__fooBAR'>();
+expectTypeOf<PascalCase<'__p2p:network', {splitOnNumbers: true; splitOnPunctuation: true}>>().toBe<'__P2PNetwork'>();
+expectTypeOf<PascalCase<'__p2p:network', {splitOnNumbers: false; splitOnPunctuation: true}>>().toBe<'__P2pNetwork'>();
+expectTypeOf<PascalCase<'__p2p:network', {splitOnNumbers: true; splitOnPunctuation: false}>>().toBe<'__P2P:network'>();
+expectTypeOf<PascalCase<'__p2p:network', {splitOnNumbers: false; splitOnPunctuation: false}>>().toBe<'__P2p:network'>();
+expectTypeOf<PascalCase<'__p2p:network'>>().toBe<'__P2pNetwork'>();
+expectTypeOf<PascalCase<Tagged<'__fooBAR', 'Text'>, {preserveLeadingUnderscores: true; preserveConsecutiveUppercase: true}>>().toBe<'__FooBAR'>();
 expectTypeOf<PascalCase<Tagged<'foo-bar', 'Text'>, never>>().toBe<'FooBar'>();
-expectTypeOf<PascalCase<'__FOO_BAR', never>>().toBe<'FooBar'>();
-expectTypeOf<PascalCase<'__foo_bar' | '__on_change', any>>().toBe<'FooBar' | 'OnChange'>();
-expectTypeOf<PascalCase<'_', never>>().toBe<''>();
+expectTypeOf<PascalCase<'__FOO_BAR', never>>().toBe<'__FooBar'>();
+expectTypeOf<PascalCase<'__foo_bar' | '__on_change', any>>().toBe<'__FooBar' | '__OnChange'>();
+expectTypeOf<PascalCase<'_', never>>().toBe<'_'>();
 expectTypeOf<PascalCase<string, never>>().toBe<string>();
 expectTypeOf<PascalCase<Tagged<string, 'Text'>, any>>().toBe<Tagged<string, 'Text'>>();
 expectTypeOf<PascalCase<any, never>>().toBe<any>();
 expectTypeOf<PascalCase<never, any>>().toBe<never>();
 expectTypeOf<PascalCase<unknown, never>>().toBe<unknown>();
 
-function checkGenericOptions<Options extends CamelCaseOptions>() {
-	expectTypeOf<PascalCase<'__foo-bar', Options>>().toBe<Capitalize<CamelCase<'__foo-bar', Options>>>();
+function _readGenericPascalUnderscores<Options extends CamelCaseOptions>(value: PascalCase<'_foo', Options>): '_Foo' {
+	return value;
 }
 
-expectTypeOf<PascalCase<'_foo', {preserveLeadingUnderscores: any}>>().toBe<'Foo'>();
+function _readInvariantPascalWords<Options extends CamelCaseOptions>(value: PascalCase<'foo-bar', Options>): 'FooBar' {
+	return value;
+}
+
+expectTypeOf<PascalCase<'_foo', {preserveLeadingUnderscores: any}>>().toBe<'_Foo'>();
 // A non-literal preservation flag resolves like the default.
-expectTypeOf<PascalCase<'_foo', {preserveLeadingUnderscores: boolean}>>().toBe<'Foo'>();
+expectTypeOf<PascalCase<'_foo', {preserveLeadingUnderscores: boolean}>>().toBe<'_Foo'>();
 // @ts-expect-error Unknown is not a preservation flag.
 expectTypeOf<PascalCase<'foo', {preserveLeadingUnderscores: unknown}>>();

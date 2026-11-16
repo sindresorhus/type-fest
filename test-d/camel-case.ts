@@ -111,7 +111,7 @@ expectTypeOf<CamelCase<'_FOO_BAR', {preserveLeadingUnderscores: true}>>().toBe<'
 expectTypeOf<CamelCase<'__FOO_BAR', {preserveLeadingUnderscores: true}>>().toBe<'__fooBar'>();
 expectTypeOf<CamelCase<'_foo-bar', {preserveLeadingUnderscores: true}>>().toBe<'_fooBar'>();
 expectTypeOf<CamelCase<'_fooBAR', {preserveLeadingUnderscores: true; preserveConsecutiveUppercase: true}>>().toBe<'_fooBAR'>();
-expectTypeOf<CamelCase<'_foo_bar'>>().toBe<'fooBar'>();
+expectTypeOf<CamelCase<'_foo_bar'>>().toBe<'_fooBar'>();
 expectTypeOf<CamelCase<'_foo_bar', {preserveLeadingUnderscores: false}>>().toBe<'fooBar'>();
 
 // Non-literal string types are passed through unchanged, like `DelimiterCase` does.
@@ -175,8 +175,8 @@ expectTypeOf<CamelCase<Tagged<Tagged<'foo-bar', 'Text'>, 'Validated'>>>().toBe<'
 expectTypeOf<CamelCase<Tagged<Tagged<'__FOO_BAR', 'Text'>, 'Validated'>, {preserveLeadingUnderscores: true}>>().toBe<'__fooBar'>();
 
 // Unspecified options use the same defaults before every part of the transformation.
-expectTypeOf<CamelCase<'_foo_bar', never>>().toBe<'fooBar'>();
-expectTypeOf<CamelCase<'_foo_bar', any>>().toBe<'fooBar'>();
+expectTypeOf<CamelCase<'_foo_bar', never>>().toBe<'_fooBar'>();
+expectTypeOf<CamelCase<'_foo_bar', any>>().toBe<'_fooBar'>();
 
 expectTypeOf<CamelCase<'__fooBAR_baz', {preserveLeadingUnderscores: true; preserveConsecutiveUppercase: true}>>().toBe<'__fooBARBaz'>();
 expectTypeOf<CamelCase<'__fooBAR_baz', {preserveLeadingUnderscores: false; preserveConsecutiveUppercase: true}>>().toBe<'fooBARBaz'>();
@@ -187,9 +187,9 @@ expectTypeOf<CamelCase<'__p2p:network', {preserveLeadingUnderscores: true; split
 expectTypeOf<CamelCase<'__p2p:network', {preserveLeadingUnderscores: true; splitOnNumbers: true; splitOnPunctuation: false}>>().toBe<'__p2P:network'>();
 expectTypeOf<CamelCase<'__p2p:network', {preserveLeadingUnderscores: true; splitOnNumbers: false; splitOnPunctuation: false}>>().toBe<'__p2p:network'>();
 expectTypeOf<CamelCase<Tagged<'__fooBAR', 'Text'>, {preserveLeadingUnderscores: true; preserveConsecutiveUppercase: true}>>().toBe<'__fooBAR'>();
-expectTypeOf<CamelCase<'__FOO_BAR', never>>().toBe<'fooBar'>();
-expectTypeOf<CamelCase<'__foo_bar' | '__on_change', any>>().toBe<'fooBar' | 'onChange'>();
-expectTypeOf<CamelCase<'_', never>>().toBe<''>();
+expectTypeOf<CamelCase<'__FOO_BAR', never>>().toBe<'__fooBar'>();
+expectTypeOf<CamelCase<'__foo_bar' | '__on_change', any>>().toBe<'__fooBar' | '__onChange'>();
+expectTypeOf<CamelCase<'_', never>>().toBe<'_'>();
 expectTypeOf<CamelCase<string, never>>().toBe<string>();
 expectTypeOf<CamelCase<Tagged<string, 'Text'>, any>>().toBe<Tagged<string, 'Text'>>();
 expectTypeOf<CamelCase<any, never>>().toBe<any>();
@@ -206,9 +206,9 @@ expectTypeOf<CamelCase<never, CasingStrategies>>().toBe<never>();
 // @ts-expect-error - Options must describe casing.
 expectTypeOf<CamelCase<'foo-bar', unknown>>();
 
-expectTypeOf<CamelCase<'_foo', {preserveLeadingUnderscores: any}>>().toBe<'foo'>();
+expectTypeOf<CamelCase<'_foo', {preserveLeadingUnderscores: any}>>().toBe<'_foo'>();
 // A non-literal preservation flag resolves like the default.
-expectTypeOf<CamelCase<'_foo', {preserveLeadingUnderscores: boolean}>>().toBe<'foo'>();
+expectTypeOf<CamelCase<'_foo', {preserveLeadingUnderscores: boolean}>>().toBe<'_foo'>();
 // @ts-expect-error Unknown is not a preservation flag.
 expectTypeOf<CamelCase<'foo', {preserveLeadingUnderscores: unknown}>>();
 
@@ -243,8 +243,8 @@ function _readInvariantUppercaseWords<Options extends CamelCaseOptions>(value: C
 	return value;
 }
 
-// A constrained disabled policy preserves the exact spelling even when the options object stays generic.
-function _readKnownDisabledUnderscores<Options extends {preserveLeadingUnderscores: false}>(value: CamelCase<'_foo', Options>): 'foo' {
+// A generic options object reads like the defaults, so a constraint that matches the default keeps the exact spelling.
+function _readKnownPreservedUnderscores<Options extends {preserveLeadingUnderscores: true}>(value: CamelCase<'_foo', Options>): '_foo' {
 	return value;
 }
 

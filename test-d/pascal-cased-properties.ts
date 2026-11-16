@@ -60,7 +60,7 @@ function _keepCallable<Options extends CamelCaseOptions>(value: () => number): P
 }
 
 // A non-literal preservation flag resolves like the default.
-expectTypeOf<PascalCasedProperties<{_foo_bar: 1}, {preserveLeadingUnderscores: boolean}>>().toBe<{FooBar: 1}>();
+expectTypeOf<PascalCasedProperties<{_foo_bar: 1}, {preserveLeadingUnderscores: boolean}>>().toBe<{_FooBar: 1}>();
 
 // Resolving options in the scalar transform keeps selected fields' modifiers and values intact.
 expectTypeOf<PascalCasedProperties<{readonly userId2?: {nestedValue: 1}; mutableValue?: string}, {splitOnNumbers: true; splitOnPunctuation: true}>>()

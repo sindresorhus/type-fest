@@ -8,7 +8,7 @@ import type {SnakeCaseString} from './snake-case-string.d.ts'; // For `@link`
 /**
 A `string` that is in camel case, like `'fooBar'`.
 
-Returns the string when {@link CamelCase} leaves it unchanged, and `never` otherwise. The string must be a non-empty literal with no ASCII punctuation, except leading underscores kept by the `preserveLeadingUnderscores` option. Every member of a union must be valid.
+Returns the string when {@link CamelCase} leaves it unchanged, and `never` otherwise. The string must be a non-empty literal with no ASCII punctuation, except leading underscores, which are kept by default. Every member of a union must be valid.
 
 Put this type on a generic parameter, as in the last example. A plain property typed `CamelCase<string>` accepts any string.
 

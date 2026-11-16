@@ -20,11 +20,11 @@ export type CamelCaseOptions = WordsOptions & {
 	preserveConsecutiveUppercase?: boolean;
 
 	/**
-	Whether to preserve leading underscores.
+	Whether to preserve leading underscores, like in `_id` and `__typename`.
 
-	This matches the behavior of the [`camelcase`](https://github.com/sindresorhus/camelcase) package v9+.
+	This matches the behavior of the [`camelcase`](https://github.com/sindresorhus/camelcase) package v9+. Unlike that package, a leading `$` is removed with the default `splitOnPunctuation` option, because it is ASCII punctuation, which separates words.
 
-	@default false
+	@default true
 	*/
 	preserveLeadingUnderscores?: boolean;
 };
@@ -32,7 +32,7 @@ export type CamelCaseOptions = WordsOptions & {
 export type _DefaultCamelCaseOptions = Merge<_DefaultWordsOptions, {
 	splitOnNumbers: false;
 	preserveConsecutiveUppercase: false;
-	preserveLeadingUnderscores: false;
+	preserveLeadingUnderscores: true;
 }>;
 
 /**
@@ -77,7 +77,7 @@ This can be useful when, for example, converting some kebab-cased command-line f
 
 By default, consecutive uppercase letters are not preserved. See {@link CamelCaseOptions.preserveConsecutiveUppercase preserveConsecutiveUppercase} option to change this behaviour.
 
-Use the `preserveLeadingUnderscores` option to retain leading underscores, matching the runtime behavior of [`camelcase`](https://github.com/sindresorhus/camelcase) v9+.
+Leading underscores are kept, matching the runtime behavior of [`camelcase`](https://github.com/sindresorhus/camelcase) v9+. Set the `preserveLeadingUnderscores` option to `false` to remove them.
 
 In a generic function, use concrete option values before relying on an exact result spelling. While any option is generic, TypeScript can read the result as if the default options were used.
 
@@ -93,7 +93,8 @@ const noSplitOnNumbers: CamelCase<'p2p_network'> = 'p2pNetwork';
 const splitOnNumbers: CamelCase<'p2p_network', {splitOnNumbers: true}> = 'p2PNetwork';
 const splitOnPunctuation: CamelCase<'foo-bar:BAZ'> = 'fooBarBaz';
 const noSplitOnPunctuation: CamelCase<'foo-bar:baz', {splitOnPunctuation: false}> = 'fooBar:baz';
-const preserveLeadingUnderscores: CamelCase<'_foo_bar', {preserveLeadingUnderscores: true}> = '_fooBar';
+const preserveLeadingUnderscores: CamelCase<'_foo_bar'> = '_fooBar';
+const noPreserveLeadingUnderscores: CamelCase<'_foo_bar', {preserveLeadingUnderscores: false}> = 'fooBar';
 
 // Advanced
 
@@ -132,9 +133,9 @@ export type CamelCase<Type, Options extends CamelCaseOptions = {}> = Type extend
 
 type CamelCaseUnbranded<Type extends string, Options extends CamelCaseOptions> =
 	ApplyDefaultOptions<CamelCaseOptions, _DefaultCamelCaseOptions, Options> extends infer OptionsWithDefaults extends Required<CamelCaseOptions>
-		? `${OptionsWithDefaults['preserveLeadingUnderscores'] extends true
-			? LeadingUnderscores<Type>
-			: ''
+		? `${OptionsWithDefaults['preserveLeadingUnderscores'] extends false
+			? ''
+			: LeadingUnderscores<Type>
 		}${CamelCaseFromArray<
 			_Words<Type extends Uppercase<Type> ? Lowercase<Type> : Type, OptionsWithDefaults>,
 			OptionsWithDefaults

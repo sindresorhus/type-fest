@@ -107,7 +107,7 @@ expectTypeOf<CamelCasedPropertiesDeep<{'foo::bar': {'bar@baz': unknown}}, {split
 
 expectTypeOf<CamelCasedPropertiesDeep<{_foo_bar: {_baz_qux: string}}, {preserveLeadingUnderscores: true}>>().toBe<{_fooBar: {_bazQux: string}}>();
 expectTypeOf<CamelCasedPropertiesDeep<{__foo_bar: string}, {preserveLeadingUnderscores: true}>>().toBe<{__fooBar: string}>();
-expectTypeOf<CamelCasedPropertiesDeep<{_foo_bar: {_baz_qux: string}}>>().toBe<{fooBar: {bazQux: string}}>();
+expectTypeOf<CamelCasedPropertiesDeep<{_foo_bar: {_baz_qux: string}}>>().toBe<{_fooBar: {_bazQux: string}}>();
 
 // Map, Set, and their readonly and weak variants are preserved, with their contents recursed into.
 declare const readonlySet: CamelCasedPropertiesDeep<ReadonlySet<{foo_bar: number}>>;

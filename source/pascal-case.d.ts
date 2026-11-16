@@ -4,7 +4,7 @@ import type {IsStringLiteral} from './is-string-literal.d.ts';
 /**
 Convert a string literal to pascal-case.
 
-Note: `PascalCase` capitalizes the result of `CamelCase`, and `Capitalize` does nothing when the first character has no uppercase form. An underscore has none, so the `preserveLeadingUnderscores` option also turns off the Pascal casing: `PascalCase<'_foo', {preserveLeadingUnderscores: true}>` is `'_foo'`, not `'_Foo'`.
+Leading underscores are kept, and the first letter after them is capitalized: `PascalCase<'_foo_bar'>` is `'_FooBar'`, like `camelcase('_foo_bar', {pascalCase: true})`. Set the `preserveLeadingUnderscores` option to `false` to remove them.
 
 @example
 ```
@@ -50,7 +50,14 @@ const dbResult: PascalCasedProperties<RawOptions> = {
 export type PascalCase<Value, Options extends CamelCaseOptions = {}> = Value extends string
 	? IsStringLiteral<Value> extends false
 		? Value
-		: Capitalize<CamelCase<Value, Options>>
+		: CapitalizeAfterUnderscores<CamelCase<Value, Options>>
 	: Value;
+
+/**
+Capitalize the first character after the leading underscores, which `CamelCase` keeps by default.
+*/
+type CapitalizeAfterUnderscores<Value extends string> = Value extends `_${infer Rest}`
+	? `_${CapitalizeAfterUnderscores<Rest>}`
+	: Capitalize<Value>;
 
 export {};

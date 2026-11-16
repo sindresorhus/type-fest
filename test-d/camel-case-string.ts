@@ -32,16 +32,17 @@ expectTypeOf<CamelCaseString<'foo-bar'>>().toBe<never>();
 expectTypeOf<CamelCaseString<'foo_bar'>>().toBe<never>();
 expectTypeOf<CamelCaseString<'foo bar'>>().toBe<never>();
 expectTypeOf<CamelCaseString<'foo\tbar'>>().toBe<never>();
-expectTypeOf<CamelCaseString<'_'>>().toBe<never>();
+expectTypeOf<CamelCaseString<'_'>>().toBe<'_'>();
 
 // An empty string is rejected, even though the transformer keeps it
 expectTypeOf<CamelCaseString<''>>().toBe<never>();
 
-// An underscore is only part of the case when the transformer is told to keep a leading one
-expectTypeOf<CamelCaseString<'_fooBar'>>().toBe<never>();
-expectTypeOf<CamelCaseString<'_fooBar', {preserveLeadingUnderscores: boolean}>>().toBe<never>();
+// Leading underscores are kept by default, and other underscores are not part of the case
+expectTypeOf<CamelCaseString<'_fooBar'>>().toBe<'_fooBar'>();
+expectTypeOf<CamelCaseString<'_fooBar', {preserveLeadingUnderscores: boolean}>>().toBe<'_fooBar'>();
 expectTypeOf<CamelCaseString<'_fooBar', {preserveLeadingUnderscores: true}>>().toBe<'_fooBar'>();
 expectTypeOf<CamelCaseString<'__foo', {preserveLeadingUnderscores: true}>>().toBe<'__foo'>();
+expectTypeOf<CamelCaseString<'_fooBar', {preserveLeadingUnderscores: false}>>().toBe<never>();
 expectTypeOf<CamelCaseString<'_foo_bar', {preserveLeadingUnderscores: true}>>().toBe<never>();
 
 // Punctuation is not part of any case, even when the transformer keeps it
@@ -109,7 +110,7 @@ defineHandlerNames(['onSubmit', 'on-reset'] as const);
 
 // Every ASCII punctuation character is checked at each position, including characters the case transform preserves.
 expectTypeOf<{[Character in AsciiPunctuationCharacter]: CamelCaseString<`${Character}fooBar`, {splitOnPunctuation: false}>}>()
-	.toBe<{[Character in AsciiPunctuationCharacter]: never}>();
+	.toBe<{[Character in AsciiPunctuationCharacter]: Character extends '_' ? '_fooBar' : never}>();
 expectTypeOf<{[Character in AsciiPunctuationCharacter]: CamelCaseString<`fooBar${Character}fooBar`, {splitOnPunctuation: false}>}>()
 	.toBe<{[Character in AsciiPunctuationCharacter]: never}>();
 expectTypeOf<{[Character in AsciiPunctuationCharacter]: CamelCaseString<`fooBar${Character}`, {splitOnPunctuation: false}>}>()

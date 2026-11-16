@@ -33,10 +33,10 @@ expectTypeOf<PascalCaseString<''>>().toBe<never>();
 expectTypeOf<PascalCaseString<'Foo.Bar', {splitOnPunctuation: false}>>().toBe<never>();
 expectTypeOf<PascalCaseString<'Foo+Bar', {splitOnPunctuation: false}>>().toBe<never>();
 
-// A leading underscore is only part of the case when the transformer is told to keep it, and the first letter is never capitalized then
+// Leading underscores are kept by default, and the first letter after them is capitalized
 expectTypeOf<PascalCaseString<'_fooBar'>>().toBe<never>();
-expectTypeOf<PascalCaseString<'_fooBar', {preserveLeadingUnderscores: true}>>().toBe<'_fooBar'>();
-expectTypeOf<PascalCaseString<'_FooBar', {preserveLeadingUnderscores: true}>>().toBe<never>();
+expectTypeOf<PascalCaseString<'_FooBar'>>().toBe<'_FooBar'>();
+expectTypeOf<PascalCaseString<'_FooBar', {preserveLeadingUnderscores: false}>>().toBe<never>();
 
 // A union is kept only when every member is valid
 expectTypeOf<PascalCaseString<'FooBar' | 'BazQux'>>().toBe<'FooBar' | 'BazQux'>();
@@ -73,7 +73,7 @@ defineComponent({name: wide});
 
 // Every ASCII punctuation character is checked at each position, including characters the case transform preserves.
 expectTypeOf<{[Character in AsciiPunctuationCharacter]: PascalCaseString<`${Character}FooBar`, {splitOnPunctuation: false}>}>()
-	.toBe<{[Character in AsciiPunctuationCharacter]: never}>();
+	.toBe<{[Character in AsciiPunctuationCharacter]: Character extends '_' ? '_FooBar' : never}>();
 expectTypeOf<{[Character in AsciiPunctuationCharacter]: PascalCaseString<`FooBar${Character}FooBar`, {splitOnPunctuation: false}>}>()
 	.toBe<{[Character in AsciiPunctuationCharacter]: never}>();
 expectTypeOf<{[Character in AsciiPunctuationCharacter]: PascalCaseString<`FooBar${Character}`, {splitOnPunctuation: false}>}>()
