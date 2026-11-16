@@ -1241,6 +1241,68 @@ There are many advanced types most users don't know about.
 	```
 	</details>
 
+- [`NoInfer<T>`](https://www.typescriptlang.org/docs/handbook/utility-types.html#noinfertype) - Blocks inference from a position, so the type argument is inferred from the other positions.
+	<details>
+	<summary>
+		Example
+	</summary>
+
+	```ts
+	declare function createLight<Color extends string>(colors: Color[], defaultColor: NoInfer<Color>): void;
+
+	createLight(['red', 'yellow', 'green'], 'red');  // OK
+	createLight(['red', 'yellow', 'green'], 'blue');  // Error, '"blue"' is not assignable to '"red" | "yellow" | "green"'
+	```
+	</details>
+
+- [`ThisParameterType<T>`](https://www.typescriptlang.org/docs/handbook/utility-types.html#thisparametertypetype) - Extracts the type of the `this` parameter of a function type, or `unknown` if it has none.
+	<details>
+	<summary>
+		Example
+	</summary>
+
+	```ts
+	function toHex(this: number) {
+		return this.toString(16);
+	}
+
+	type T1 = ThisParameterType<typeof toHex>;  // number
+	```
+	</details>
+
+- [`OmitThisParameter<T>`](https://www.typescriptlang.org/docs/handbook/utility-types.html#omitthisparametertype) - Removes the `this` parameter from a function type.
+	<details>
+	<summary>
+		Example
+	</summary>
+
+	```ts
+	function toHex(this: number) {
+		return this.toString(16);
+	}
+
+	const maxByteToHex: OmitThisParameter<typeof toHex> = toHex.bind(255);
+	maxByteToHex();  // 'ff'
+	```
+	</details>
+
+- [`ThisType<T>`](https://www.typescriptlang.org/docs/handbook/utility-types.html#thistypetype) - Marks the type of `this` in the methods of an object literal. It does not return a transformed type.
+	<details>
+	<summary>
+		Example
+	</summary>
+
+	```ts
+	type Counter = {count: number};
+
+	const methods: {increment(): void} & ThisType<Counter> = {
+		increment() {
+			this.count++;  // `this` is `Counter`
+		},
+	};
+	```
+	</details>
+
 You can find some examples in the [TypeScript docs](https://www.typescriptlang.org/docs/handbook/utility-types.html).
 
 ## Maintainers
