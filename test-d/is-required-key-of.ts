@@ -118,8 +118,13 @@ expectTypeOf(boolean).toBe<IsRequiredKeyOf<A, 'a' | 'x'>>(); // 'x' is not in A,
 // `never` / `any
 type K = {a: string};
 expectTypeOf<IsRequiredKeyOf<K, any>>().toBe<boolean>();
-expectTypeOf<IsRequiredKeyOf<any, any>>().toBe<true>();
-expectTypeOf<IsRequiredKeyOf<any, 'a'>>().toBe<true>();
+// An `any` object is read like `Record<PropertyKey, any>`.
+expectTypeOf<IsRequiredKeyOf<any, any>>().toBe<boolean>();
+expectTypeOf<IsRequiredKeyOf<any, 'a'>>().toBe<false>();
+expectTypeOf<IsRequiredKeyOf<any, 0>>().toBe<false>();
+expectTypeOf<IsRequiredKeyOf<any, string>>().toBe<true>();
+expectTypeOf<IsRequiredKeyOf<any, PropertyKey>>().toBe<true>();
+expectTypeOf<IsRequiredKeyOf<any, 'a' | symbol>>().toBe<boolean>();
 expectTypeOf<IsRequiredKeyOf<K, never>>().toBe<false>();
 expectTypeOf<IsRequiredKeyOf<any, never>>().toBe<false>();
 expectTypeOf<IsRequiredKeyOf<never, 'a'>>().toBe<false>();
