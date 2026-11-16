@@ -177,7 +177,7 @@ export type {WritableKeysOf} from './source/writable-keys-of.d.ts';
 export type {IsWritableKeyOf} from './source/is-writable-key-of.d.ts';
 export type {HasWritableKeys} from './source/has-writable-keys.d.ts';
 export type {Spread} from './source/spread.d.ts';
-export type {SplitOnRestElement} from './source/split-on-rest-element.d.ts';
+export type {SplitOnRestElement, SplitOnRestElementOptions} from './source/split-on-rest-element.d.ts';
 export type {ExtractRestElement} from './source/extract-rest-element.d.ts';
 export type {ExcludeRestElement} from './source/exclude-rest-element.d.ts';
 export type {IsInteger} from './source/is-integer.d.ts';

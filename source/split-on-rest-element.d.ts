@@ -10,7 +10,7 @@ import type {ExcludeRestElement} from './exclude-rest-element.d.ts'; // For `@li
 /**
 {@link SplitOnRestElement} options.
 */
-type SplitOnRestElementOptions = {
+export type SplitOnRestElementOptions = {
 	/**
 	Whether to preserve the optional modifier (`?`).
 
