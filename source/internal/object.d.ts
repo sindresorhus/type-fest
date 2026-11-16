@@ -72,10 +72,21 @@ Returns whether the given key of `ObjectType` has the `readonly` modifier.
 
 The key belongs to the object, so no distribution or `any` handling is needed.
 */
-export type IsReadonlyProperty<ObjectType, Key extends keyof ObjectType> = IsEqual<
-	{[Property in Key]: ObjectType[Property]},
-	{readonly [Property in Key]: ObjectType[Property]}
->;
+export type IsReadonlyProperty<ObjectType, Key extends keyof ObjectType> =
+	(
+		// An index signature does not satisfy a required property, so this only matches a declared key. `Required` keeps optional declared keys, and `Record` treats `0` and `'0'` as the same property.
+		Required<ObjectType> extends Record<Key, unknown>
+			? Key
+			// A mapped type over a literal key copies only the modifier of a declared property, so map over the index signatures that cover the key instead. Like in TypeScript, a `number` index signature also covers numeric string keys, and a `string` index signature applies only when no other index signature covers the key. The mapped type visits each index signature on its own, while `keyof` would merge a template literal signature into `string`.
+			: keyof {[Property in keyof ObjectType as Key extends Property | (number extends Property ? `${number}` : never) ? (string extends Property ? never : Property) : never]: never} extends infer SpecificKey
+				? [SpecificKey] extends [never] ? string : SpecificKey
+				: never
+	) extends infer MappedKey extends keyof ObjectType
+		? IsEqual<
+			{[Property in MappedKey]: ObjectType[Property]},
+			{readonly [Property in MappedKey]: ObjectType[Property]}
+		>
+		: never;
 
 /**
 Normalize keys by including string and number representations wherever applicable.

@@ -125,12 +125,18 @@ expectTypeOf<IsOptionalKeyOf<any, never>>().toBe<false>();
 expectTypeOf<IsOptionalKeyOf<never, 'a'>>().toBe<false>();
 expectTypeOf<IsOptionalKeyOf<never, any>>().toBe<false>();
 
-// Only the built-in `Record` type disagrees, because TypeScript compares it with the `Record` in the check by its type arguments instead of by its properties. It is not caused by `keyof`, which is the same for `Record<string, T>` and `{[Key in string]: T}`. See the note in the docs.
+// A literal key of an index signature is optional however the type is written. TypeScript compares two references to `Record` by their type arguments, so a check against `Record` reported the built-in `Record` type, but not an alias of it, as required. See the note in the docs.
 type CustomRecord<Key extends PropertyKey, Value> = {[RecordKey in Key]: Value};
+type NumberRecord = Record<string, number>;
 expectTypeOf<IsOptionalKeyOf<{[key: string]: number}, 'a'>>().toBe<true>();
 expectTypeOf<IsOptionalKeyOf<{[Key in string]: number}, 'a'>>().toBe<true>();
 expectTypeOf<IsOptionalKeyOf<CustomRecord<string, number>, 'a'>>().toBe<true>();
-expectTypeOf<IsOptionalKeyOf<Record<string, number>, 'a'>>().toBe<false>();
+expectTypeOf<IsOptionalKeyOf<Record<string, number>, 'a'>>().toBe<true>();
+expectTypeOf<IsOptionalKeyOf<NumberRecord, 'a'>>().toBe<true>();
+expectTypeOf<IsOptionalKeyOf<Readonly<Record<string, number>>, 'a'>>().toBe<true>();
+expectTypeOf<IsOptionalKeyOf<Record<`data-${string}`, number>, 'data-a'>>().toBe<true>();
+expectTypeOf<IsOptionalKeyOf<Record<'a' | 'b', number>, 'a'>>().toBe<false>();
+expectTypeOf<IsOptionalKeyOf<Partial<Record<'a' | 'b', number>>, 'a'>>().toBe<true>();
 expectTypeOf<IsOptionalKeyOf<{[key: string]: number}, string>>().toBe<false>();
 expectTypeOf<IsOptionalKeyOf<Record<string, number>, string>>().toBe<false>();
 

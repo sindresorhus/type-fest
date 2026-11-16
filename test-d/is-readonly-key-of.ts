@@ -32,7 +32,7 @@ type C = {
 };
 
 expectTypeOf<IsReadonlyKeyOf<C, string>>().toBe<true>();
-expectTypeOf<IsReadonlyKeyOf<C, 'anything'>>().toBe<false>();
+expectTypeOf<IsReadonlyKeyOf<C, 'anything'>>().toBe<true>();
 
 // Optional + readonly
 type D = {
@@ -134,3 +134,28 @@ type WrappedIsReadonlyKeyOfType<Type extends {c: 3}> = [IsReadonlyKeyOf<Type, 'c
 expectTypeOf<WrappedIsReadonlyKeyOfKey<'c'>>().toBe<'yes'>();
 expectTypeOf<WrappedIsReadonlyKeyOfKey<'a'>>().toBe<'no'>();
 expectTypeOf<WrappedIsReadonlyKeyOfType<{readonly c: 3}>>().toBe<'yes'>();
+
+// A literal key that an index signature covers has the modifier of the index signature, like a `string` key.
+expectTypeOf<IsReadonlyKeyOf<Readonly<Record<string, number>>, 'a'>>().toBe<true>();
+expectTypeOf<IsReadonlyKeyOf<{readonly [key: string]: number}, 'a'>>().toBe<true>();
+expectTypeOf<IsReadonlyKeyOf<{readonly [key: string]: number; b: number}, 'a'>>().toBe<true>();
+expectTypeOf<IsReadonlyKeyOf<{readonly [key: string]: number; b: number}, 'b'>>().toBe<false>();
+expectTypeOf<IsReadonlyKeyOf<{[key: string]: number; readonly b: number}, 'a'>>().toBe<false>();
+expectTypeOf<IsReadonlyKeyOf<{[key: string]: number}, 'a'>>().toBe<false>();
+expectTypeOf<IsReadonlyKeyOf<{readonly [key: `data-${string}`]: number}, 'data-a'>>().toBe<true>();
+expectTypeOf<IsReadonlyKeyOf<{readonly [key: number]: number}, 0>>().toBe<true>();
+expectTypeOf<IsReadonlyKeyOf<readonly string[], 0>>().toBe<true>();
+expectTypeOf<IsReadonlyKeyOf<string[], 0>>().toBe<false>();
+
+// Like in TypeScript, a `string` index signature applies only when no other index signature covers the key, and a declared property applies before any index signature.
+expectTypeOf<IsReadonlyKeyOf<{readonly [key: `data-${string}`]: number; [key: string]: number}, 'data-a'>>().toBe<true>();
+expectTypeOf<IsReadonlyKeyOf<{readonly [key: `data-${string}`]: number; [key: string]: number}, 'other'>>().toBe<false>();
+expectTypeOf<IsReadonlyKeyOf<{'0': number; readonly [key: string]: number}, 0>>().toBe<false>();
+
+// A `number` index signature also covers a numeric string key, and a declared key uses its own modifier.
+declare const uniqueSymbol: unique symbol;
+expectTypeOf<IsReadonlyKeyOf<{readonly [key: number]: number; [key: string]: number}, '0'>>().toBe<true>();
+expectTypeOf<IsReadonlyKeyOf<{readonly [key: string]: number; [key: number]: number}, '0'>>().toBe<false>();
+expectTypeOf<IsReadonlyKeyOf<{readonly [key: `data-${string}`]: number; 'data-x': number}, 'data-x'>>().toBe<false>();
+expectTypeOf<IsReadonlyKeyOf<{readonly [key: symbol]: number}, typeof uniqueSymbol>>().toBe<true>();
+expectTypeOf<IsReadonlyKeyOf<readonly string[], 'length'>>().toBe<true>();

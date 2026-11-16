@@ -10,7 +10,7 @@ Distributes over object and key unions, returning `boolean` when results differ.
 
 An `any` object has every key, and all of them are required, so the result is `false`, like `OptionalKeysOf<any>` is `never`. This also applies when the key is `any`. Otherwise, an `any` key returns `boolean`. `unknown` is not accepted.
 
-Note: A literal key of an index signature is reported as optional, except for the built-in `Record` type, where it is reported as required. `IsOptionalKeyOf<{[key: string]: T}, 'a'>` is `true`, while `IsOptionalKeyOf<Record<string, T>, 'a'>` is `false`. This is because the check compares the type with `Record<Key, Type[Key]>`, and TypeScript compares two `Record` types by their type arguments instead of by their properties. The `string` key itself is reported as required for both.
+Note: A literal key of an index signature is reported as optional, because the index signature does not require it, so `IsOptionalKeyOf<Record<string, T>, 'a'>` is `true`. The `string` key itself is reported as required.
 
 @example
 ```
@@ -55,7 +55,8 @@ export type IsOptionalKeyOf<Type extends object, Key extends KeysOfUnion<Type>> 
 			// The distribution comes first, because `keyof` of a union is the intersection of its members' keys, so a key only one member has would fail the check below.
 			: Type extends unknown
 				? Key extends keyof Type
-					? Type extends Record<Key, Type[Key]>
+					// A mapped type is used instead of `Record<Key, Type[Key]>`, because TypeScript compares two references to `Record` by their type arguments, which reported a literal key of `Record<string, T>` as required.
+					? Type extends {[Property in Key]: Type[Property]}
 						? false
 						: true
 					: false

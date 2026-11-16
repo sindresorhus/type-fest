@@ -10,6 +10,8 @@ Distributes over object and key unions, returning `boolean` when results differ.
 
 An `any` object has every key, and all of them are required, so the result is `true`, like `RequiredKeysOf<any>` is `PropertyKey`. This also applies when the key is `any`. Otherwise, an `any` key returns `boolean`. `unknown` is not accepted.
 
+Note: A literal key of an index signature is not reported as required, because the index signature does not require it, so `IsRequiredKeyOf<Record<string, T>, 'a'>` is `false`. The `string` key itself is reported as required.
+
 @example
 ```
 import type {IsRequiredKeyOf} from 'type-fest';
@@ -52,7 +54,8 @@ export type IsRequiredKeyOf<Type extends object, Key extends KeysOfUnion<Type>> 
 		: [Type, Key] extends [never, unknown] | [unknown, never] ? false
 			: Type extends unknown
 				? Key extends keyof Type
-					? Type extends Record<Key, Type[Key]>
+					// A mapped type is used instead of `Record<Key, Type[Key]>`, because TypeScript compares two references to `Record` by their type arguments, which reported a literal key of `Record<string, T>` as required.
+					? Type extends {[Property in Key]: Type[Property]}
 						? true
 						: false
 					: false
