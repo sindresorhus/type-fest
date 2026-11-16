@@ -159,3 +159,8 @@ expectTypeOf<IsReadonlyKeyOf<{readonly [key: string]: number; [key: number]: num
 expectTypeOf<IsReadonlyKeyOf<{readonly [key: `data-${string}`]: number; 'data-x': number}, 'data-x'>>().toBe<false>();
 expectTypeOf<IsReadonlyKeyOf<{readonly [key: symbol]: number}, typeof uniqueSymbol>>().toBe<true>();
 expectTypeOf<IsReadonlyKeyOf<readonly string[], 'length'>>().toBe<true>();
+
+// Like in TypeScript, a `${number}` index signature covers the string key `'0'`, but not the number key `0`, which takes the `string` index signature.
+type NumericTemplateSignature = {readonly [key: `${number}`]: number; [key: string]: number};
+expectTypeOf<IsReadonlyKeyOf<NumericTemplateSignature, '0'>>().toBe<true>();
+expectTypeOf<IsReadonlyKeyOf<NumericTemplateSignature, 0>>().toBe<false>();
