@@ -129,9 +129,9 @@ type _ObjectMerge<
 			: P
 		: never]:
 			| Second[P]
-			| ([Extract<KeyAliases<P>, keyof PickIndexSignature<First>>] extends [never]
+			| ([Extract<IndexKeyAliases<P>, keyof PickIndexSignature<First>>] extends [never]
 				? never
-				: If<IsOptionalKeyOf<Second, P>, First[KeyAliases<P> & keyof First], never>)
+				: If<IsOptionalKeyOf<Second, P>, PickIndexSignature<First>[IndexKeyAliases<P> & keyof PickIndexSignature<First>], never>)
 } & {
 	// Map over literal keys of `First`, except those that are present in `Second`.
 	-readonly [P in keyof First as P extends NormalizedFirstLiteralKeys
@@ -142,9 +142,9 @@ type _ObjectMerge<
 			| First[P]
 				// If there's a matching index signature in `Second`, then add the type for it as well,
 				// for example, in `ObjectMerge<{a: string}, {[x: string]: number}>`, `a` is of type `string | number`.
-			| ([Extract<KeyAliases<P>, keyof PickIndexSignature<Second>>] extends [never]
+			| ([Extract<IndexKeyAliases<P>, keyof PickIndexSignature<Second>>] extends [never]
 				? never
-				: Second[KeyAliases<P> & keyof Second]);
+				: PickIndexSignature<Second>[IndexKeyAliases<P> & keyof PickIndexSignature<Second>]);
 } & {
 	// Map over non-literal keys of `Second`.
 	-readonly [P in keyof Second as P extends NormalizedSecondLiteralKeys ? never : P]:
@@ -183,8 +183,13 @@ type _ObjectMerge<
 Returns the keys of `Type` that the index key `IndexKey` covers: declared keys through their canonical numeric aliases, and index-signature keys through their normalized forms.
 */
 type OverlappingIndexKeys<Type extends object, IndexKey extends PropertyKey> =
-	| keyof {[Key in keyof OmitIndexSignature<Type> as [Extract<KeyAliases<Key>, IndexKey>] extends [never] ? never : Key]: never}
+	| keyof {[Key in keyof OmitIndexSignature<Type> as [Extract<IndexKeyAliases<Key>, IndexKey>] extends [never] ? never : Key]: never}
 	| (NormalizedKeys<IndexKey> & keyof PickIndexSignature<Type>);
+
+/**
+Get the aliases of a declared key that can match an index signature. TypeScript and the runtime treat a `'NaN'` key as numeric, but there is no `NaN` literal type, so it matches `number`.
+*/
+type IndexKeyAliases<Key extends PropertyKey> = Key extends 'NaN' ? 'NaN' | number : KeyAliases<Key>;
 
 /**
 Get literal keys of a type, including numeric aliases and the runtime string spellings of enum keys.

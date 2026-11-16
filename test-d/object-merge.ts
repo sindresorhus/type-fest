@@ -305,6 +305,16 @@ expectTypeOf<Pick<ObjectMerge<typeof enumMergeDestination, typeof enumMergeSourc
 expectTypeOf<ObjectMerge<{'01': string}, Record<number, number>>>().toBe<{[key: number]: number; '01': string}>();
 expectTypeOf<ObjectMerge<Record<number, number>, {'01'?: string}>>().toBe<{[key: number]: number; '01'?: string}>();
 
+// A `NaN` key is numeric, like in TypeScript and at runtime, even though there is no `NaN` literal type.
+expectTypeOf<ObjectMerge<{NaN: string}, Record<number, number>>>().toBe<{[key: number]: number | string; NaN: number | string}>();
+expectTypeOf<ObjectMerge<Record<number, number>, {NaN?: string}>>().toBe<{[key: number]: number | string; NaN?: number | string}>();
+expectTypeOf<ObjectMerge<Record<number, number>, {NaN: string}>>().toBe<{[key: number]: number | string; NaN: string}>();
+
+// Declared numeric properties cannot overwrite `NaN` through an index-signature alias.
+type IndexedNaNMerge = {[key: `N${string}`]: number; 0: boolean};
+expectTypeOf<ObjectMerge<{NaN: string}, IndexedNaNMerge>['NaN']>().toBe<string | number>();
+expectTypeOf<ObjectMerge<IndexedNaNMerge, {NaN?: string}>['NaN']>().toBe<string | number | undefined>();
+
 function _readNoncanonicalMerge<Value>(value: ObjectMerge<{'01': Value}, Record<number, number>>): Value {
 	return value['01'];
 }
