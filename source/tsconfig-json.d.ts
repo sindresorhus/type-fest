@@ -376,14 +376,14 @@ export namespace TsConfigJson {
 		/**
 		Warn on expressions and declarations with an implied 'any' type.
 
-		@default false
+		Default: `true` unless `strict` is `false` (`strict` is `true` by default since TypeScript 6.0).
 		*/
 		noImplicitAny?: boolean;
 
 		/**
 		Raise error on 'this' expressions with an implied any type.
 
-		@default false
+		Default: `true` unless `strict` is `false` (`strict` is `true` by default since TypeScript 6.0).
 		*/
 		noImplicitThis?: boolean;
 
@@ -529,7 +529,7 @@ export namespace TsConfigJson {
 		/**
 		Default catch clause variables as `unknown` instead of `any`.
 
-		@default false
+		Default: `true` unless `strict` is `false` (`strict` is `true` by default since TypeScript 6.0).
 		*/
 		useUnknownInCatchVariables?: boolean;
 
@@ -694,7 +694,7 @@ export namespace TsConfigJson {
 		/**
 		Enable strict null checks.
 
-		@default false
+		Default: `true` unless `strict` is `false` (`strict` is `true` by default since TypeScript 6.0).
 		*/
 		strictNullChecks?: boolean;
 
@@ -731,7 +731,7 @@ export namespace TsConfigJson {
 		/**
 		Enable stricter checking of of the `bind`, `call`, and `apply` methods on functions.
 
-		@default false
+		Default: `true` unless `strict` is `false` (`strict` is `true` by default since TypeScript 6.0).
 		*/
 		strictBindCallApply?: boolean;
 
@@ -745,21 +745,21 @@ export namespace TsConfigJson {
 		/**
 		Built-in iterators are instantiated with a `TReturn` type of undefined instead of `any`.
 
-		@default false
+		Default: `true` unless `strict` is `false` (`strict` is `true` by default since TypeScript 6.0).
 		*/
 		strictBuiltinIteratorReturn?: boolean;
 
 		/**
 		Disable bivariant parameter checking for function types.
 
-		@default false
+		Default: `true` unless `strict` is `false` (`strict` is `true` by default since TypeScript 6.0).
 		*/
 		strictFunctionTypes?: boolean;
 
 		/**
 		Ensure non-undefined class properties are initialized in the constructor.
 
-		@default false
+		Default: `true` unless `strict` is `false` (`strict` is `true` by default since TypeScript 6.0).
 		*/
 		strictPropertyInitialization?: boolean;
 
@@ -782,7 +782,7 @@ export namespace TsConfigJson {
 		/**
 		Emit ECMAScript standard class fields.
 
-		@default false
+		Default: `true` for ES2022 and later targets (the default target is ES2025 since TypeScript 6.0), `false` otherwise.
 		*/
 		useDefineForClassFields?: boolean;
 
