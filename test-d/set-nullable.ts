@@ -1,6 +1,6 @@
 import {expectTypeOf} from 'nz';
 import type {Opaque, Tagged} from '../source/tagged.d.ts';
-import type {LiteralUnion, SetNullable} from '../index.d.ts';
+import type {ConditionalKeys, LiteralUnion, SetNullable} from '../index.d.ts';
 
 // Make one key nullable.
 declare const variation1: SetNullable<{a: number; b: string}, 'a'>;
@@ -209,3 +209,17 @@ const inferredNullableField = makeFieldNullable({0: 'ready', payload: 1}, 0);
 expectTypeOf(inferredNullableField).toBe<{readonly 0: 'ready' | null; readonly payload: 1}>();
 // @ts-expect-error Selecting the field does not make a readonly field writable.
 inferredNullableField[0] = null;
+
+// Keys that stay an unresolved generic do not make type-checking excessively deep.
+type GenericKeysSchema = {a: {x: 1}};
+type GenericKeysRow<Name extends keyof GenericKeysSchema> = {[Key in keyof (GenericKeysSchema[Name] & (Name extends 'a' ? {id: 1} : {}))]: string};
+type GenericKeysInsert<Name extends keyof GenericKeysSchema> = SetNullable<Omit<GenericKeysRow<Name>, 'id'>, ConditionalKeys<GenericKeysSchema[Name], 1> & keyof Omit<GenericKeysRow<Name>, 'id'>>;
+
+expectTypeOf<GenericKeysInsert<'a'>>().toBe<{x: string | null}>();
+
+declare function saveGenericKeys(records: ReadonlyArray<Record<string, string>>): void;
+declare function saveGenericKeys(records: readonly object[]): void;
+
+function _insertGenericKeys<Name extends keyof GenericKeysSchema>(rows: Array<GenericKeysInsert<Name>>) {
+	saveGenericKeys(rows);
+}

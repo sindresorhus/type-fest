@@ -1,4 +1,3 @@
-import type {If} from './if.d.ts';
 import type {IsAny} from './is-any.d.ts';
 import type {IsNever} from './is-never.d.ts';
 import type {CallSignatureOf, SelectedKeys, SimplifyObject, UnwrapPathBrand} from './internal/index.d.ts';
@@ -76,9 +75,9 @@ type _SetRequired<BaseType, Keys> =
 				? BaseType
 				// Only index keys are handled as tuple elements. Other keys, such as an extra property of an augmented array, take the object branch.
 				: [Keys] extends [number | `${number}`]
-					? SetArrayRequired<BaseType, Keys> extends infer ResultantArray
-						? If<IsReadonlyArray<BaseType>, Readonly<ResultantArray>, ResultantArray>
-						: never
+					? IsReadonlyArray<BaseType> extends true
+						? Readonly<SetArrayRequired<BaseType, Keys>>
+						: SetArrayRequired<BaseType, Keys>
 					: _SetObjectRequired<BaseType, SelectedKeys<BaseType, Keys>>
 		: _SetObjectRequired<BaseType, SelectedKeys<BaseType, Keys>>;
 

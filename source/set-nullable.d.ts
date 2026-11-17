@@ -35,14 +35,15 @@ type AllNullable = SetNullable<Foo>;
 @category Object
 */
 export type SetNullable<BaseType, Keys extends KeysOfUnion<BaseType> = KeysOfUnion<BaseType>> =
-	SetNullableImplementation<BaseType, KeySelector<UnwrapPathBrand<Keys>>>;
+	// `SelectedKeys` in the mapped type below applies `KeySelector` itself. Wrapping the keys in `KeySelector` here too makes type-checking of an unresolved generic key set excessively deep, so the lookups below normalize enum members to their values.
+	SetNullableImplementation<BaseType, UnwrapPathBrand<Keys>>;
 
 // A homomorphic mapped type over a type parameter is applied to each member of a union on its own, so a key that only some members have reaches those members.
 type SetNullableImplementation<BaseType, Keys> = {
-	// Tuple elements use string indices, so look up their canonical numeric aliases in the selector, which matches each union member by its own spelling. Other numeric-looking names, like '01', stay distinct.
+	// Tuple elements use string indices, so look up their canonical numeric aliases in the selector, which matches each union member by its own spelling. Other numeric-looking names, like '01', stay distinct. The `KeySelector` normalizes a numeric enum member to its value, which keeps a wide `number` from matching it.
 	[Key in keyof BaseType]: Key extends SelectedKeys<BaseType, Keys>
 		? BaseType[Key] | null
-		: [SelectedKeyAlias<Keys, Key>] extends [never]
+		: [SelectedKeyAlias<KeySelector<Keys>, Key>] extends [never]
 			? BaseType[Key]
 			: BaseType[Key] | null;
 };

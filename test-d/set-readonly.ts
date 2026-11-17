@@ -1,6 +1,6 @@
 import {expectTypeOf} from 'nz';
 import type {Opaque, Tagged} from '../source/tagged.d.ts';
-import type {LiteralUnion, SetReadonly} from '../index.d.ts';
+import type {ConditionalKeys, LiteralUnion, SetReadonly} from '../index.d.ts';
 
 // Update one readonly and one non readonly to readonly.
 declare const variation1: SetReadonly<{a: number; readonly b: string; c: boolean}, 'b' | 'c'>;
@@ -175,3 +175,17 @@ type ReadonlyCallableUnion = {(): 'first'; value: string} | {(): 'second'; count
 type ReadonlyCallableResult = SetReadonly<ReadonlyCallableUnion, 'value'>;
 expectTypeOf<Extract<ReadonlyCallableResult, () => 'first'>['value']>().toBe<string>();
 expectTypeOf<Extract<ReadonlyCallableResult, () => 'second'>['count']>().toBe<number>();
+
+// Keys that stay an unresolved generic do not make type-checking run out of memory.
+type GenericKeysSchema = {a: {x: 1}};
+type GenericKeysRow<Name extends keyof GenericKeysSchema> = {[Key in keyof (GenericKeysSchema[Name] & (Name extends 'a' ? {id: 1} : {}))]: string};
+type GenericKeysInsert<Name extends keyof GenericKeysSchema> = SetReadonly<Omit<GenericKeysRow<Name>, 'id'>, ConditionalKeys<GenericKeysSchema[Name], 1> & keyof Omit<GenericKeysRow<Name>, 'id'>>;
+
+expectTypeOf<GenericKeysInsert<'a'>>().toBe<{readonly x: string}>();
+
+declare function saveGenericKeys(records: ReadonlyArray<Record<string, string>>): void;
+declare function saveGenericKeys(records: readonly object[]): void;
+
+function _insertGenericKeys<Name extends keyof GenericKeysSchema>(rows: Array<GenericKeysInsert<Name>>) {
+	saveGenericKeys(rows);
+}

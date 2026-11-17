@@ -1,5 +1,5 @@
 import {expectTypeOf} from 'nz';
-import type {LiteralUnion, Opaque, SetOptional, Tagged} from '../index.d.ts';
+import type {ConditionalKeys, LiteralUnion, Opaque, SetOptional, Tagged} from '../index.d.ts';
 
 // Update one required and one optional to optional.
 declare const variation1: SetOptional<{a: number; b?: string; c: boolean}, 'b' | 'c'>;
@@ -303,3 +303,17 @@ optionalSymbol[selectorSymbol] = 'value';
 expectTypeOf<SetOptional<readonly [{id: string}, number] | [readonly string[], boolean], 1>>().toBe<readonly [{id: string}, number?] | [readonly string[], boolean?]>();
 expectTypeOf<SetOptional<readonly [1, 2] | [3, 4, 5], 0>>().toBe<readonly [1 | undefined, 2] | [3 | undefined, 4, 5]>();
 expectTypeOf<SetOptional<readonly [] | [1, ...string[]], 0>>().toBe<readonly [] | [1?, ...string[]]>();
+
+// Keys that stay an unresolved generic do not make type-checking run out of memory.
+type GenericKeysSchema = {a: {x: 1}};
+type GenericKeysRow<Name extends keyof GenericKeysSchema> = {[Key in keyof (GenericKeysSchema[Name] & (Name extends 'a' ? {id: 1} : {}))]: string};
+type GenericKeysInsert<Name extends keyof GenericKeysSchema> = SetOptional<Omit<GenericKeysRow<Name>, 'id'>, ConditionalKeys<GenericKeysSchema[Name], 1> & keyof Omit<GenericKeysRow<Name>, 'id'>>;
+
+expectTypeOf<GenericKeysInsert<'a'>>().toBe<{x?: string}>();
+
+declare function saveGenericKeys(records: ReadonlyArray<Record<string, string>>): void;
+declare function saveGenericKeys(records: readonly object[]): void;
+
+function _insertGenericKeys<Name extends keyof GenericKeysSchema>(rows: Array<GenericKeysInsert<Name>>) {
+	saveGenericKeys(rows);
+}
