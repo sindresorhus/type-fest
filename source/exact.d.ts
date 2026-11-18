@@ -7,21 +7,37 @@ import type {KeysOfUnion} from './keys-of-union.d.ts';
 import type {IsUnknown} from './is-unknown.d.ts';
 import type {Primitive} from './primitive.d.ts';
 import type {OmitIndexSignature} from './omit-index-signature.d.ts';
+import type {PickIndexSignature} from './pick-index-signature.d.ts';
 
 /**
 Apply `Exact` to each property of `ParameterType`, with the value of the same key in `InputType`.
 
 The value is read from each member of `InputType` separately, because `keyof` of a union only has the keys that all members share. For an optional or nullable input like `{a: string} | undefined`, `keyof` is `never`, so the value would be `never`, and `Exact<…, never>` accepts no value.
 
-For an index signature key like `string`, the value is the union of the values of all input keys that match it.
-
-Primitive members of `InputType` are skipped, because they have no properties to compare. For an index signature key, reading them would give all their method types, which is slow.
+Primitive members of `InputType` are skipped, because they have no properties to compare.
 */
 type ExactProperties<ParameterType, InputType> = {
 	// Primitive parameters pass through unchanged, so their input values do not need to be read or compared.
 	[Key in keyof ParameterType]: [ParameterType[Key]] extends [Primitive]
 		? ParameterType[Key]
-		: Exact<ParameterType[Key], InputType extends Primitive ? never : PropertyValue<InputType, Key> | InputType[Extract<keyof InputType, Key>]>;
+		: Exact<ParameterType[Key], InputType extends Primitive ? never : PropertyValue<InputType, Key>>;
+};
+
+/**
+Apply `Exact` to each key of `InputObject` that is not a declared key of `ParameterType`, with the value of the parameter's index signature for that key and the input value of that key.
+
+Each key is checked with its own value. Checking all the values together, against the union of the values, makes the check grow with each value, and a generic value can make the check of every other value fail.
+
+A key that no index signature of `ParameterType` matches gets `never`, like the excess keys in `ExactObject`.
+
+The keys are optional, because a member of a union input can be without the key.
+
+For an index signature key of a union input, like `string` in `Record<string, …> | {a: …}`, the values of the keys of each member that match it are read together, because `KeysOfUnion` gives only `string` for such a union. A generic value in such a union input can make the check of the other values fail (limitation).
+*/
+type ExactIndexSignatureProperties<ParameterType, InputObject> = {
+	[Key in KeysOfUnion<InputObject> as Key extends keyof OmitIndexSignature<ParameterType>
+		? never
+		: Key]?: Exact<PropertyValue<ParameterType, Key>, InputObject extends unknown ? PropertyValue<InputObject, Key> | InputObject[Extract<keyof InputObject, Key>] : never>;
 };
 
 /**
@@ -29,7 +45,13 @@ Create a type from `ParameterType` and `InputType` and change keys exclusive to 
 - Generate a list of keys that exists in `InputType` but not in `ParameterType`.
 - Mark these excess keys as `never`.
 */
-type ExactObject<ParameterType, InputType, InputObject = Exclude<InputType, Primitive | Function | readonly unknown[]>> = ExactProperties<ParameterType, InputType>
+type ExactObject<ParameterType, InputType, InputObject = Exclude<InputType, Primitive | Function | readonly unknown[]>> = ([keyof PickIndexSignature<ParameterType>] extends [never]
+	// Without an index signature, each input key is a declared key or an excess key.
+	? ExactProperties<ParameterType, InputType>
+	// The index signatures are kept as they are, because the input keys they match are checked by `ExactIndexSignatureProperties`.
+	: ExactProperties<OmitIndexSignature<ParameterType>, InputType>
+		& PickIndexSignature<ParameterType>
+		& ExactIndexSignatureProperties<ParameterType, InputObject>)
 	// Only object members of the input are read, because the keys of a primitive or array member (like `length`), or of a callable member, are not excess keys of this object member.
 	& Record<Exclude<keyof InputObject, ExactObjectKeys<ParameterType>>, never>
 	// `KeysOfUnion` rather than `keyof`, because `keyof` of a union is the intersection of its members' keys, so a key only one member has would vanish and the member carrying it would be accepted.

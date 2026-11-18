@@ -310,6 +310,28 @@ declare const arrayOrExcessObjectInput: ['q'] | {a: 'x'; b: 'y'};
 	unionFunction({} as {x: 'x'; y: {b: 'y'}});
 	// @ts-expect-error
 	unionFunction({} as {x: 'x'; y: {b: 'y'; c: 'y'}});
+
+	// It should check the values of each member of a union input
+	function_({} as {a: {x: {b: 'x'}} | {y: {b: 'y'}}});
+	// @ts-expect-error
+	function_({} as {a: {x: {b: 'x'}} | {y: {b: 'y'; c: 'y'}}});
+	function_({} as {a: Record<string, {b: 'x'}> | {y: {b: 'y'}}});
+	// @ts-expect-error
+	function_({} as {a: Record<string, {b: 'x'}> | {y: {b: 'y'; c: 'y'}}});
+
+	// It should reject an excess property in an index signature of the input
+	// @ts-expect-error
+	function_({} as {a: Record<string, {b: 'x'; c: 'x'}>});
+	function_({} as {a: Record<`data-${string}`, {b: 'x'}>});
+	// @ts-expect-error
+	function_({} as {a: Record<`data-${string}`, {b: 'x'; c: 'x'}>});
+
+	const declaredFunction = <T extends Exact<{id: {b: string}; [key: string]: {b: string}}, T>>(arguments_: T) => arguments_;
+	declaredFunction({} as {id: {b: 'x'}; x: {b: 'x'}});
+	// @ts-expect-error
+	declaredFunction({} as {id: {b: 'x'; c: 'x'}; x: {b: 'x'}});
+	// @ts-expect-error
+	declaredFunction({} as {id: {b: 'x'}; x: {b: 'x'; c: 'x'}});
 }
 
 { // Spec - index signature with a recursive value and a generic input value
@@ -321,6 +343,36 @@ declare const arrayOrExcessObjectInput: ['q'] | {a: 'x'; b: 'y'};
 
 	function _create<Kind extends 'a' | 'b'>(kind: Kind, details: {a: number}) {
 		save({kind, details, status: 'created'});
+	}
+}
+
+{ // Spec - index signature with values of different shapes and a generic input value
+	type Json = string | number | boolean | null | Json[] | {[key: string]: Json};
+	type Row = {[key: string]: Json};
+
+	const save = <Input extends Row>(row: Exact<Row, Input> & Input) => row;
+
+	// Type-checking this must not be excessively slow.
+	function _createWithUnion<Kind extends 'a' | 'b'>(kind: Kind, payload: {a: number[]} | {b: {c: string}} | {d: string[]}) {
+		save({kind, payload});
+	}
+
+	// Each value is checked with its own key, so the generic value does not affect the check of another value.
+	function _createWithRecord<Kind extends 'a' | 'b'>(kind: Kind, payload: {r: Record<string, string>}) {
+		save({kind, payload});
+	}
+
+	const exactRecord = <Input extends Exact<Record<string, {b: string}>, Input>>(input: Input) => input;
+
+	function _createWithExcess<Kind extends 'a' | 'b'>(kind: Kind) {
+		exactRecord({x: {b: kind}, y: {b: 'y'}});
+		// @ts-expect-error
+		exactRecord({x: {b: kind}, y: {b: 'y', c: 'y'}});
+	}
+
+	// It should accept a generic input that is passed on
+	function _forward<Input extends Row>(row: Exact<Row, Input> & Input) {
+		save(row);
 	}
 }
 
