@@ -305,6 +305,23 @@ declare const arrayOrExcessObjectInput: ['q'] | {a: 'x'; b: 'y'};
 	templateFunction({} as {'data-x': {b: 'x'; c: 'x'}});
 	// @ts-expect-error
 	templateFunction({} as {x: {b: 'x'}});
+
+	const unionFunction = <T extends Exact<Record<string, string | {b: string}>, T>>(arguments_: T) => arguments_;
+	unionFunction({} as {x: 'x'; y: {b: 'y'}});
+	// @ts-expect-error
+	unionFunction({} as {x: 'x'; y: {b: 'y'; c: 'y'}});
+}
+
+{ // Spec - index signature with a recursive value and a generic input value
+	type Json = string | number | boolean | Json[] | {[key: string]: Json};
+	type Row = {[key: string]: Json};
+
+	// Type-checking this must not be excessively slow.
+	const save = <Input extends Row>(row: Exact<Row, Input> & Input) => row;
+
+	function _create<Kind extends 'a' | 'b'>(kind: Kind, details: {a: number}) {
+		save({kind, details, status: 'created'});
+	}
 }
 
 { // Spec - union of array

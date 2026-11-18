@@ -14,12 +14,14 @@ Apply `Exact` to each property of `ParameterType`, with the value of the same ke
 The value is read from each member of `InputType` separately, because `keyof` of a union only has the keys that all members share. For an optional or nullable input like `{a: string} | undefined`, `keyof` is `never`, so the value would be `never`, and `Exact<…, never>` accepts no value.
 
 For an index signature key like `string`, the value is the union of the values of all input keys that match it.
+
+Primitive members of `InputType` are skipped, because they have no properties to compare. For an index signature key, reading them would give all their method types, which is slow.
 */
 type ExactProperties<ParameterType, InputType> = {
 	// Primitive parameters pass through unchanged, so their input values do not need to be read or compared.
 	[Key in keyof ParameterType]: [ParameterType[Key]] extends [Primitive]
 		? ParameterType[Key]
-		: Exact<ParameterType[Key], InputType extends unknown ? PropertyValue<InputType, Key> | InputType[Extract<keyof InputType, Key>] : never>;
+		: Exact<ParameterType[Key], InputType extends Primitive ? never : PropertyValue<InputType, Key> | InputType[Extract<keyof InputType, Key>]>;
 };
 
 /**
