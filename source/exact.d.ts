@@ -1,4 +1,4 @@
-import type {IsArrayOfUnknownLength, KeyAliases} from './internal/index.d.ts';
+import type {IsArrayOfUnknownLength, KeyAliases, NormalizedKeys} from './internal/index.d.ts';
 import type {PropertyValue} from './property-value.d.ts';
 import type {RequireNone} from './require-none.d.ts';
 import type {ArrayElement} from './array-element.d.ts';
@@ -58,8 +58,8 @@ type ExactObject<ParameterType, InputType, InputObject = Exclude<InputType, Prim
 	// Such a key is optional, because the members without it can be for another member of `ParameterType`, like `{a: 1} | {b: 1}` for `{a: number} | {b: number}`. Without `exactOptionalPropertyTypes`, this also accepts the key with an `undefined` value.
 	& RequireNone<Exclude<KeysOfUnion<InputObject>, ExactObjectKeys<ParameterType>>>;
 
-// Include aliases for declared keys, keeping index signatures in their original form.
-type ExactObjectKeys<Type> = KeysOfUnion<Type> | KeyAliases<keyof OmitIndexSignature<Type>>;
+// Include aliases for declared keys, and the keys that TypeScript matches with an index signature, like number keys for a `string` index signature and numeric strings for a `number` one.
+type ExactObjectKeys<Type> = NormalizedKeys<KeysOfUnion<Type>> | KeyAliases<keyof OmitIndexSignature<Type>>;
 
 /**
 Create a type that does not allow extra properties, meaning it only allows properties that are explicitly declared.
@@ -98,6 +98,10 @@ const invalidInput = {name: 'name', id: 1};
 // @ts-expect-error
 onlyAcceptNameImproved(invalidInput); // Compilation error
 ```
+
+Note: A property value with a generic object type, like `Value extends {a: number}`, is rejected, because it can have extra properties. A generic primitive type is accepted.
+
+Note: An excess property in an intersection of an index signature and an object, like `Record<string, {a: number}> & {b: {a: number; extra: true}}`, is not detected.
 
 [Read more](https://stackoverflow.com/questions/49580725/is-it-possible-to-restrict-typescript-object-to-contain-only-properties-defined)
 

@@ -374,6 +374,209 @@ declare const arrayOrExcessObjectInput: ['q'] | {a: 'x'; b: 'y'};
 	function _forward<Input extends Row>(row: Exact<Row, Input> & Input) {
 		save(row);
 	}
+
+	// A generic value in a union input with an index signature member can make the check of the other values fail (known limitation)
+	function _unionWithIndexSignature<Kind extends 'a' | 'b'>(kind: Kind, payload: {r: Record<string, string>}, record: Record<string, string>, flag: boolean) {
+		// @ts-expect-error
+		save(flag ? {kind, payload} : record);
+	}
+}
+
+{ // Spec - number keys for a string index signature
+	const function_ = <T extends Exact<Record<string, {b: string}>, T>>(arguments_: T) => arguments_;
+	function_({} as {0: {b: 'x'}});
+	function_({} as {[id: number]: {b: 'x'}});
+	// @ts-expect-error
+	function_({} as {0: {b: 'x'; c: 'x'}});
+	// @ts-expect-error
+	function_({} as {[id: number]: {b: 'x'; c: 'x'}});
+
+	// It should still reject a number key that no index signature matches
+	const templateFunction = <T extends Exact<Record<`data-${string}`, {b: string}>, T>>(arguments_: T) => arguments_;
+	// @ts-expect-error
+	templateFunction({} as {0: {b: 'x'}});
+	const declaredFunction = <T extends Exact<{a: {b: string}}, T>>(arguments_: T) => arguments_;
+	// @ts-expect-error
+	declaredFunction({} as {a: {b: 'x'}; 0: {b: 'x'}});
+}
+
+{ // Spec - generic property values
+	const function_ = <T extends Exact<{status: string; details: {a: number}}, T>>(arguments_: T) => arguments_;
+
+	function _primitive<Status extends string>(status: Status) {
+		function_({status, details: {a: 1}});
+	}
+
+	// A generic object value is rejected, because it can have extra properties (known limitation)
+	function _object<Details extends {a: number}>(details: Details) {
+		// @ts-expect-error
+		function_({status: 'ready', details});
+	}
+}
+
+{ // Spec - intersection of an index signature and an object
+	const function_ = <T extends Exact<Record<string, {a: number}>, T>>(arguments_: T) => arguments_;
+
+	// An excess property in the object is not detected (known limitation)
+	function_({} as Record<string, {a: 1}> & {b: {a: 1; extra: true}});
+}
+
+{ // Spec - number keys for a number index signature
+	const function_ = <T extends Exact<Record<number, {b: string}>, T>>(arguments_: T) => arguments_;
+	function_({} as {'0': {b: 'x'}; '1.5': {b: 'y'}});
+	// @ts-expect-error
+	function_({} as {'0': {b: 'x'; c: 'x'}});
+	// @ts-expect-error
+	function_({} as {x: {b: 'x'}});
+
+	const mixedFunction = <T extends Exact<{id: number; [key: string]: number}, T>>(arguments_: T) => arguments_;
+	mixedFunction({id: 1, 0: 2, x: 3});
+	// @ts-expect-error
+	mixedFunction({id: 1, x: 'x'});
+}
+
+{ // Spec - index signature values
+	const function_ = <T extends Exact<Record<string, {b: string}>, T>>(arguments_: T) => arguments_;
+
+	function_({});
+	function_({x: {b: 'x'}} as const);
+	function_({} as {readonly x: {readonly b: 'x'}});
+	function_({} as Record<string, {b: string}>);
+	function_({} as {x?: {b: 'x'}});
+	// @ts-expect-error
+	function_({} as {x?: {b: 'x'; c: 'x'}});
+	function_({} as {x: {b: 'x'}} | {x: {b: 'y'}});
+	// @ts-expect-error
+	function_({} as {x: {b: 'x'}} | {x: {b: 'y'; c: 'y'}});
+	function_({} as {x: {b: 'x'}} & {y: {b: 'y'}});
+	// @ts-expect-error
+	function_({} as {x: {b: 'x'}} & {y: {b: 'y'; c: 'y'}});
+
+	// Special values
+	function_({} as {x: any});
+	function_({} as {x: never});
+	// @ts-expect-error
+	function_({} as {x: unknown});
+	// @ts-expect-error
+	function_({x: 'x'});
+
+	// A symbol key is not matched by a `string` index signature
+	const symbolKey = Symbol('key');
+	// @ts-expect-error
+	function_({[symbolKey]: {b: 'x'}});
+
+	// It should accept a generic key
+	function _genericKey<Key extends string>(key: Key) {
+		function_({[key]: {b: 'x'}});
+	}
+
+	// It should accept a generic input that is passed on
+	function _forward<Input extends Exact<Record<string, {b: string}>, Input>>(input: Input) {
+		function_(input);
+	}
+
+	const unknownFunction = <T extends Exact<Record<string, unknown>, T>>(arguments_: T) => arguments_;
+	unknownFunction({x: {y: {z: 1}}, y: [1, 'a'], z: () => 1});
+
+	const nullableFunction = <T extends Exact<Record<string, {b: string} | null | undefined>, T>>(arguments_: T) => arguments_;
+	nullableFunction({x: null, y: undefined, z: {b: 'z'}});
+	// @ts-expect-error
+	nullableFunction({x: null, z: {b: 'z', c: 'z'}});
+
+	const optionalFunction = <T extends Exact<Record<string, {b: string; c?: number}>, T>>(arguments_: T) => arguments_;
+	optionalFunction({x: {b: 'x'}, y: {b: 'y', c: 1}});
+	// @ts-expect-error
+	optionalFunction({x: {b: 'x', d: 1}});
+
+	const readonlyFunction = <T extends Exact<{readonly [key: string]: {b: string}}, T>>(arguments_: T) => arguments_;
+	readonlyFunction({x: {b: 'x'}});
+	// @ts-expect-error
+	readonlyFunction({x: {b: 'x', c: 'x'}});
+
+	const dateFunction = <T extends Exact<Record<string, Date>, T>>(arguments_: T) => arguments_;
+	dateFunction({x: new Date()});
+
+	const callbackFunction = <T extends Exact<Record<string, (value: string) => void>, T>>(arguments_: T) => arguments_;
+	callbackFunction({x: (value: string) => value.trim(), y: (value: string) => value.length});
+}
+
+{ // Spec - nested index signature values
+	const arrayFunction = <T extends Exact<Record<string, Array<{b: string}>>, T>>(arguments_: T) => arguments_;
+	arrayFunction({x: [{b: 'x'}], y: []});
+	// @ts-expect-error
+	arrayFunction({x: [{b: 'x'}, {b: 'y', c: 'y'}]});
+
+	const tupleFunction = <T extends Exact<Record<string, [{b: string}, number]>, T>>(arguments_: T) => arguments_;
+	tupleFunction({x: [{b: 'x'}, 1]});
+	// @ts-expect-error
+	tupleFunction({x: [{b: 'x', c: 'x'}, 1]});
+
+	const recordFunction = <T extends Exact<Record<string, Record<string, {b: string}>>, T>>(arguments_: T) => arguments_;
+	recordFunction({x: {y: {b: 'y'}}, z: {}});
+	// @ts-expect-error
+	recordFunction({x: {y: {b: 'y'}, w: {b: 'w', c: 'w'}}});
+
+	const arrayOfRecordsFunction = <T extends Exact<Array<Record<string, {b: string}>>, T>>(arguments_: T) => arguments_;
+	arrayOfRecordsFunction([{x: {b: 'x'}}, {}]);
+	// @ts-expect-error
+	arrayOfRecordsFunction([{x: {b: 'x'}}, {y: {b: 'y', c: 'y'}}]);
+}
+
+{ // Spec - several index signatures
+	const templateFunction = <T extends Exact<{[key: `data-${string}`]: string; [key: `aria-${string}`]: number}, T>>(arguments_: T) => arguments_;
+	templateFunction({'data-x': 'x', 'aria-y': 1});
+	// @ts-expect-error
+	templateFunction({'data-x': 1});
+	// @ts-expect-error
+	templateFunction({role: 'x'});
+
+	const stringAndNumberFunction = <T extends Exact<{[key: string]: number | {b: string}; [key: number]: number}, T>>(arguments_: T) => arguments_;
+	stringAndNumberFunction({x: {b: 'x'}, 0: 1});
+	// @ts-expect-error
+	stringAndNumberFunction({x: {b: 'x', c: 'x'}});
+	// @ts-expect-error
+	stringAndNumberFunction({0: {b: 'x'}});
+
+	const declaredOptionalFunction = <T extends Exact<{id?: {b: string}; [key: string]: {b: string} | undefined}, T>>(arguments_: T) => arguments_;
+	declaredOptionalFunction({x: {b: 'x'}});
+	declaredOptionalFunction({id: {b: 'x'}});
+	// @ts-expect-error
+	declaredOptionalFunction({id: {b: 'x', c: 'x'}});
+
+	const unionFunction = <T extends Exact<Record<string, number> | {a: {b: string}}, T>>(arguments_: T) => arguments_;
+	unionFunction({a: {b: 'x'}});
+	unionFunction({x: 1});
+	// @ts-expect-error
+	unionFunction({a: {b: 'x', c: 'x'}});
+}
+
+{ // Spec - index signature with a recursive value and more generic input values
+	type Json = string | number | boolean | null | Json[] | {[key: string]: Json};
+	type Row = {[key: string]: Json};
+
+	const save = <Input extends Row>(row: Exact<Row, Input> & Input) => row;
+	const saveWithConstraint = <Input extends Exact<Row, Input>>(row: Input) => row;
+
+	type Wide = {a: number[]} | {b: {c: string}} | {d: string[]} | {e: {f: {g: number[]}}} | {h: boolean[]} | {i: {j: string}; k: number[]} | {l: null} | {m: Array<{n: string}>};
+
+	// Type-checking these must not be excessively slow.
+	function _constraint<Kind extends 'a' | 'b'>(kind: Kind, payload: {a: number[]} | {b: {c: string}} | {d: string[]}, other: {r: Record<string, string>}) {
+		saveWithConstraint({kind, payload});
+		saveWithConstraint({kind, other});
+	}
+
+	function _shapes<Kind extends 'a' | 'b'>(kind: Kind, kinds: Kind[], sameKey: {v: number[]} | {v: {c: string}} | {v: string[]}, mixed: number[] | string[] | {c: string}) {
+		save({kind, sameKey, mixed, tags: [kind], kinds, nested: {deep: {kind, mixed}}});
+	}
+
+	function _wide<Kind extends string, Count extends number>(kind: Kind, count: Count, first: Wide, second: Wide) {
+		save({kind, count, first, second, nested: {first, second, kind}, list: [first, second], text: 'text', number: 1, flag: false, empty: null});
+	}
+
+	const strings = <Input extends Exact<Record<string, string>, Input>>(input: Input) => input;
+	function _primitive<Name extends string>(name: Name) {
+		strings({name, other: 'x'});
+	}
 }
 
 { // Spec - union of array
