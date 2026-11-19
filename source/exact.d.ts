@@ -1,4 +1,4 @@
-import type {IsArrayOfUnknownLength, KeyAliases, NormalizedKeys} from './internal/index.d.ts';
+import type {IsArrayOfUnknownLength, IsReadonlyProperty, KeyAliases, NormalizedKeys} from './internal/index.d.ts';
 import type {PropertyValue} from './property-value.d.ts';
 import type {RequireNone} from './require-none.d.ts';
 import type {ArrayElement} from './array-element.d.ts';
@@ -8,6 +8,7 @@ import type {IsUnknown} from './is-unknown.d.ts';
 import type {Primitive} from './primitive.d.ts';
 import type {OmitIndexSignature} from './omit-index-signature.d.ts';
 import type {PickIndexSignature} from './pick-index-signature.d.ts';
+import type {MatchingKey} from './matching-key.d.ts';
 
 /**
 Apply `Exact` to each property of `ParameterType`, with the value of the same key in `InputType`.
@@ -30,14 +31,17 @@ Each key is checked with its own value. Checking all the values together, agains
 
 A key that no index signature of `ParameterType` matches gets `never`, like the excess keys in `ExactObject`.
 
-The keys are optional, because a member of a union input can be without the key.
+The keys are optional, because a member of a union input can be without the key. Each key keeps the readonly modifier of the matching parameter property or index signature.
 
 For an index signature key of a union input, like `string` in `Record<string, …> | {a: …}`, the values of the keys of each member that match it are read together, because `KeysOfUnion` gives only `string` for such a union. A generic value in such a union input can make the check of the other values fail (limitation).
 */
-type ExactIndexSignatureProperties<ParameterType, InputObject> = {
+type ExactIndexSignatureProperties<ParameterType, InputObject, Properties = {
 	[Key in KeysOfUnion<InputObject> as Key extends keyof OmitIndexSignature<ParameterType>
 		? never
 		: Key]?: Exact<PropertyValue<ParameterType, Key>, InputObject extends unknown ? PropertyValue<InputObject, Key> | InputObject[Extract<keyof InputObject, Key>] : never>;
+}> = Readonly<Properties> & {
+	// Writable properties override their readonly counterparts in the intersection.
+	[Key in keyof Properties as IsReadonlyProperty<ParameterType, MatchingKey<ParameterType & object, Key>> extends true ? never : Key]: Properties[Key];
 };
 
 /**

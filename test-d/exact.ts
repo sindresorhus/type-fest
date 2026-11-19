@@ -500,6 +500,63 @@ declare const arrayOrExcessObjectInput: ['q'] | {a: 'x'; b: 'y'};
 	callbackFunction({x: (value: string) => value.trim(), y: (value: string) => value.length});
 }
 
+{ // Spec - preserve index signature readonly modifiers
+	const readonlyString: Exact<Readonly<Record<string, string>>, {name: 'Ada'}> = {};
+	// @ts-expect-error
+	readonlyString.name = 'Grace';
+
+	const readonlyNumber: Exact<Readonly<Record<number, string>>, {0: 'Ada'}> = {};
+	// @ts-expect-error
+	readonlyNumber[0] = 'Grace';
+	const readonlyNumericString: Exact<Readonly<Record<number, string>>, {'0': 'Ada'}> = {};
+	// @ts-expect-error
+	readonlyNumericString['0'] = 'Grace';
+
+	const symbolKey = Symbol('key');
+	const readonlySymbol: Exact<Readonly<Record<symbol, string>>, {[symbolKey]: 'Ada'}> = {};
+	// @ts-expect-error
+	readonlySymbol[symbolKey] = 'Grace';
+
+	const readonlyTemplate: Exact<Readonly<Record<`data-${string}`, string>>, {'data-name': 'Ada'}> = {};
+	// @ts-expect-error
+	readonlyTemplate['data-name'] = 'Grace';
+
+	const mixed: Exact<{readonly [key: string]: string; [key: number]: string}, {name: 'Ada'; 0: 'Ada'; '1': 'Ada'}> = {};
+	// @ts-expect-error
+	mixed.name = 'Grace';
+	mixed[0] = 'Grace';
+	mixed['1'] = 'Grace';
+
+	const reverseMixed: Exact<{[key: string]: string; readonly [key: number]: string}, {name: 'Ada'; 0: 'Ada'; '1': 'Ada'}> = {};
+	reverseMixed.name = 'Grace';
+	// @ts-expect-error
+	reverseMixed[0] = 'Grace';
+	// @ts-expect-error
+	reverseMixed['1'] = 'Grace';
+
+	const declared: Exact<{readonly [key: string]: string; name: string; 0: string}, {name: 'Ada'; '0': 'Ada'}> = {name: 'Ada', 0: 'Ada'};
+	declared.name = 'Grace';
+	declared['0'] = 'Grace';
+
+	const writable: Exact<Record<string, string>, {readonly name: 'Ada'}> = {};
+	writable.name = 'Grace';
+	const writableIndex: Exact<Record<string, string>, Readonly<Record<string, 'Ada'>>> = {};
+	writableIndex['name'] = 'Grace';
+
+	const indexedMixed: Exact<{readonly [key: string]: string; [key: number]: string}, Record<string, 'Ada'>> = {};
+	// @ts-expect-error
+	indexedMixed['name'] = 'Grace';
+	indexedMixed[0] = 'Grace';
+	indexedMixed['1'] = 'Grace';
+
+	const indexedReverseMixed: Exact<{[key: string]: string; readonly [key: number]: string}, Record<string, 'Ada'>> = {};
+	indexedReverseMixed['name'] = 'Grace';
+	// @ts-expect-error
+	indexedReverseMixed[0] = 'Grace';
+	// @ts-expect-error
+	indexedReverseMixed['1'] = 'Grace';
+}
+
 { // Spec - nested index signature values
 	const arrayFunction = <T extends Exact<Record<string, Array<{b: string}>>, T>>(arguments_: T) => arguments_;
 	arrayFunction({x: [{b: 'x'}], y: []});
